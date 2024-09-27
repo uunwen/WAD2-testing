@@ -1,9 +1,8 @@
-### Introduction
+## Introduction
 Thanks for taking time to go through this. 
 
-I have no idea what I'm doing. 
 
-### File Structure 
+## File Structure 
 ```
 WAD2_project
 	\root
