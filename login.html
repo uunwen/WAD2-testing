@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login Page</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Welcome</h1>
+
+      <!-- Options to select the user type -->
+      <div class="login-options">
+        <button onclick="showForm('communityService')">
+          Community Service Login
+        </button>
+        <button onclick="showForm('user')">User Login</button>
+        <button onclick="showForm('admin')">Administrator Login</button>
+      </div>
+
+      <!-- Community Service Login Form -->
+      <div id="communityServiceForm" class="login-form">
+        <h2>Community Service Login</h2>
+        <form action="sponsor_welcome.html" method="post">
+          <input type="text" placeholder="Community Service ID" required />
+          <input type="password" placeholder="Password" required />
+          <input type="submit" value="login" />
+          <button class="back-button" onclick="goBack()">Back</button>
+        </form>
+      </div>
+
+      <!-- User Login Form -->
+      <div id="userForm" class="login-form">
+        <h2>User Login</h2>
+        <form action="student_welcome.html" method="post">
+          <input type="text" placeholder="Username" required />
+          <input type="password" placeholder="Password" required />
+          <input type="submit" value="login" />
+          <button class="back-button" onclick="goBack()">Back</button>
+        </form>
+      </div>
+
+      <!-- Administrator Login Form -->
+      <div id="adminForm" class="login-form">
+        <h2>Administrator Login</h2>
+        <form action="admin_main.html" method="post">
+          <input type="text" placeholder="Admin ID" required />
+          <input type="password" placeholder="Password" required />
+          <input type="submit" value="login" />
+          <button class="back-button" onclick="goBack()">Back</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="login.js"></script>
+  </body>
+</html>
