@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  </head>
+  <body onload="generateQr()">
+    <div class="container">
+      <div id="imgBox">
+        <img src="" id="qrImage" />
+      </div>
+    </div>
+    <script>
+      var date = moment();
+      let imgBox = document.getElementById("imgBox");
+      let qrImage = document.getElementById("qrImage");
+      let qrText = date.format("DD/MM/YYYY").toString();
+      console.log(qrText);
+
+      function generateQr() {
+        qrImage.src =
+          "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+          qrText;
+      }
+    </script>
+  </body>
+</html>
