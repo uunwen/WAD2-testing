@@ -25,7 +25,7 @@
             top: 0px;
             bottom: 0px;
         }
-        
+
         .sidebar-content a {
             text-decoration: none;
             color: black;
@@ -89,6 +89,15 @@
         .checkbox-wrapper .check:checked+label svg g path {
             stroke-dashoffset: 0;
             opacity: 1;
+        }
+
+        .page-content {
+            width: 100%;
+            padding-left: 25%;
+        }
+
+        .main-content {
+            width: 95%;
         }
     </style>
 </head>
@@ -162,10 +171,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-9">
-
+            <div class="col-9 page-content">
+                <div class="main-content mx-auto">
+                    <h2 class="fw-bold">Overview</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id nisl tortor. Nunc
+                        ultricies, urna quis blandit feugiat, purus massa.</p>
+                    <h2 class="fw-bold">Profile Activity</h2>
+                </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script>
