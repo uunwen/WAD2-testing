@@ -26,20 +26,106 @@ function displaySponsorData(sponsorData) {
     // Clear previous content
     dataDisplayDiv.innerHTML = '';
 
-    // Set the Sponsor Name as the header
-    if (sponsorData['Organizer Name']) {
-        sponsorNameElement.textContent = sponsorData['Organizer Name'];
-        delete sponsorData['Organizer Name']; // Remove Sponsor Name to avoid displaying it twice
+    // Set the Sponsor Name as the header and update the page title
+    if (sponsorData['org_name']) {  // Use 'org_name' from your Firebase data
+        sponsorNameElement.textContent = sponsorData['org_name'];
+        document.title = sponsorData['org_name']; // Dynamically set the page title
     }
 
-    // Display all the sponsor information in a key-value format
-    for (const key in sponsorData) {
-        if (sponsorData.hasOwnProperty(key)) {
-            const paragraph = document.createElement('p');
-            paragraph.innerHTML = `<strong>${key}:</strong> ${sponsorData[key]}`;
-            dataDisplayDiv.appendChild(paragraph);
-        }
+    // Create a table for followers_count, likes_count, and project_count
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.textAlign = 'center';  // Center-align this table
+    table.style.margin = '20px 0';
+
+    // Create the first row (values)
+    const valuesRow = document.createElement('tr');
+    ['followers_count', 'likes_count', 'project_count'].forEach((key) => {
+        const valueCell = document.createElement('td');
+        valueCell.textContent = sponsorData[key] || 'N/A'; // Handle missing data
+        valueCell.style.padding = '10px';
+        valueCell.style.fontSize = '24px'; // Make values larger
+        valuesRow.appendChild(valueCell);
+    });
+    table.appendChild(valuesRow);
+
+    // Create the second row (keys/labels)
+    const labelsRow = document.createElement('tr');
+    ['Followers', 'Likes', 'Projects'].forEach((label) => {
+        const labelCell = document.createElement('td');
+        labelCell.textContent = label;
+        labelCell.style.padding = '10px';
+        labelCell.style.fontWeight = 'bold'; // Bold labels
+        labelsRow.appendChild(labelCell);
+    });
+    table.appendChild(labelsRow);
+
+    // Append the table to the data display div
+    dataDisplayDiv.appendChild(table);
+
+    // Create a row with icons for email, Facebook, and website
+    const iconsRow = document.createElement('div');
+    iconsRow.style.display = 'flex';
+    iconsRow.style.justifyContent = 'center'; // Center-align icons
+    iconsRow.style.margin = '20px 0';
+
+    // Email icon
+    const emailIcon = document.createElement('a');
+    emailIcon.href = `mailto:${sponsorData['email_add']}`;
+    emailIcon.innerHTML = '<i class="fas fa-envelope"></i>';
+    emailIcon.style.margin = '0 20px';
+    emailIcon.title = 'Email';
+    iconsRow.appendChild(emailIcon);
+
+    // Facebook icon
+    const facebookIcon = document.createElement('a');
+    facebookIcon.href = sponsorData['facebook_link'];
+    facebookIcon.target = '_blank';
+    facebookIcon.innerHTML = '<i class="fab fa-facebook"></i>';
+    facebookIcon.style.margin = '0 20px';
+    facebookIcon.title = 'Facebook';
+    iconsRow.appendChild(facebookIcon);
+
+    // Website icon
+    const websiteIcon = document.createElement('a');
+    websiteIcon.href = sponsorData['website'];
+    websiteIcon.target = '_blank';
+    websiteIcon.innerHTML = '<i class="fas fa-globe"></i>';
+    websiteIcon.style.margin = '0 20px';
+    websiteIcon.title = 'Website';
+    iconsRow.appendChild(websiteIcon);
+
+    // Append the icons row to the data display div
+    dataDisplayDiv.appendChild(iconsRow);
+
+    // Display the about section
+    const aboutSection = document.createElement('p');
+    aboutSection.style.textAlign = 'left';  // Left-align the about section
+    aboutSection.innerHTML = `<strong>About:</strong> ${sponsorData['org_background']}`;
+    dataDisplayDiv.appendChild(aboutSection);
+
+    // Display the project list as bullet points
+    const projectListHeader = document.createElement('p');
+    projectListHeader.style.textAlign = 'left';  // Left-align the project list header
+    projectListHeader.innerHTML = "<strong>Projects:</strong>";
+    dataDisplayDiv.appendChild(projectListHeader);
+
+    const projectList = document.createElement('ul');
+    projectList.style.textAlign = 'left';  // Left-align the list
+
+    // Check if project_list exists and is an array
+    if (Array.isArray(sponsorData['project_list'])) {
+        sponsorData['project_list'].forEach((project) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = project;
+            projectList.appendChild(listItem);
+        });
+    } else {
+        console.warn('Project list is not an array or is missing.');
+        projectList.innerHTML = '<li>No projects available.</li>';
     }
+
+    dataDisplayDiv.appendChild(projectList);
 }
 
 // Function to fetch and display data for sponsor8
