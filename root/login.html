@@ -14,61 +14,13 @@
   <!-- Import main css -->
   <link rel="stylesheet" href="../css/main.css" />
 
-  <style>
-    button {
-      background-color: #797a75;
-      color: #f0f1e6;
-      width: 20%;
-      position: relative;
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      margin: 5px 0;
-      opacity: 0.85;
-      display: inline-block;
-      font-size: 17px;
-      line-height: 20px;
-    }
-
-    #googleSignIn {
-      background-color: #f0f1e6;
-      color: black;
-      border: 1px solid black;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 10px;
-      text-align: center;
-      flex-wrap: wrap; /* Allow content to wrap */
-      transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
-    }
-
-    #googleSignIn img {
-      width: 24px;
-      height: 24px;
-    }
-
-    /* Hover effect for all buttons */
-    button:hover {
-      background-color: #f0f1e6;
-      color: #797a75;
-      border: 1px solid #797a75;
-    }
-
-    @media (max-width: 576px) {
-      #googleSignIn {
-        flex-direction: column; /* Stack items vertically on small screens */
-        width: 80%; /* Take up more space on small screens */
-      }
-    }
-  </style>
+  <!-- Import css for login page   -->
+  <link rel="stylesheet" href="../css/login.css" />
 
   <body>
     <div class="container">
       <h1>Welcome</h1>
-
+      
       <div
         id="loginOptions"
         class="login-options"
@@ -85,9 +37,9 @@
         <h2>Community Service Login</h2>
         <!-- Add community service login form here -->
         <form action="" method="post">
-          <input type="text" placeholder="Community Service ID" required />
+          <input type="text" required />
           <input type="password" placeholder="Password" required />
-          <input type="submit" value="login" />
+          <button type="submit" value="login">Login</button>
         </form>
         <button onclick="showForm('loginOptions')">Back</button>
       </div>
@@ -104,14 +56,14 @@
         <h2>Administrator Login</h2>
         <!-- Add admin login form here -->
         <form action="admin.html" method="post">
-          <input type="text" placeholder="Community Service ID" required />
+          <input type="text" required />
           <input type="password" placeholder="Password" required />
-          <input type="submit" value="login" />
+          <button type="submit" value="login">Login</button>
         </form>
         <button onclick="showForm('loginOptions')">Back</button>
       </div>
     </div>
 
-    <script type="module" src="scripts/index.js"></script>
+    <script type="module" src="scripts/login.js"></script>
   </body>
 </html>
