@@ -3,57 +3,115 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Page</title>
+    <title>Welcome</title>
   </head>
+  <!-- Import bootstrap -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+
+  <!-- Import main css -->
+  <link rel="stylesheet" href="../css/main.css" />
+
+  <style>
+    button {
+      background-color: #797a75;
+      color: #f0f1e6;
+      width: 20%;
+      position: relative;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      margin: 5px 0;
+      opacity: 0.85;
+      display: inline-block;
+      font-size: 17px;
+      line-height: 20px;
+    }
+
+    #googleSignIn {
+      background-color: #f0f1e6;
+      color: black;
+      border: 1px solid black;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      text-align: center;
+      flex-wrap: wrap; /* Allow content to wrap */
+      transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
+    }
+
+    #googleSignIn img {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Hover effect for all buttons */
+    button:hover {
+      background-color: #f0f1e6;
+      color: #797a75;
+      border: 1px solid #797a75;
+    }
+
+    @media (max-width: 576px) {
+      #googleSignIn {
+        flex-direction: column; /* Stack items vertically on small screens */
+        width: 80%; /* Take up more space on small screens */
+      }
+    }
+  </style>
 
   <body>
     <div class="container">
       <h1>Welcome</h1>
 
-      <!-- Options to select the user type -->
-      <div class="login-options">
-        <button onclick="showForm('communityService')">
+      <div
+        id="loginOptions"
+        class="login-options"
+        class="d-flex justify-content-center"
+      >
+        <button onclick="showForm('communityServiceForm')">
           Community Service Login
         </button>
-        <button onclick="showForm('user')">User Login</button>
-        <button onclick="showForm('admin')">Administrator Login</button>
+        <button onclick="showForm('userForm')">User Login</button>
+        <button onclick="showForm('adminForm')">Administrator Login</button>
       </div>
 
-      <!-- Community Service Login Form -->
-      <div id="communityServiceForm" class="login-form">
+      <div id="communityServiceForm" class="login-form" style="display: none">
         <h2>Community Service Login</h2>
-        <form action="pages\sponsor.html" method="post">
+        <!-- Add community service login form here -->
+        <form action="" method="post">
           <input type="text" placeholder="Community Service ID" required />
           <input type="password" placeholder="Password" required />
           <input type="submit" value="login" />
-          <button class="back-button" onclick="goBack()">Back</button>
         </form>
+        <button onclick="showForm('loginOptions')">Back</button>
       </div>
 
-      <!-- User Login Form -->
-      <div id="userForm" class="login-form">
+      <div id="userForm" class="login-form" style="display: none">
         <h2>User Login</h2>
-        <form action="pages\student.html" method="post">
-          <input type="text" placeholder="Username" required />
-          <input type="password" placeholder="Password" required />
-          <input type="submit" value="login" />
-          <button class="back-button" onclick="goBack()">Back</button>
-        </form>
+        <button id="googleSignIn">
+          <img src="../img/Google__G__logo.png" />Login with Google
+        </button>
+        <button onclick="showForm('loginOptions')">Back</button>
       </div>
 
-      <!-- Administrator Login Form -->
-      <div id="adminForm" class="login-form">
+      <div id="adminForm" class="login-form" style="display: none">
         <h2>Administrator Login</h2>
-        <form action="pages\admin.html" method="post">
-          <input type="text" placeholder="Admin ID" required />
+        <!-- Add admin login form here -->
+        <form action="admin.html" method="post">
+          <input type="text" placeholder="Community Service ID" required />
           <input type="password" placeholder="Password" required />
           <input type="submit" value="login" />
-          <button class="back-button" onclick="goBack()">Back</button>
         </form>
+        <button onclick="showForm('loginOptions')">Back</button>
       </div>
     </div>
 
-    <script src="scripts\index.js"></script>
-    <script src="index.js" type="module"></script>
+    <script type="module" src="scripts/index.js"></script>
   </body>
 </html>

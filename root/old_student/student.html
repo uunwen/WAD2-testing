@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Student welcome page</title>
+  </head>
+  <body>
+    <h1>Welcome back!</h1>
+    <h4>Ready to sign up for CSP?</h4>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Search me..." />
+      <button onclick="searchPosts()">Search</button>
+    </div>
+
+    <!-- Cards Container -->
+    <div class="cards-container" id="cards-container">
+      <!-- Cards will be dynamically populated here -->
+    </div>
+
+    <br /><br />
+    <!-- Take attendence -->
+    <div class="attendance">
+      <button id="attendanceQr">Take attendance</button>
+    </div>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="../scripts/student_card_container.js"></script>
+  </body>
+
+  <script>
+    // Get user info from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get("uid");
+    const name = urlParams.get("name");
+
+    document
+      .getElementById("attendanceQr")
+      .addEventListener("click", () => {
+        // Redirect to attendance.html with user info
+        window.location.href = `../attendance/pages/attendance.html?uid=${uid}&name=${name}`;
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
+  </script>
+</html>
