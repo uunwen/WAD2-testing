@@ -27,15 +27,15 @@ function displaySponsorData(sponsorData) {
     dataDisplayDiv.innerHTML = '';
 
     // Set the Sponsor Name as the header and update the page title
-    if (sponsorData['org_name']) {  // Use 'org_name' from your Firebase data
+    if (sponsorData['org_name']) {
         sponsorNameElement.textContent = sponsorData['org_name'];
-        document.title = sponsorData['org_name']; // Dynamically set the page title
+        document.title = sponsorData['org_name'];
     }
 
     // Create a table for followers_count, likes_count, and project_count
     const table = document.createElement('table');
     table.style.width = '100%';
-    table.style.textAlign = 'center';  // Center-align this table
+    table.style.textAlign = 'center';
     table.style.margin = '20px 0';
 
     // Create the first row (values)
@@ -44,7 +44,7 @@ function displaySponsorData(sponsorData) {
         const valueCell = document.createElement('td');
         valueCell.textContent = sponsorData[key] || 'N/A'; // Handle missing data
         valueCell.style.padding = '10px';
-        valueCell.style.fontSize = '24px'; // Make values larger
+        valueCell.style.fontSize = '24px';
         valuesRow.appendChild(valueCell);
     });
     table.appendChild(valuesRow);
@@ -55,7 +55,7 @@ function displaySponsorData(sponsorData) {
         const labelCell = document.createElement('td');
         labelCell.textContent = label;
         labelCell.style.padding = '10px';
-        labelCell.style.fontWeight = 'bold'; // Bold labels
+        labelCell.style.fontWeight = 'bold';
         labelsRow.appendChild(labelCell);
     });
     table.appendChild(labelsRow);
@@ -66,7 +66,7 @@ function displaySponsorData(sponsorData) {
     // Create a row with icons for email, Facebook, and website
     const iconsRow = document.createElement('div');
     iconsRow.style.display = 'flex';
-    iconsRow.style.justifyContent = 'center'; // Center-align icons
+    iconsRow.style.justifyContent = 'center';
     iconsRow.style.margin = '20px 0';
 
     // Email icon
@@ -100,20 +100,19 @@ function displaySponsorData(sponsorData) {
 
     // Display the about section
     const aboutSection = document.createElement('p');
-    aboutSection.style.textAlign = 'left';  // Left-align the about section
-    aboutSection.innerHTML = `<strong>About:</strong> ${sponsorData['org_background']}`;
+    aboutSection.style.textAlign = 'left';
+    aboutSection.innerHTML = `<strong>About:</strong> ${sponsorData['org_background'] || 'No information available.'}`;
     dataDisplayDiv.appendChild(aboutSection);
 
     // Display the project list as bullet points
     const projectListHeader = document.createElement('p');
-    projectListHeader.style.textAlign = 'left';  // Left-align the project list header
+    projectListHeader.style.textAlign = 'left';
     projectListHeader.innerHTML = "<strong>Projects:</strong>";
     dataDisplayDiv.appendChild(projectListHeader);
 
     const projectList = document.createElement('ul');
-    projectList.style.textAlign = 'left';  // Left-align the list
+    projectList.style.textAlign = 'left';
 
-    // Check if project_list exists and is an array
     if (Array.isArray(sponsorData['project_list'])) {
         sponsorData['project_list'].forEach((project) => {
             const listItem = document.createElement('li');
@@ -121,7 +120,6 @@ function displaySponsorData(sponsorData) {
             projectList.appendChild(listItem);
         });
     } else {
-        console.warn('Project list is not an array or is missing.');
         projectList.innerHTML = '<li>No projects available.</li>';
     }
 
@@ -149,3 +147,5 @@ function fetchSponsor1Data() {
 
 // Fetch and display data when the page loads
 window.onload = fetchSponsor1Data;
+
+
