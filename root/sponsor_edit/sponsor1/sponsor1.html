@@ -79,6 +79,34 @@
             color: #007BFF;
         }
 
+        /* Row for upload button */
+        .upload-row {
+            display: flex;
+            justify-content: flex-end;
+            /* Align the button to the right */
+            margin: 20px 0;
+        }
+
+        /* Upload button styling */
+        .upload-btn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
         /* Event Data Box */
         .event-box {
             border: 1px solid #ccc;
@@ -127,6 +155,11 @@
         <!-- Box where description (about section) will be displayed -->
         <div id="sponsorDescription" class="description-box">
             <!-- Description will be dynamically inserted here -->
+        </div>
+
+        <!-- Row for the upload button -->
+        <div class="upload-row">
+            <button class="upload-btn">Upload</button> <!-- Upload button aligned to the right -->
         </div>
 
         <!-- Event boxes for multiple events -->
