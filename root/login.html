@@ -11,59 +11,56 @@
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
   />
 
-  <!-- Import main css -->
-  <link rel="stylesheet" href="../css/main.css" />
-
   <!-- Import css for login page   -->
   <link rel="stylesheet" href="../css/login.css" />
 
   <body>
-    <div class="container">
-      <h1>Welcome</h1>
-      
-      <div
-        id="loginOptions"
-        class="login-options"
-        class="d-flex justify-content-center"
-      >
-        <button onclick="showForm('communityServiceForm')">
-          Community Service Login
-        </button>
-        <button onclick="showForm('userForm')">User Login</button>
-        <button onclick="showForm('adminForm')">Administrator Login</button>
-      </div>
+    <div class="background">
+      <div class="container">
+        <h1>Welcome</h1>
 
-      <div id="communityServiceForm" class="login-form" style="display: none">
-        <h2>Community Service Login</h2>
-        <!-- Add community service login form here -->
-        <form action="" method="post">
-          <input type="text" required />
-          <input type="password" placeholder="Password" required />
-          <button type="submit" value="login">Login</button>
-        </form>
-        <button onclick="showForm('loginOptions')">Back</button>
-      </div>
+        <div
+          id="loginOptions"
+          class="login-options"
+          class="d-flex justify-content-center"
+        >
+          <button onclick="showForm('communityServiceForm')">
+            Community Service Login
+          </button>
+          <button onclick="showForm('userForm')">User Login</button>
+          <button onclick="showForm('adminForm')">Administrator Login</button>
+        </div>
 
-      <div id="userForm" class="login-form" style="display: none">
-        <h2>User Login</h2>
-        <button id="googleSignIn">
-          <img src="../img/Google__G__logo.png" />Login with Google
-        </button>
-        <button onclick="showForm('loginOptions')">Back</button>
-      </div>
+        <div id="communityServiceForm" class="login-form" style="display: none">
+          <h2>Community Service Login</h2>
+          <!-- Add community service login form here -->
+          Username: <input type="text" id="sponsorId" required /><br />
+          Password: <input type="password" id="sponsorPwd" required /><br />
+          <button onclick="sponsorLogin()">Login</button>
+          <button onclick="showForm('loginOptions')">Back</button>
+        </div>
 
-      <div id="adminForm" class="login-form" style="display: none">
-        <h2>Administrator Login</h2>
-        <!-- Add admin login form here -->
-        <form action="admin.html" method="post">
-          <input type="text" required />
-          <input type="password" placeholder="Password" required />
-          <button type="submit" value="login">Login</button>
-        </form>
-        <button onclick="showForm('loginOptions')">Back</button>
+        <div id="userForm" class="login-form" style="display: none">
+          <h2>User Login</h2>
+          <button id="googleSignIn" onclick="googleSignIn('student')">
+            <img src="../img/Google__G__logo.png" />Login with student's Google
+            account
+          </button>
+          <button onclick="showForm('loginOptions')">Back</button>
+        </div>
+
+        <div id="adminForm" class="login-form" style="display: none">
+          <h2>Administrator Login</h2>
+          <!-- Add admin login form here -->
+          <button id="googleSignIn" onclick="googleSignIn('admin')">
+            <img src="../img/Google__G__logo.png" />Login with Administrator
+            google account account
+          </button>
+          <button onclick="showForm('loginOptions')">Back</button>
+        </div>
       </div>
     </div>
-
     <script type="module" src="scripts/login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -1,0 +1,136 @@
+.background {
+  background-image: url("../img/smu.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 60vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #c8c9be;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
+.container {
+  background-color: #f0f1e6;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+#loginOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+button {
+  background-color: #797a75;
+  color: #f0f1e6;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: #f0f1e6;
+  color: #797a75;
+  border: 1px solid #797a75;
+}
+
+#googleSignIn {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+#googleSignIn img {
+  width: 24px;
+  height: 24px;
+}
+
+.login-form {
+  display: none;
+  margin-top: 20px;
+}
+
+.login-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.input-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #797a75;
+  box-shadow: 0 0 0 2px rgba(121, 122, 117, 0.2);
+}
+
+.login-form button {
+  margin-top: 20px;
+}
+
+@media (max-width: 576px) {
+  body {
+    background-image: none;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  button,
+  .input-group input {
+    font-size: 14px;
+  }
+
+  #loginOptions {
+    gap: 15px;
+  }
+}

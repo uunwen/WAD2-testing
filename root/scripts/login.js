@@ -52,11 +52,48 @@ function logEntireDatabase() {
 // To test that firebase is working
 logEntireDatabase();
 
-// Google login
-document.getElementById("googleSignIn").addEventListener("click", () => {
+// // Google login for student
+// document.getElementById("googleSignIn").addEventListener("click", () => {
+//   const provider = new GoogleAuthProvider();
+//   signInWithPopup(auth, provider)
+//     .then((result) => {
+//       // This gives you a Google Access Token. You can use it to access the Google API.
+//       const credential = GoogleAuthProvider.credentialFromResult(result);
+//       const token = credential.accessToken;
+
+//       // The signed-in user info.
+//       const user = result.user;
+
+//       // Save user info to Realtime Database
+//       set(ref(database, "students/" + user.uid), {
+//         name: user.displayName,
+//         email: user.email,
+//         hours_left: 80, // default 80hrs
+//       });
+
+//       // Redirect to Student.html after
+//       window.location.href = `../root/events.html?uid=${
+//         user.uid
+//       }&name=${encodeURIComponent(user.displayName)}`;
+//     })
+
+//     .catch((error) => {
+//       // Handle Errors here.
+//       const errorCode = error.code;
+//       const errorMessage = error.message;
+//       console.error(errorCode, errorMessage);
+//     });
+// });
+
+// async function isSchoolEmail(email) {
+
+// }
+
+// Google sign in handler
+window.googleSignIn = async function googleSignIn(userType) {
   const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then((result) => {
+  try {
+    signInWithPopup(auth, provider).then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
@@ -64,26 +101,59 @@ document.getElementById("googleSignIn").addEventListener("click", () => {
       // The signed-in user info.
       const user = result.user;
 
-      // Save user info to Realtime Database
-      set(ref(database, "students/" + user.uid), {
-        name: user.displayName,
-        email: user.email,
-        hours_left: 80, // default 80hrs
-      });
+      if (userType == "student") {
+        set(ref(database, "students/" + user.uid), {
+          name: user.displayName,
+          email: user.email,
+          hours_left: 80, // default 80hrs
+        });
 
-      // Redirect to Student.html after
-      window.location.href = `../root/events.html?uid=${
-        user.uid
-      }&name=${encodeURIComponent(user.displayName)}`;
-    })
+        // Redirect to Student.html after
+        window.location.href = `../root/events.html?uid=${
+          user.uid
+        }&name=${encodeURIComponent(user.displayName)}`;
+      }
+      if (userType == "admin") {
+        set(ref(database, "admins" + user.uid), {
+          name: user.displayName,
+          email: user.email,
+        });
 
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
+        // Redirect to Student.html after
+        window.location.href = `../root/admin.html?uid=${
+          user.uid
+        }&name=${encodeURIComponent(user.displayName)}`;
+      }
     });
-});
+  } catch (error) {}
+};
+
+// no validation just for show login for sponsor
+window.sponsorLogin = async function sponsorLogin() {
+  let sponsorId = document.getElementById("sponsorId").value;
+  let sponsorPwd = document.getElementById("sponsorPwd").value;
+
+  // Hardcoded sponsor's pwd
+  const HARDCODED_PWD = "ilovewad2";
+  console.log(sponsorId);
+
+  try {
+    let sponsorRef = ref(database, "sponsors/" + sponsorId);
+    const snapshot = await get(sponsorRef);
+
+    if (snapshot.exists() && sponsorPwd === HARDCODED_PWD) {
+      // Get the service user's name from the database
+      const sponsoreData = snapshot.val();
+
+      // Redirect to corrosponding sponsor page with sponsor uid
+      window.location.href = `sponsor_edit/${sponsorId}/${sponsorId}.html?uid=${sponsorId}`;
+    } else {
+      console.log("WRONG PWD?");
+    }
+  } catch (error) {
+    console.error("Error during community service login:", error);
+  }
+};
 
 // Function to show/hide forms
 window.showForm = function (formId) {
