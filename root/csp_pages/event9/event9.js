@@ -37,17 +37,20 @@ function displayEventData(eventData) {
         'Organiser',
         'Location',
         'Session(s)',
-        'Volunteer Hours per Session',
         'Volunteer Period',
         'Capacity',
-        'Estimated Total Volunteer Hours',
+        'Total CSP hours', // Check if this matches exactly with Firebase key
         'Project Requirements',
+        'Region',
         'Admissions Period'
     ];
 
     // Iterate through the displayOrder array and display the corresponding data
     displayOrder.forEach(key => {
         const paragraph = document.createElement('p');
+
+        // Debugging log to check key and value
+        console.log(`Key: ${key}, Value: ${eventData[key]}`);
 
         // Special handling for the 'Organiser' field to add the link
         if (key === 'Organiser' && eventData[key]) {
@@ -64,9 +67,12 @@ function displayEventData(eventData) {
             paragraph.innerHTML = `<strong>Organiser:</strong> `;
             paragraph.appendChild(organiserLink); // Add the link to the paragraph
         }
-        // This should be part of the same structure, handling all other fields
-        else if (eventData[key]) {
-            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key]}`;
+        // Handle other fields, including Total CSP Hours, or if the field is empty or undefined
+        else if (eventData[key] || eventData[key] === "") {
+            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key] || "N/A"}`; // Display "N/A" if the value is empty
+        } else {
+            // Log if the field does not exist or is empty
+            console.log(`No data available for key: ${key}`);
         }
 
         // Append the paragraph to the display div
@@ -82,6 +88,11 @@ function fetchEvent9Data() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const eventData = snapshot.val();
+                console.log("Event Data Fetched:", eventData); // Log entire data object for debugging
+
+                // Log the specific 'Total CSP hours' key to check if it exists
+                console.log("Total CSP hours:", eventData['Total CSP hours']);
+
                 displayEventData(eventData); // Display the fetched event9 data
             } else {
                 document.getElementById("event9Data").innerHTML = '<p>No data available for event9.</p>';
@@ -95,4 +106,3 @@ function fetchEvent9Data() {
 
 // Fetch and display data when the page loads
 window.onload = fetchEvent9Data;
-

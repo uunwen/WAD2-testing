@@ -21,7 +21,7 @@ const database = getDatabase(app);
 // Function to display event data on the HTML page in a specific order
 function displayEventData(eventData) {
     const headerElement = document.getElementById("eventHeader"); // h1 element for the Project Name
-    const dataDisplayDiv = document.getElementById("event3Data"); // Div to display event3 data
+    const dataDisplayDiv = document.getElementById("event13Data"); // Div to display event13 data
 
     // Clear previous content
     dataDisplayDiv.innerHTML = '';
@@ -49,15 +49,12 @@ function displayEventData(eventData) {
     displayOrder.forEach(key => {
         const paragraph = document.createElement('p');
 
-        // Debugging log to check key and value
-        console.log(`Key: ${key}, Value: ${eventData[key]}`);
-
         // Special handling for the 'Organiser' field to add the link
         if (key === 'Organiser' && eventData[key]) {
             const organiserLink = document.createElement('a');
 
             // Change the link to a relative path to navigate correctly
-            organiserLink.href = '../../sponsor_pages/sponsor3/sponsor3.html'; // Correct relative path
+            organiserLink.href = '../../sponsor_pages/sponsor1/sponsor1.html'; // Correct relative path
             organiserLink.textContent = eventData[key];
 
             // Style the link to make it clickable
@@ -67,12 +64,9 @@ function displayEventData(eventData) {
             paragraph.innerHTML = `<strong>Organiser:</strong> `;
             paragraph.appendChild(organiserLink); // Add the link to the paragraph
         }
-        // Handle other fields, including Total CSP Hours, or if the field is empty or undefined
-        else if (eventData[key] || eventData[key] === "") {
-            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key] || "N/A"}`; // Display "N/A" if the value is empty
-        } else {
-            // Log if the field does not exist or is empty
-            console.log(`No data available for key: ${key}`);
+        // This should be part of the same structure, handling all other fields
+        else if (eventData[key]) {
+            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key]}`;
         }
 
         // Append the paragraph to the display div
@@ -80,33 +74,25 @@ function displayEventData(eventData) {
     });
 }
 
-function fetchEvent3Data() {
-    const event3Ref = ref(database, 'events/event3'); // Reference to 'event3' data in Firebase
+// Function to fetch and display data for event13
+function fetchEvent13Data() {
+    const event13Ref = ref(database, 'events/event13'); // Reference to 'event13' data in Firebase
 
-    get(event3Ref)
+    get(event13Ref)
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const eventData = snapshot.val();
-                console.log("Full Event Data Fetched:", eventData); // Log entire data object for debugging
-
-                // Log the specific 'Total CSP hours' key to check if it exists
-                if (eventData['Total CSP hours']) {
-                    console.log("Total CSP hours:", eventData['Total CSP hours']);
-                } else {
-                    console.log("Total CSP hours key not found");
-                }
-
-                displayEventData(eventData); // Display the fetched event3 data
+                displayEventData(eventData); // Display the fetched event13 data
             } else {
-                document.getElementById("event3Data").innerHTML = '<p>No data available for event3.</p>';
+                document.getElementById("event13Data").innerHTML = '<p>No data available for event13.</p>';
             }
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
-            document.getElementById("event3Data").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            document.getElementById("event13Data").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         });
 }
 
-
 // Fetch and display data when the page loads
-window.onload = fetchEvent3Data;
+window.onload = fetchEvent13Data;
+

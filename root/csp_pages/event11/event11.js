@@ -21,7 +21,7 @@ const database = getDatabase(app);
 // Function to display event data on the HTML page in a specific order
 function displayEventData(eventData) {
     const headerElement = document.getElementById("eventHeader"); // h1 element for the Project Name
-    const dataDisplayDiv = document.getElementById("event3Data"); // Div to display event3 data
+    const dataDisplayDiv = document.getElementById("event11Data"); // Div to display event11 data
 
     // Clear previous content
     dataDisplayDiv.innerHTML = '';
@@ -57,7 +57,7 @@ function displayEventData(eventData) {
             const organiserLink = document.createElement('a');
 
             // Change the link to a relative path to navigate correctly
-            organiserLink.href = '../../sponsor_pages/sponsor3/sponsor3.html'; // Correct relative path
+            organiserLink.href = '../../sponsor_pages/sponsor11/sponsor11.html'; // Correct relative path
             organiserLink.textContent = eventData[key];
 
             // Style the link to make it clickable
@@ -80,33 +80,29 @@ function displayEventData(eventData) {
     });
 }
 
-function fetchEvent3Data() {
-    const event3Ref = ref(database, 'events/event3'); // Reference to 'event3' data in Firebase
+// Function to fetch and display data for event11
+function fetchEvent11Data() {
+    const event11Ref = ref(database, 'events/event11'); // Reference to 'event11' data in Firebase
 
-    get(event3Ref)
+    get(event11Ref)
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const eventData = snapshot.val();
-                console.log("Full Event Data Fetched:", eventData); // Log entire data object for debugging
+                console.log("Event Data Fetched:", eventData); // Log entire data object for debugging
 
                 // Log the specific 'Total CSP hours' key to check if it exists
-                if (eventData['Total CSP hours']) {
-                    console.log("Total CSP hours:", eventData['Total CSP hours']);
-                } else {
-                    console.log("Total CSP hours key not found");
-                }
+                console.log("Total CSP hours:", eventData['Total CSP hours']);
 
-                displayEventData(eventData); // Display the fetched event3 data
+                displayEventData(eventData); // Display the fetched event11 data
             } else {
-                document.getElementById("event3Data").innerHTML = '<p>No data available for event3.</p>';
+                document.getElementById("event11Data").innerHTML = '<p>No data available for event11.</p>';
             }
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
-            document.getElementById("event3Data").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            document.getElementById("event11Data").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         });
 }
 
-
 // Fetch and display data when the page loads
-window.onload = fetchEvent3Data;
+window.onload = fetchEvent11Data;

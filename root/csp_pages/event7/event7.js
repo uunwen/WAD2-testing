@@ -29,7 +29,6 @@ function displayEventData(eventData) {
     // Set the Project Name as the header
     if (eventData['Project Name']) {
         headerElement.textContent = eventData['Project Name'];
-        delete eventData['Project Name']; // Remove Project Name from being displayed twice
     }
 
     // Display the data in the desired order
@@ -38,17 +37,20 @@ function displayEventData(eventData) {
         'Organiser',
         'Location',
         'Session(s)',
-        'Volunteer Hours per Session',
         'Volunteer Period',
         'Capacity',
-        'Estimated Total Volunteer Hours',
+        'Total CSP hours', // Check if this matches exactly with Firebase key
         'Project Requirements',
+        'Region',
         'Admissions Period'
     ];
 
     // Iterate through the displayOrder array and display the corresponding data
     displayOrder.forEach(key => {
         const paragraph = document.createElement('p');
+
+        // Debugging log to check key and value
+        console.log(`Key: ${key}, Value: ${eventData[key]}`);
 
         // Special handling for the 'Organiser' field to add the link
         if (key === 'Organiser' && eventData[key]) {
@@ -65,16 +67,18 @@ function displayEventData(eventData) {
             paragraph.innerHTML = `<strong>Organiser:</strong> `;
             paragraph.appendChild(organiserLink); // Add the link to the paragraph
         }
-        // This should be part of the same structure, handling all other fields
-        else if (eventData[key]) {
-            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key]}`;
+        // Handle other fields, including Total CSP Hours, or if the field is empty or undefined
+        else if (eventData[key] || eventData[key] === "") {
+            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key] || "N/A"}`; // Display "N/A" if the value is empty
+        } else {
+            // Log if the field does not exist or is empty
+            console.log(`No data available for key: ${key}`);
         }
 
         // Append the paragraph to the display div
         dataDisplayDiv.appendChild(paragraph);
     });
 }
-
 
 // Function to fetch and display data for event7
 function fetchEvent7Data() {
@@ -84,6 +88,11 @@ function fetchEvent7Data() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const eventData = snapshot.val();
+                console.log("Event Data Fetched:", eventData); // Log entire data object for debugging
+
+                // Log the specific 'Total CSP hours' key to check if it exists
+                console.log("Total CSP hours:", eventData['Total CSP hours']);
+
                 displayEventData(eventData); // Display the fetched event7 data
             } else {
                 document.getElementById("event7Data").innerHTML = '<p>No data available for event7.</p>';

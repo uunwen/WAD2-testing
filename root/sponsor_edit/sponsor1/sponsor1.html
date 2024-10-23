@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Details</title> <!-- This will be replaced by org_name dynamically -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add basic styles for the sponsor page -->
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Box styling for description */
+        .description-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #fff;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling for followers, likes, and projects */
+        .stats-box {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #e6f2ff;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item p {
+            margin: 5px 0;
+            font-size: 20px;
+        }
+
+        .stat-item .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        /* Styling for icons */
+        .icons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .icons a {
+            margin: 0 15px;
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .icons a:hover {
+            color: #007BFF;
+        }
+
+        /* Event Data Box */
+        .event-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-box h2 {
+            color: #007BFF;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .stats-box {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-item {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header for Sponsor Name -->
+        <h1 id="sponsorHeader">Sponsor Details</h1>
+
+        <!-- Div where sponsor statistics (likes, followers, etc.) will be displayed -->
+        <div id="sponsorStats" class="stats-box">
+            <!-- Statistics will be dynamically inserted here -->
+        </div>
+
+        <!-- Icons for email, Facebook, website -->
+        <div class="icons" id="iconsRow"></div>
+
+        <!-- Box where description (about section) will be displayed -->
+        <div id="sponsorDescription" class="description-box">
+            <!-- Description will be dynamically inserted here -->
+        </div>
+
+        <!-- Event boxes for multiple events -->
+        <!-- Box where event-specific data (event1) will be displayed -->
+        <div id="event1Data" class="event-box">
+            <!-- Event 1 data will be dynamically inserted here -->
+        </div>
+
+        <!-- Box where event-specific data (events11) will be displayed -->
+        <div id="event11Data" class="event-box">
+            <!-- Event 11 data will be dynamically inserted here -->
+        </div>
+
+        <!-- Box where event-specific data (events12) will be displayed -->
+        <div id="event12Data" class="event-box">
+            <!-- Event 12 data will be dynamically inserted here -->
+        </div>
+
+        <!-- Box where event-specific data (events13) will be displayed -->
+        <div id="event13Data" class="event-box">
+            <!-- Event 13 data will be dynamically inserted here -->
+        </div>
+
+    </div>
+
+    <!-- Include your JavaScript file (sponsor1.js) -->
+    <script type="module" src="sponsor1.js"></script>
+</body>
+
+</html>
