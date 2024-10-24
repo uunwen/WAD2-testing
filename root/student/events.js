@@ -10,8 +10,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL:
-    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
