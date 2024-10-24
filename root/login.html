@@ -19,6 +19,7 @@
       <div class="image"><img src="../img/smu.jpg" /></div>
       <div class="container">
         <h1>Welcome</h1>
+        <hr />
 
         <div
           id="loginOptions"
@@ -33,7 +34,9 @@
         </div>
 
         <div id="communityServiceForm" class="login-form" style="display: none">
-          <h2>Community Service Login</h2>
+          <h2>
+            <img src="../img/social-services.png" /> Community Service Login
+          </h2>
           <!-- Add community service login form here -->
           Username: <input type="text" id="sponsorId" required /><br />
           Password: <input type="password" id="sponsorPwd" required /><br />
@@ -42,7 +45,11 @@
         </div>
 
         <div id="userForm" class="login-form" style="display: none">
-          <h2>User Login</h2>
+          <h2>Student Login</h2>
+          <p class="smuLoginInfo">
+            Student please login with your school google account, <br />e.g.
+            John.Low.2021@smu.edu.sg
+          </p>
           <button id="googleSignIn" onclick="googleSignIn('student')">
             <img src="../img/Google__G__logo.png" />Login
           </button>
@@ -52,6 +59,10 @@
         <div id="adminForm" class="login-form" style="display: none">
           <h2>Administrator Login</h2>
           <!-- Add admin login form here -->
+          <p class="smuLoginInfo">
+            Faculty please login with work's google account, <br />e.g.
+            faculty.name@smu.edu.sg
+          </p>
           <button id="googleSignIn" onclick="googleSignIn('admin')">
             <img src="../img/Google__G__logo.png" />Login
           </button>
