@@ -52,43 +52,6 @@ function logEntireDatabase() {
 // To test that firebase is working
 logEntireDatabase();
 
-// // Google login for student
-// document.getElementById("googleSignIn").addEventListener("click", () => {
-//   const provider = new GoogleAuthProvider();
-//   signInWithPopup(auth, provider)
-//     .then((result) => {
-//       // This gives you a Google Access Token. You can use it to access the Google API.
-//       const credential = GoogleAuthProvider.credentialFromResult(result);
-//       const token = credential.accessToken;
-
-//       // The signed-in user info.
-//       const user = result.user;
-
-//       // Save user info to Realtime Database
-//       set(ref(database, "students/" + user.uid), {
-//         name: user.displayName,
-//         email: user.email,
-//         hours_left: 80, // default 80hrs
-//       });
-
-//       // Redirect to Student.html after
-//       window.location.href = `../root/events.html?uid=${
-//         user.uid
-//       }&name=${encodeURIComponent(user.displayName)}`;
-//     })
-
-//     .catch((error) => {
-//       // Handle Errors here.
-//       const errorCode = error.code;
-//       const errorMessage = error.message;
-//       console.error(errorCode, errorMessage);
-//     });
-// });
-
-// async function isSchoolEmail(email) {
-
-// }
-
 // Google sign in handler
 window.googleSignIn = async function googleSignIn(userType) {
   const provider = new GoogleAuthProvider();
@@ -109,18 +72,18 @@ window.googleSignIn = async function googleSignIn(userType) {
         });
 
         // Redirect to Student.html after
-        window.location.href = `../root/events.html?uid=${
+        window.location.href = `../student/main.html?uid=${
           user.uid
         }&name=${encodeURIComponent(user.displayName)}`;
       }
       if (userType == "admin") {
-        set(ref(database, "admins" + user.uid), {
+        set(ref(database, "admins/" + user.uid), {
           name: user.displayName,
           email: user.email,
         });
 
         // Redirect to Student.html after
-        window.location.href = `../root/admin.html?uid=${
+        window.location.href = `../admin.html?uid=${
           user.uid
         }&name=${encodeURIComponent(user.displayName)}`;
       }
@@ -148,7 +111,7 @@ window.sponsorLogin = async function sponsorLogin() {
       const sponsoreData = snapshot.val();
 
       // Redirect to corrosponding sponsor page with sponsor uid
-      window.location.href = `sponsor_edit/${sponsorId}/${sponsorId}.html?uid=${sponsorId}`;
+      window.location.href = `../sponsor_edit/${sponsorId}/${sponsorId}.html?uid=${sponsorId}`;
     } else {
       console.log("WRONG PWD");
       document.getElementById("errorMessage").innerHTML =
