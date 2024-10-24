@@ -125,7 +125,9 @@ window.googleSignIn = async function googleSignIn(userType) {
         }&name=${encodeURIComponent(user.displayName)}`;
       }
     });
-  } catch (error) {}
+  } catch (error) {
+    alert("Wrong username/password");
+  }
 };
 
 // no validation just for show login for sponsor
@@ -148,7 +150,10 @@ window.sponsorLogin = async function sponsorLogin() {
       // Redirect to corrosponding sponsor page with sponsor uid
       window.location.href = `sponsor_edit/${sponsorId}/${sponsorId}.html?uid=${sponsorId}`;
     } else {
-      console.log("WRONG PWD?");
+      console.log("WRONG PWD");
+      document.getElementById("errorMessage").innerHTML =
+        "Invalid username or password!";
+      document.getElementById("errorMessage").style.display = "block"; // Show error message
     }
   } catch (error) {
     console.error("Error during community service login:", error);

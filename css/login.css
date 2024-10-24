@@ -148,14 +148,14 @@
   .image {
     width: 90%; /* Allow the image to scale responsively */
     height: auto; /* Maintain aspect ratio */
-    margin-bottom: 20px;
   }
 
   .container {
-    position: static;
     transform: none;
-
+    margin: auto;
+    position: absolute;
     margin-top: 10px; /* Add spacing when stacked */
-    width: 90%; /* Full width on smaller screens */
+    width: 60%; /* Full width on smaller screens */
+    height: auto;
   }
 }
