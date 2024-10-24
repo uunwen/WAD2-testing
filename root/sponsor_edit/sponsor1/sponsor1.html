@@ -4,10 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sponsor Details</title> <!-- This will be replaced by org_name dynamically -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Add basic styles for the sponsor page -->
+    <title>Sponsor Details</title>
     <style>
         body {
             background-color: #f0f8ff;
@@ -18,11 +15,37 @@
         .container {
             width: 80%;
             margin: 0 auto;
-            text-align: center;
         }
 
         h1 {
             color: #333;
+            text-align: center;
+        }
+
+        /* Box for sponsor statistics */
+        #sponsorStats {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            font-size: 18px;
+        }
+
+        .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        /* Row for sponsor icons */
+        #iconsRow {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
         /* Box styling for description */
@@ -36,58 +59,13 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Styling for followers, likes, and projects */
-        .stats-box {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            margin: 20px 0;
-            background-color: #e6f2ff;
-            border-radius: 8px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-item p {
-            margin: 5px 0;
-            font-size: 20px;
-        }
-
-        .stat-item .number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        /* Styling for icons */
-        .icons {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .icons a {
-            margin: 0 15px;
-            font-size: 24px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .icons a:hover {
-            color: #007BFF;
-        }
-
-        /* Row for upload button */
+        /* Row for the upload button */
         .upload-row {
             display: flex;
             justify-content: flex-end;
-            /* Align the button to the right */
             margin: 20px 0;
         }
 
-        /* Upload button styling */
         .upload-btn {
             padding: 10px 20px;
             background-color: #007BFF;
@@ -116,25 +94,29 @@
             background-color: #f9f9f9;
             text-align: left;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
-        .event-box h2 {
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-header h2 {
             color: #007BFF;
+            margin: 0;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-
-            .stats-box {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .stat-item {
-                margin: 10px 0;
-            }
+        .delete-btn {
+            padding: 8px 16px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -145,47 +127,26 @@
         <h1 id="sponsorHeader">Sponsor Details</h1>
 
         <!-- Div where sponsor statistics (likes, followers, etc.) will be displayed -->
-        <div id="sponsorStats" class="stats-box">
-            <!-- Statistics will be dynamically inserted here -->
-        </div>
+        <div id="sponsorStats" class="stats-box"></div>
 
         <!-- Icons for email, Facebook, website -->
-        <div class="icons" id="iconsRow"></div>
+        <div id="iconsRow" class="icons"></div>
 
         <!-- Box where description (about section) will be displayed -->
-        <div id="sponsorDescription" class="description-box">
-            <!-- Description will be dynamically inserted here -->
-        </div>
+        <div id="sponsorDescription" class="description-box"></div>
 
         <!-- Row for the upload button -->
         <div class="upload-row">
-            <button class="upload-btn">Upload</button> <!-- Upload button aligned to the right -->
+            <button class="upload-btn">Upload</button>
         </div>
 
-        <!-- Event boxes for multiple events -->
-        <!-- Box where event-specific data (event1) will be displayed -->
-        <div id="event1Data" class="event-box">
-            <!-- Event 1 data will be dynamically inserted here -->
-        </div>
-
-        <!-- Box where event-specific data (events11) will be displayed -->
-        <div id="event11Data" class="event-box">
-            <!-- Event 11 data will be dynamically inserted here -->
-        </div>
-
-        <!-- Box where event-specific data (events12) will be displayed -->
-        <div id="event12Data" class="event-box">
-            <!-- Event 12 data will be dynamically inserted here -->
-        </div>
-
-        <!-- Box where event-specific data (events13) will be displayed -->
-        <div id="event13Data" class="event-box">
-            <!-- Event 13 data will be dynamically inserted here -->
-        </div>
-
+        <!-- Event Data Boxes -->
+        <div id="event1Data" class="event-box"></div>
+        <div id="event11Data" class="event-box"></div>
+        <div id="event12Data" class="event-box"></div>
+        <div id="event13Data" class="event-box"></div>
     </div>
 
-    <!-- Include your JavaScript file (sponsor1.js) -->
     <script type="module" src="sponsor1.js"></script>
 </body>
 
