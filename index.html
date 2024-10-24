@@ -14,6 +14,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.6.2/event-calendar.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.6.2/event-calendar.min.css" rel="stylesheet">
+
+    <style>
+        .calender-height{
+            width: 50%;
+        }
+        .content{
+            width: 75%;
+            margin-left: 25%;
+            height: auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,7 +44,7 @@
                     <p class="sidebar-content text-center m-0">{{hoursLeft}}</p>
                     <hr class="sidebar-hr w-80">
                     <p class="sidebar-content text-center m-0">CALENDER</p>
-                    <a href="#"><img src="img/calendar.png" height="200px" width="auto" alt=""></a>
+                    <!-- <a href="#"><img src="img/calendar.png" height="200px" width="auto" alt=""></a> -->
                     <hr class="sidebar-hr w-80 mt-4">
                     <p class="sidebar-content text-center m-0">TO-DO LIST</p>
                     <div class="w-80">
@@ -63,7 +77,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-9">
+            <div class="col-9 content">
+                <div id="ec" class="w-75" style="height: 500px;"></div>
+                
 
             </div>
         </div>
@@ -76,7 +92,7 @@
                 return {
                     account: "student",
                     hoursLeft: 80,
-                    toDoList: ["Task 1", "Task 2", "Task 3", "Task 4"]
+                    toDoList: ["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"]
                 };
             }, // data
             // computed: { 
@@ -95,7 +111,13 @@
             } // methods
         });
         const vm = app.mount('#app');
-
+        let ec = new EventCalendar(document.getElementById('ec'), {
+            view: 'dayGridMonth',
+            events: [
+                { title: 'Midterm Exam', start: '2024-10-22' },
+                { title: 'Group Study', start: '2024-10-29' },
+            ]
+        });
     </script>
 </body>
 

@@ -1,78 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome</title>
-  </head>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome</title>
+  <script src="scripts/login.js"></script>
   <!-- Import bootstrap -->
-  <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-  />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
   <!-- Import css for login page   -->
-  <link rel="stylesheet" href="../css/login.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
 
-  <body>
-    <div class="background">
-      <div class="image"><img src="../img/smu.jpg" /></div>
-      <div class="container">
-        <h1>Welcome</h1>
-        <hr />
+<body>
+  <div class="background">
+    <div class="image"><img src="img/smu.jpg" /></div>
+    <div class="container">
+      <h1>Welcome</h1>
+      <hr />
 
-        <div
-          id="loginOptions"
-          class="login-options"
-          class="d-flex justify-content-center"
-        >
-          <button onclick="showForm('communityServiceForm')">
-            Community Service Login
-          </button>
-          <button onclick="showForm('userForm')">User Login</button>
-          <button onclick="showForm('adminForm')">Administrator Login</button>
-        </div>
+      <div id="loginOptions" class="login-options" class="d-flex justify-content-center">
+        <button onclick="showForm('communityServiceForm')">
+          Community Service Login
+        </button>
+        <button onclick="showForm('userForm')">User Login</button>
+        <button onclick="showForm('adminForm')">Administrator Login</button>
+      </div>
 
-        <div id="communityServiceForm" class="login-form" style="display: none">
-          <h2>
-            <img src="../img/social-services.png" /> Community Service Login
-          </h2>
-          <!-- Add community service login form here -->
-          Username: <input type="text" id="sponsorId" required /><br />
-          Password: <input type="password" id="sponsorPwd" required /><br />
-          <button onclick="sponsorLogin()">Login</button>
-          <button onclick="showForm('loginOptions')">Back</button>
+      <div id="communityServiceForm" class="login-form" style="display: none">
+        <h2>
+          <img src="img/social-services.png" /> Community Service Login
+        </h2>
+        <!-- Add community service login form here -->
+        Username: <input type="text" id="sponsorId" required /><br />
+        Password: <input type="password" id="sponsorPwd" required /><br />
+        <button onclick="sponsorLogin()">Login</button>
+        <button onclick="showForm('loginOptions')">Back</button>
 
-          <p id="errorMessage" style="color: red; display: none"></p>
-        </div>
+        <p id="errorMessage" style="color: red; display: none"></p>
+      </div>
 
-        <div id="userForm" class="login-form" style="display: none">
-          <h2>Student Login</h2>
-          <p class="smuLoginInfo">
-            Student please login with your school google account, <br />e.g.
-            John.Low.2021@smu.edu.sg
-          </p>
-          <button id="googleSignIn" onclick="googleSignIn('student')">
-            <img src="../img/Google__G__logo.png" />Login
-          </button>
-          <button onclick="showForm('loginOptions')">Back</button>
-        </div>
+      <div id="userForm" class="login-form" style="display: none">
+        <h2>Student Login</h2>
+        <p class="smuLoginInfo">
+          Student please login with your school google account, <br />e.g.
+          John.Low.2021@smu.edu.sg
+        </p>
+        <button id="googleSignIn" onclick="googleSignIn('student')">
+          <img src="img/Google__G__logo.png" />Login
+        </button>
+        <button onclick="showForm('loginOptions')">Back</button>
+      </div>
 
-        <div id="adminForm" class="login-form" style="display: none">
-          <h2>Administrator Login</h2>
-          <!-- Add admin login form here -->
-          <p class="smuLoginInfo">
-            Faculty please login with work's google account, <br />e.g.
-            faculty.name@smu.edu.sg
-          </p>
-          <button id="googleSignIn" onclick="googleSignIn('admin')">
-            <img src="../img/Google__G__logo.png" />Login
-          </button>
-          <button onclick="showForm('loginOptions')">Back</button>
-        </div>
+      <div id="adminForm" class="login-form" style="display: none">
+        <h2>Administrator Login</h2>
+        <!-- Add admin login form here -->
+        <p class="smuLoginInfo">
+          Faculty please login with work's google account, <br />e.g.
+          faculty.name@smu.edu.sg
+        </p>
+        <button id="googleSignIn" onclick="googleSignIn('admin')">
+          <img src="img/Google__G__logo.png" />Login
+        </button>
+        <button onclick="showForm('loginOptions')">Back</button>
       </div>
     </div>
-    <script type="module" src="scripts/login.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  </div>
+  <script type="module" src="scripts/login.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
