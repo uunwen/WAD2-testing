@@ -4,11 +4,12 @@ body {
 
 .sidebar {
     background-color: #c8c9be;
-    position: sticky;
-    top: 0px;
-    bottom: 0px;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
     border-right: 1px solid #ccc;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .sidebar-content a {
@@ -34,5 +35,9 @@ body {
 
 
 .main-content {
-    width: 95%;
+    margin-left: 25%;
+}
+
+.main {
+    margin-top: 700px;
 }
