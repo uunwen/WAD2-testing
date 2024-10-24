@@ -4,9 +4,11 @@ body {
 
 .sidebar {
     background-color: #c8c9be;
-    position: fixed;
+    position: sticky;
     top: 0px;
     bottom: 0px;
+    border-right: 1px solid #ccc;
+    padding: 20px;
 }
 
 .sidebar-content a {
@@ -22,10 +24,6 @@ body {
     border-top: 2px solid black;
 }
 
-.sidebar-logo {
-    height: 10%;
-}
-
 .w-80 {
     width: 80%;
 }
@@ -34,10 +32,6 @@ body {
     font-size: 20px;
 }
 
-.page-content {
-    width: 100%;
-    padding-left: 25%;
-}
 
 .main-content {
     width: 95%;
