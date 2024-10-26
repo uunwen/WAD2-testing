@@ -251,6 +251,7 @@ function displaySponsorData(sponsorData) {
   ];
 
   stats.forEach((stat) => {
+    console.log(stat.value);
     const statItem = document.createElement("div");
     statItem.className = "stat-item";
     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
@@ -348,10 +349,36 @@ function cancelEditAboutSection() {
   editBtn.style.display = "inline-block";
 }
 
+// // Display event data in a styled box with edit functionality
+// function displayEventData(eventData, containerId, eventRefPath) {
+
+//   const dataDisplayDiv = document.getElementById(containerId);
+//   dataDisplayDiv.innerHTML = ""; // Clear any existing content
+
+//   // Add header (project name)
+//   if (eventData["Project Name"]) {
+//     const headerDiv = document.createElement("div");
+//     headerDiv.className = "event-header";
+
+//     const header = document.createElement("h2");
+//     header.textContent = eventData["Project Name"];
+
+//     headerDiv.appendChild(header);
+//     dataDisplayDiv.appendChild(headerDiv);
+//   }
+
 // Display event data in a styled box with edit functionality
 function displayEventData(eventData, containerId, eventRefPath) {
-  const dataDisplayDiv = document.getElementById(containerId);
-  dataDisplayDiv.innerHTML = ""; // Clear any existing content
+  const eventContainer = document.getElementById("event");
+
+  // Create a new container div for this specific event
+  const dataDisplayDiv = document.createElement("div");
+  dataDisplayDiv.id = containerId;
+  dataDisplayDiv.className = "event-box";
+  eventContainer.appendChild(dataDisplayDiv);
+
+  // const dataDisplayDiv = document.getElementById(containerId);
+  // dataDisplayDiv.innerHTML = ""; // Clear any existing content
 
   // Add header (project name)
   if (eventData["Project Name"]) {
@@ -519,7 +546,9 @@ async function fetchEventData(eventRefPath, containerId) {
     if (snapshot.exists()) {
       const eventData = snapshot.val();
       const isMatch = await matchOrgNames(eventData.Organiser);
+      console.log(eventData.Organiser + isMatch);
       if (isMatch) {
+        console.log(eventData, containerId, eventRefPath);
         displayEventData(eventData, containerId, eventRefPath);
       }
     } else {

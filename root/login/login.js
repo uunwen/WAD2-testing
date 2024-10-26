@@ -111,7 +111,7 @@ window.sponsorLogin = async function sponsorLogin() {
       const sponsoreData = snapshot.val();
 
       // Redirect to corrosponding sponsor page with sponsor uid
-      window.location.href = `../sponsor_edit/${sponsorId}/${sponsorId}.html?uid=${sponsorId}`;
+      window.location.href = `../sponsor_edit/sponsor1/sponsor1.html?uid=${sponsorId}`;
     } else {
       console.log("WRONG PWD");
       document.getElementById("errorMessage").innerHTML =
