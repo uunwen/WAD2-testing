@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Event</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #007BFF;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        p#formMessage {
+            margin-top: 15px;
+            text-align: center;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Create New Event</h2>
+        <form id="eventForm">
+            <label for="admissionsPeriod">Admissions Period (e.g., October 2024 - November 2024):</label>
+            <input type="text" id="admissionsPeriod" required>
+
+            <label for="capacity">Capacity (e.g., 50 volunteers):</label>
+            <input type="text" id="capacity" required>
+
+            <label for="description">Description (e.g., Spend a rewarding day at East Coast Beach...):</label>
+            <textarea id="description" required></textarea>
+
+            <label for="location">Location (e.g., East Coast Beach):</label>
+            <input type="text" id="location" required>
+
+            <label for="organiser">Organiser (e.g., Ocean Purpose Project):</label>
+            <input type="text" id="organiser" required>
+
+            <label for="projectName">Project Name (e.g., Beach Clean-Up):</label>
+            <input type="text" id="projectName" required>
+
+            <label for="projectRequirements">Project Requirements (e.g., Bring gloves and reusable water
+                bottles):</label>
+            <input type="text" id="projectRequirements" required>
+
+            <label for="region">Region:</label>
+            <select id="region" required>
+                <option value="" disabled selected>Select a region</option>
+                <option value="North">North</option>
+                <option value="South">South</option>
+                <option value="East">East</option>
+                <option value="West">West</option>
+                <option value="Central">Central</option>
+            </select>
+
+            <label for="sessions">Session(s) (e.g., Monday, 8:00 AM - 1:00 PM):</label>
+            <input type="text" id="sessions" required>
+
+            <label for="totalCSPHours">Total CSP hours (e.g., 80 hours):</label>
+            <input type="number" id="totalCSPHours" required>
+
+            <label for="volunteerPeriod">Volunteer Period (e.g., December 2024 – January 2025):</label>
+            <input type="text" id="volunteerPeriod" required>
+
+            <button type="button" id="submitEvent">Submit Event</button>
+        </form>
+        <p id="formMessage"></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules from CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
+            authDomain: "wad-proj-2b37f.firebaseapp.com",
+            databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "wad-proj-2b37f",
+            storageBucket: "wad-proj-2b37f.appspot.com",
+            messagingSenderId: "873354832788",
+            appId: "1:873354832788:web:41105e10dd0f7651607d81",
+            measurementId: "G-LFFLPT7G58",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Initialize event number
+        let eventNumber = 16;
+
+        // Handle form submission
+        document.getElementById("submitEvent").addEventListener("click", function () {
+            // Get input values
+            const admissionsPeriod = document.getElementById("admissionsPeriod").value;
+            const capacity = document.getElementById("capacity").value;
+            const description = document.getElementById("description").value;
+            const location = document.getElementById("location").value;
+            const organiser = document.getElementById("organiser").value;
+            const projectName = document.getElementById("projectName").value;
+            const projectRequirements = document.getElementById("projectRequirements").value;
+            const region = document.getElementById("region").value;
+            const sessions = document.getElementById("sessions").value;
+            const totalCSPHours = document.getElementById("totalCSPHours").value;
+            const volunteerPeriod = document.getElementById("volunteerPeriod").value;
+
+            // Create event object with input data
+            const newEvent = {
+                "Admissions Period": admissionsPeriod,
+                "Capacity": capacity,
+                "Description": description,
+                "Location": location,
+                "Organiser": organiser,
+                "Project Name": projectName,
+                "Project Requirements": projectRequirements,
+                "Region": region,
+                "Session(s)": sessions,
+                "Total CSP hours": totalCSPHours,
+                "Volunteer Period": volunteerPeriod
+            };
+
+            // Reference to the new event path in Firebase
+            const newEventRef = ref(database, `events/event${eventNumber}`);
+
+            // Store the new event data in Firebase
+            update(newEventRef, newEvent)
+                .then(() => {
+                    document.getElementById("formMessage").textContent = "Event created successfully!";
+                    document.getElementById("formMessage").classList.remove("error");
+                    console.log(`Event ${eventNumber} created successfully in Firebase`);
+
+                    // Increment event number for the next event creation
+                    eventNumber += 1;
+
+                    // Reset form fields
+                    document.getElementById("eventForm").reset();
+                })
+                .catch((error) => {
+                    document.getElementById("formMessage").textContent = `Error creating event: ${error.message}`;
+                    document.getElementById("formMessage").classList.add("error");
+                    console.error("Error creating event:", error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>

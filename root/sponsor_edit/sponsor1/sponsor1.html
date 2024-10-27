@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+
+
     <title>Sponsor Details</title>
     <style>
         body {
@@ -29,6 +35,46 @@
             justify-content: space-around;
             text-align: center;
         }
+
+        .icon-large {
+            font-size: 36px;
+            /* Adjust the size as needed */
+            margin: 0 10px;
+            /* Optional: add space between icons */
+            transition: color 0.3s, transform 0.3s;
+            /* Smooth transition for the hover effect */
+        }
+
+        .icon-large:hover {
+            color: #007BFF;
+            /* Change to your desired hover color */
+            transform: scale(1.2);
+            /* Slightly increase the size on hover */
+        }
+
+
+        .upload-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+            /* Disabled cursor */
+            opacity: 0.6;
+            /* Make the button appear disabled */
+        }
+
+        .upload-btn:enabled {
+            cursor: pointer;
+            /* Change cursor when enabled */
+            opacity: 1;
+            /* Reset opacity when enabled */
+        }
+
+
+
 
         .stat-item {
             font-size: 18px;
@@ -146,6 +192,9 @@
             </div>
         </div>
 
+        <div style="margin-top: 20px; text-align: center;">
+            <button id="uploadBtn" class="upload-btn" disabled>Upload</button>
+        </div>
 
         <!-- Event Data Boxes -->
         <div id="event1Data" class="event-box"></div>
