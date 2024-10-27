@@ -1,196 +1,12 @@
-// // Import Firebase modules from CDN
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-// import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-// // Firebase configuration
-// const firebaseConfig = {
-//     apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
-//     authDomain: "wad-proj-2b37f.firebaseapp.com",
-//     databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
-//     projectId: "wad-proj-2b37f",
-//     storageBucket: "wad-proj-2b37f.appspot.com",
-//     messagingSenderId: "873354832788",
-//     appId: "1:873354832788:web:41105e10dd0f7651607d81",
-//     measurementId: "G-LFFLPT7G58",
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const database = getDatabase(app);
-
-// // Fetch sponsor data
-// function fetchSponsor1Data() {
-//     const sponsor1Ref = ref(database, 'sponsors/sponsor1');
-//     get(sponsor1Ref)
-//         .then((snapshot) => {
-//             if (snapshot.exists()) {
-//                 const sponsorData = snapshot.val();
-//                 console.log("Sponsor data fetched:", sponsorData);  // Added log to track data
-//                 displaySponsorData(sponsorData);
-//             } else {
-//                 console.warn("No sponsor data available");
-//                 document.getElementById("sponsorHeader").innerHTML = '<p>No sponsor data available.</p>';
-//             }
-//         })
-//         .catch((error) => {
-//             console.error("Error fetching sponsor data:", error.message);
-//             document.getElementById("sponsorHeader").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-//         });
-// }
-
-// // Display sponsor data
-// function displaySponsorData(sponsorData) {
-//     const sponsorNameElement = document.getElementById("sponsorHeader");
-//     const sponsorStats = document.getElementById("sponsorStats");
-//     const iconsRow = document.getElementById("iconsRow");
-//     const sponsorDescription = document.getElementById("sponsorDescription");
-
-//     // Set the Sponsor Name and update the page title
-//     if (sponsorData['org_name']) {
-//         sponsorNameElement.textContent = sponsorData['org_name'];
-//         document.title = sponsorData['org_name'];
-//     }
-
-//     // Clear previous content
-//     sponsorStats.innerHTML = '';
-//     sponsorDescription.innerHTML = '';
-
-//     // Display followers, likes, and projects
-//     const stats = [
-//         { label: 'Followers', value: sponsorData['followers_count'] || 'N/A' },
-//         { label: 'Likes', value: sponsorData['likes_count'] || 'N/A' },
-//         { label: 'Projects', value: sponsorData['project_count'] || 'N/A' }
-//     ];
-
-//     stats.forEach(stat => {
-//         const statItem = document.createElement('div');
-//         statItem.className = 'stat-item';
-//         statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
-//         sponsorStats.appendChild(statItem);
-//     });
-
-//     // Icons for email, Facebook, website (clear iconsRow content first)
-//     iconsRow.innerHTML = '';
-//     if (sponsorData['email_add']) {
-//         const emailIcon = document.createElement('a');
-//         emailIcon.href = `mailto:${sponsorData['email_add']}`;
-//         emailIcon.innerHTML = '<i class="fas fa-envelope"></i>';
-//         iconsRow.appendChild(emailIcon);
-//     }
-//     if (sponsorData['facebook_link']) {
-//         const facebookIcon = document.createElement('a');
-//         facebookIcon.href = sponsorData['facebook_link'];
-//         facebookIcon.target = '_blank';
-//         facebookIcon.innerHTML = '<i class="fab fa-facebook"></i>';
-//         iconsRow.appendChild(facebookIcon);
-//     }
-//     if (sponsorData['website']) {
-//         const websiteIcon = document.createElement('a');
-//         websiteIcon.href = sponsorData['website'];
-//         websiteIcon.target = '_blank';
-//         websiteIcon.innerHTML = '<i class="fas fa-globe"></i>';
-//         iconsRow.appendChild(websiteIcon);
-//     }
-
-//     // About section
-//     if (sponsorData['org_background']) {
-//         sponsorDescription.innerHTML = `<strong>About:</strong> ${sponsorData['org_background']}`;
-//     }
-// }
-
-// // Display event data in a styled box
-// function displayEventData(eventData, containerId) {
-//     const dataDisplayDiv = document.getElementById(containerId);
-//     dataDisplayDiv.innerHTML = '';
-
-//     // Add header (project name)
-//     if (eventData['Project Name']) {
-//         const headerDiv = document.createElement('div');
-//         headerDiv.className = 'event-header';
-
-//         const header = document.createElement('h2');
-//         header.textContent = eventData['Project Name'];
-
-//         // Create the disabled delete button
-//         const deleteBtn = document.createElement('button');
-//         deleteBtn.className = 'delete-btn';
-//         deleteBtn.disabled = true;  // Disable it for now
-//         deleteBtn.textContent = 'Delete';
-
-//         headerDiv.appendChild(header);
-//         headerDiv.appendChild(deleteBtn);
-//         dataDisplayDiv.appendChild(headerDiv);
-//     }
-
-//     // Create a container for the event data
-//     const boxDiv = document.createElement('div');
-//     boxDiv.style.border = '1px solid #ccc';
-//     boxDiv.style.padding = '15px';
-//     boxDiv.style.borderRadius = '5px';
-//     boxDiv.style.backgroundColor = '#f9f9f9';
-//     boxDiv.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-//     boxDiv.style.margin = '15px 0';
-
-//     const displayOrder = [
-//         'Description', 'Location', 'Session(s)', 'Volunteer Hours per Session',
-//         'Volunteer Period', 'Capacity', 'Total CSP hours', 'Project Requirements', 'Region', 'Admissions Period'
-//     ];
-
-//     displayOrder.forEach(key => {
-//         if (eventData[key]) {
-//             const paragraph = document.createElement('p');
-//             paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key]}`;
-//             boxDiv.appendChild(paragraph);
-//         }
-//     });
-
-//     dataDisplayDiv.appendChild(boxDiv);
-// }
-
-// // Function to fetch and display data for any event
-// function fetchEventData(eventRefPath, containerId) {
-//     const eventRef = ref(database, eventRefPath);
-//     get(eventRef)
-//         .then((snapshot) => {
-//             if (snapshot.exists()) {
-//                 const eventData = snapshot.val();
-//                 console.log(`Event data fetched for ${eventRefPath}:`, eventData);  // Added log for event data
-//                 displayEventData(eventData, containerId);
-//             } else {
-//                 console.warn(`No data available for ${eventRefPath}`);
-//                 document.getElementById(containerId).innerHTML = `<p>No data available for ${eventRefPath}.</p>`;
-//             }
-//         })
-//         .catch((error) => {
-//             console.error(`Error fetching event data for ${eventRefPath}:`, error.message);
-//             document.getElementById(containerId).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-//         });
-// }
-
-// window.onload = () => {
-//     console.log("Window loaded, fetching sponsor and event data"); // Added log for window load
-//     fetchSponsor1Data(); // Fetch sponsor data
-//     fetchEventData('events/event1', 'event1Data');
-//     fetchEventData('events/event11', 'event11Data');
-//     fetchEventData('events/event12', 'event12Data');
-//     fetchEventData('events/event13', 'event13Data');
-// };
-
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  get,
-  update,
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL:
-    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
@@ -202,28 +18,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Retrive user info
-const urlParams = new URLSearchParams(window.location.search);
-const uid = urlParams.get("uid");
-
 // Fetch sponsor data
 function fetchSponsor1Data() {
-  const sponsor1Ref = ref(database, "sponsors/" + uid);
+  const sponsor1Ref = ref(database, 'sponsors/sponsor1');
   get(sponsor1Ref)
     .then((snapshot) => {
       if (snapshot.exists()) {
         const sponsorData = snapshot.val();
-        displaySponsorData(sponsorData); // Display sponsor data
+        console.log("Sponsor Data:", sponsorData);  // Check what data is retrieved
+        displaySponsorData(sponsorData);  // Display sponsor data
       } else {
-        document.getElementById("sponsorHeader").innerHTML =
-          "<p>No sponsor data available.</p>";
+        document.getElementById("sponsorHeader").innerHTML = '<p>No sponsor data available.</p>';
       }
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-      document.getElementById(
-        "sponsorHeader"
-      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+      document.getElementById("sponsorHeader").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
 
@@ -234,68 +44,67 @@ function displaySponsorData(sponsorData) {
   const iconsRow = document.getElementById("iconsRow");
 
   // Set the Sponsor Name and update the page title
-  if (sponsorData["org_name"]) {
-    sponsorNameElement.textContent = sponsorData["org_name"];
-    document.title = sponsorData["org_name"];
+  if (sponsorData['org_name']) {
+    sponsorNameElement.textContent = sponsorData['org_name'];
+    document.title = sponsorData['org_name'];
   }
 
   // Clear previous content for statistics and icons
-  sponsorStats.innerHTML = "";
-  iconsRow.innerHTML = "";
+  sponsorStats.innerHTML = '';
+  iconsRow.innerHTML = '';
 
   // Display followers, likes, and projects
   const stats = [
-    { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
-    { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
-    { label: "Projects", value: sponsorData["project_count"] || "N/A" },
+    { label: 'Followers', value: sponsorData['followers_count'] || 'N/A' },
+    { label: 'Likes', value: sponsorData['likes_count'] || 'N/A' },
+    { label: 'Projects', value: sponsorData['project_count'] || 'N/A' }
   ];
 
-  stats.forEach((stat) => {
-    console.log(stat.value);
-    const statItem = document.createElement("div");
-    statItem.className = "stat-item";
+  stats.forEach(stat => {
+    const statItem = document.createElement('div');
+    statItem.className = 'stat-item';
     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
     sponsorStats.appendChild(statItem);
   });
 
   // Icons for email, Facebook, and website
-  if (sponsorData["email_add"]) {
-    const emailIcon = document.createElement("a");
-    emailIcon.href = `mailto:${sponsorData["email_add"]}`;
+  if (sponsorData['email_add']) {
+    const emailIcon = document.createElement('a');
+    emailIcon.href = `mailto:${sponsorData['email_add']}`;
     emailIcon.innerHTML = '<i class="fas fa-envelope"></i>';
     iconsRow.appendChild(emailIcon);
   }
-  if (sponsorData["facebook_link"]) {
-    const facebookIcon = document.createElement("a");
-    facebookIcon.href = sponsorData["facebook_link"];
-    facebookIcon.target = "_blank";
-    facebookIcon.innerHTML = '<i class="fab fa-facebook"></i>';
+
+  // Check if the Facebook link exists and display it
+  if (sponsorData['facebook_link']) {
+    console.log("Facebook Link:", sponsorData['facebook_link']);  // Log Facebook link to check
+    const facebookIcon = document.createElement('a');
+    facebookIcon.href = sponsorData['facebook_link'];
+    facebookIcon.target = '_blank';
+    facebookIcon.innerHTML = '<i class="fab fa-facebook"></i>';  // Font Awesome class for Facebook
     iconsRow.appendChild(facebookIcon);
+  } else {
+    console.log("No Facebook link found.");
   }
-  if (sponsorData["website"]) {
-    const websiteIcon = document.createElement("a");
-    websiteIcon.href = sponsorData["website"];
-    websiteIcon.target = "_blank";
+
+  if (sponsorData['website']) {
+    const websiteIcon = document.createElement('a');
+    websiteIcon.href = sponsorData['website'];
+    websiteIcon.target = '_blank';
     websiteIcon.innerHTML = '<i class="fas fa-globe"></i>';
     iconsRow.appendChild(websiteIcon);
   }
 
   // Display the "About" section content
-  const aboutContent = sponsorData["org_background"] || "N/A";
+  const aboutContent = sponsorData['org_background'] || "N/A";
   document.getElementById("aboutContent").textContent = aboutContent;
 
   // Event listener for editing the "About" section
-  document
-    .getElementById("editAboutBtn")
-    .addEventListener("click", enableEditAboutSection);
+  document.getElementById("editAboutBtn").addEventListener("click", enableEditAboutSection);
 
   // Event listeners for save and cancel buttons
-  document
-    .getElementById("saveAboutBtn")
-    .addEventListener("click", () => saveAboutSection("sponsor1"));
-  document
-    .getElementById("cancelAboutBtn")
-    .addEventListener("click", cancelEditAboutSection);
+  document.getElementById("saveAboutBtn").addEventListener("click", () => saveAboutSection('sponsor1'));
+  document.getElementById("cancelAboutBtn").addEventListener("click", cancelEditAboutSection);
 }
 
 // Enable edit mode for the "About" section
@@ -349,89 +158,74 @@ function cancelEditAboutSection() {
   editBtn.style.display = "inline-block";
 }
 
-// // Display event data in a styled box with edit functionality
-// function displayEventData(eventData, containerId, eventRefPath) {
-
-//   const dataDisplayDiv = document.getElementById(containerId);
-//   dataDisplayDiv.innerHTML = ""; // Clear any existing content
-
-//   // Add header (project name)
-//   if (eventData["Project Name"]) {
-//     const headerDiv = document.createElement("div");
-//     headerDiv.className = "event-header";
-
-//     const header = document.createElement("h2");
-//     header.textContent = eventData["Project Name"];
-
-//     headerDiv.appendChild(header);
-//     dataDisplayDiv.appendChild(headerDiv);
-//   }
+// Fetch event data from Firebase
+function fetchEventData(eventRefPath, containerId) {
+  const eventRef = ref(database, eventRefPath);
+  get(eventRef)
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const eventData = snapshot.val();
+        displayEventData(eventData, containerId, eventRefPath);
+      } else {
+        document.getElementById(containerId).innerHTML = `<p>No data available for ${eventRefPath}.</p>`;
+      }
+    })
+    .catch((error) => {
+      console.error(`Error fetching event data for ${eventRefPath}:`, error.message);
+    });
+}
 
 // Display event data in a styled box with edit functionality
 function displayEventData(eventData, containerId, eventRefPath) {
-  const eventContainer = document.getElementById("event");
-
-  // Create a new container div for this specific event
-  const dataDisplayDiv = document.createElement("div");
-  dataDisplayDiv.id = containerId;
-  dataDisplayDiv.className = "event-box";
-  eventContainer.appendChild(dataDisplayDiv);
-
-  // const dataDisplayDiv = document.getElementById(containerId);
-  // dataDisplayDiv.innerHTML = ""; // Clear any existing content
+  const dataDisplayDiv = document.getElementById(containerId);
+  dataDisplayDiv.innerHTML = ''; // Clear any existing content
 
   // Add header (project name)
-  if (eventData["Project Name"]) {
-    const headerDiv = document.createElement("div");
-    headerDiv.className = "event-header";
+  if (eventData['Project Name']) {
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'event-header';
 
-    const header = document.createElement("h2");
-    header.textContent = eventData["Project Name"];
+    const header = document.createElement('h2');
+    header.textContent = eventData['Project Name'];
 
     headerDiv.appendChild(header);
     dataDisplayDiv.appendChild(headerDiv);
   }
 
   // Create a container for the event data and allow editing
-  const boxDiv = document.createElement("div");
-  boxDiv.className = "event-box";
+  const boxDiv = document.createElement('div');
+  boxDiv.className = 'event-box';
   boxDiv.id = containerId;
 
   // Iterate through the event data and display each key-value pair
   for (const key in eventData) {
-    if (key !== "Project Name") {
-      const paragraph = document.createElement("p");
-      paragraph.setAttribute("data-key", key);
+    if (key !== 'Project Name') {
+      const paragraph = document.createElement('p');
+      paragraph.setAttribute('data-key', key);
       paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key]}`;
       boxDiv.appendChild(paragraph);
     }
   }
 
   // Add Edit, Save, and Cancel buttons
-  const editBtn = document.createElement("button");
-  editBtn.className = "edit-btn";
-  editBtn.textContent = "Edit";
+  const editBtn = document.createElement('button');
+  editBtn.className = 'edit-btn';
+  editBtn.textContent = 'Edit';
 
-  const saveBtn = document.createElement("button");
-  saveBtn.className = "save-btn";
-  saveBtn.textContent = "Save";
-  saveBtn.style.display = "none"; // Initially hidden
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'save-btn';
+  saveBtn.textContent = 'Save';
+  saveBtn.style.display = 'none'; // Initially hidden
 
-  const cancelBtn = document.createElement("button");
-  cancelBtn.className = "cancel-btn";
-  cancelBtn.textContent = "Cancel";
-  cancelBtn.style.display = "none"; // Initially hidden
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'cancel-btn';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.display = 'none'; // Initially hidden
 
   // Add event listeners to buttons
-  editBtn.addEventListener("click", () =>
-    enableEditEvent(containerId, saveBtn, cancelBtn)
-  );
-  saveBtn.addEventListener("click", () =>
-    saveEventData(eventRefPath, containerId)
-  );
-  cancelBtn.addEventListener("click", () =>
-    cancelEditEvent(eventRefPath, containerId)
-  );
+  editBtn.addEventListener('click', () => enableEditEvent(containerId, saveBtn, cancelBtn));
+  saveBtn.addEventListener('click', () => saveEventData(eventRefPath, containerId));
+  cancelBtn.addEventListener('click', () => cancelEditEvent(eventRefPath, containerId));
 
   boxDiv.appendChild(editBtn);
   boxDiv.appendChild(saveBtn);
@@ -443,24 +237,24 @@ function displayEventData(eventData, containerId, eventRefPath) {
 // Enable edit mode for events
 function enableEditEvent(containerId, saveBtn, cancelBtn) {
   const eventDataDiv = document.getElementById(containerId);
-  const editBtn = eventDataDiv.querySelector(".edit-btn");
+  const editBtn = eventDataDiv.querySelector('.edit-btn');
 
   // Convert static paragraphs into input fields for editing
-  eventDataDiv.querySelectorAll("p").forEach((paragraph) => {
-    const key = paragraph.getAttribute("data-key");
-    const value = paragraph.textContent.split(": ")[1];
-    const inputField = document.createElement("input");
-    inputField.type = "text";
+  eventDataDiv.querySelectorAll('p').forEach(paragraph => {
+    const key = paragraph.getAttribute('data-key');
+    const value = paragraph.textContent.split(': ')[1];
+    const inputField = document.createElement('input');
+    inputField.type = 'text';
     inputField.value = value;
-    inputField.setAttribute("data-key", key);
+    inputField.setAttribute('data-key', key);
     paragraph.innerHTML = `<strong>${key}:</strong> `;
     paragraph.appendChild(inputField);
   });
 
   // Show save and cancel buttons, hide edit button
-  editBtn.style.display = "none";
-  saveBtn.style.display = "inline-block";
-  cancelBtn.style.display = "inline-block";
+  editBtn.style.display = 'none';
+  saveBtn.style.display = 'inline-block';
+  cancelBtn.style.display = 'inline-block';
 }
 
 // Save event changes to Firebase
@@ -469,8 +263,8 @@ function saveEventData(eventRefPath, containerId) {
   const updatedData = {};
 
   // Collect updated data from input fields
-  eventDataDiv.querySelectorAll("input").forEach((inputField) => {
-    const key = inputField.getAttribute("data-key");
+  eventDataDiv.querySelectorAll('input').forEach(inputField => {
+    const key = inputField.getAttribute('data-key');
     updatedData[key] = inputField.value;
   });
 
@@ -493,113 +287,32 @@ function cancelEditEvent(eventRefPath, containerId) {
 // Display updated event data after saving
 function displayUpdatedEventData(updatedData, containerId) {
   const eventDataDiv = document.getElementById(containerId);
-  const editBtn = eventDataDiv.querySelector(".edit-btn");
-  const saveBtn = eventDataDiv.querySelector(".save-btn");
-  const cancelBtn = eventDataDiv.querySelector(".cancel-btn");
+  const editBtn = eventDataDiv.querySelector('.edit-btn');
+  const saveBtn = eventDataDiv.querySelector('.save-btn');
+  const cancelBtn = eventDataDiv.querySelector('.cancel-btn');
 
-  eventDataDiv.innerHTML = ""; // Clear existing content
+  eventDataDiv.innerHTML = ''; // Clear existing content
 
   // Rebuild the static content with the updated data
   for (const key in updatedData) {
-    const paragraph = document.createElement("p");
-    paragraph.setAttribute("data-key", key);
+    const paragraph = document.createElement('p');
+    paragraph.setAttribute('data-key', key);
     paragraph.innerHTML = `<strong>${key}:</strong> ${updatedData[key]}`;
     eventDataDiv.appendChild(paragraph);
   }
 
   // Restore the edit button and hide save/cancel buttons
-  editBtn.style.display = "inline-block";
-  saveBtn.style.display = "none";
-  cancelBtn.style.display = "none";
-}
-
-// // Fetch event data from Firebase
-// function fetchEventData(eventRefPath, containerId) {
-//   const eventRef = ref(database, eventRefPath);
-//   get(eventRef)
-//     .then((snapshot) => {
-//       if (snapshot.exists()) {
-//         const eventData = snapshot.val();
-//         const isMatch = matchOrgNames(eventData.Organiser);
-//         console.log(isMatch);
-
-//         displayEventData(eventData, containerId, eventRefPath);
-//       } else {
-//         document.getElementById(
-//           containerId
-//         ).innerHTML = `<p>No data available for ${eventRefPath}.</p>`;
-//       }
-//     })
-//     .catch((error) => {
-//       console.error(
-//         `Error fetching event data for ${eventRefPath}:`,
-//         error.message
-//       );
-//     });
-// }
-
-// Fetch event data from Firebase edited to match organiser name
-async function fetchEventData(eventRefPath, containerId) {
-  try {
-    const eventRef = ref(database, eventRefPath);
-    const snapshot = await get(eventRef);
-    if (snapshot.exists()) {
-      const eventData = snapshot.val();
-      const isMatch = await matchOrgNames(eventData.Organiser);
-      console.log(eventData.Organiser + isMatch);
-      if (isMatch) {
-        console.log(eventData, containerId, eventRefPath);
-        displayEventData(eventData, containerId, eventRefPath);
-      }
-    } else {
-      document.getElementById(
-        containerId
-      ).innerHTML = `<p>No data available for ${eventRefPath}.</p>`;
-    }
-  } catch (error) {
-    console.error(
-      `Error fetching event data for ${eventRefPath}:`,
-      error.message
-    );
-  }
-}
-
-async function matchOrgNames(eventOrganiser) {
-  try {
-    // Fetch sponsor data
-    const sponsorRef = ref(database, "sponsors/" + uid);
-    const snapshot = await get(sponsorRef);
-
-    if (snapshot.exists()) {
-      const sponsorData = snapshot.val();
-      const org_name = sponsorData.org_name;
-      return eventOrganiser === org_name;
-    }
-    return false;
-  } catch (error) {
-    console.log("matchOrgNames error: " + error);
-    return false;
-  }
-}
-
-async function getTotalEventsCount() {
-  try {
-    const sponsorRef = ref(database, "events/");
-    const snapshot = await get(sponsorRef);
-    if (snapshot.exists()) {
-      const count = snapshot.size;
-      return count;
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  editBtn.style.display = 'inline-block';
+  saveBtn.style.display = 'none';
+  cancelBtn.style.display = 'none';
 }
 
 // On window load, fetch sponsor and event data
-window.onload = async () => {
+window.onload = () => {
   fetchSponsor1Data(); // Fetch sponsor data
-  const eventsCount = await getTotalEventsCount();
-  for (let i = 1; i <= eventsCount; i++) {
-    fetchEventData("events/event" + i, "event" + i + "Data");
-  }
+  fetchEventData('events/event1', 'event1Data');
+  fetchEventData('events/event11', 'event11Data');
+  fetchEventData('events/event12', 'event12Data');
+  fetchEventData('events/event13', 'event13Data');
 };
+
