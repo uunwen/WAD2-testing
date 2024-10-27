@@ -116,8 +116,11 @@
             <label for="totalCSPHours">Total CSP hours (e.g., 80 hours):</label>
             <input type="number" id="totalCSPHours" required>
 
-            <label for="volunteerPeriod">Volunteer Period (e.g., December 2024 – January 2025):</label>
-            <input type="text" id="volunteerPeriod" required>
+            <label for="volunteerPeriodStart">Volunteer Period Start:</label>
+            <input type="date" id="volunteerPeriodStart" required>
+
+            <label for="volunteerPeriodEnd">Volunteer Period End:</label>
+            <input type="date" id="volunteerPeriodEnd" required>
 
             <button type="button" id="submitEvent">Submit Event</button>
         </form>
@@ -161,7 +164,15 @@
             const region = document.getElementById("region").value;
             const sessions = document.getElementById("sessions").value;
             const totalCSPHours = document.getElementById("totalCSPHours").value;
-            const volunteerPeriod = document.getElementById("volunteerPeriod").value;
+            const volunteerPeriodStart = new Date(document.getElementById("volunteerPeriodStart").value);
+            const volunteerPeriodEnd = new Date(document.getElementById("volunteerPeriodEnd").value);
+
+
+            // Format the Volunteer Period as "Month Year - Month Year"
+            const options = { year: 'numeric', month: 'long' };
+            const volunteerPeriod = `${volunteerPeriodStart.toLocaleDateString('en-US', options)} - ${volunteerPeriodEnd.toLocaleDateString('en-US', options)}`;
+
+
 
             // Create event object with input data
             const newEvent = {
