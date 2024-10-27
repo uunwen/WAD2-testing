@@ -168,10 +168,11 @@
             const volunteerPeriodEnd = new Date(document.getElementById("volunteerPeriodEnd").value);
 
 
-            // Format the Volunteer Period as "Month Year - Month Year"
-            const options = { year: 'numeric', month: 'long' };
-            const volunteerPeriod = `${volunteerPeriodStart.toLocaleDateString('en-US', options)} - ${volunteerPeriodEnd.toLocaleDateString('en-US', options)}`;
-
+            // Format the Volunteer Period as "dd/mm/yy - dd/mm/yy"
+            const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+            const formattedStart = volunteerPeriodStart.toLocaleDateString('en-GB', options);
+            const formattedEnd = volunteerPeriodEnd.toLocaleDateString('en-GB', options);
+            const volunteerPeriod = `${formattedStart} - ${formattedEnd}`;
 
 
             // Create event object with input data
