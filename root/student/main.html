@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hover Filters with Icon Links</title>
+    <title>Home</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/sidebar-checkbox.css">
@@ -148,6 +148,11 @@
                     <a href="#"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
                 </div>
             </div>
+
+            <!-- Sidebar Icon -->
+            <div class="menu sidebar-icon">
+                <span onclick="sidebarIconSelect()" class="icon"><img src="../img/layout.png" alt="sidebar"></span>
+            </div>
         </div>
     </nav>
 
@@ -161,10 +166,7 @@
                     <p class="sidebar-content text-center m-0">{{hoursLeft}}</p>
                     <hr class="sidebar-hr w-80">
                     <p class="sidebar-content text-center m-0">CALENDER</p>
-
-                    <a href="#" class="w-80 text-center"><img src="../img/calendar.png"
-                            width="70%" height="auto" alt=""></a>
-
+                    <a href="#" class="w-80 text-center"><img src="../img/calendar.png" alt=""></a>
                     <hr class="sidebar-hr w-80 mt-4">
                     <p class="sidebar-content text-center m-0">TO-DO LIST</p>
                     <div class="w-80">
@@ -207,45 +209,6 @@
             </div>
         </div>
     </div>
-
-
-    <script>
-        // <div id='app'></div>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    account: "student",
-                    hoursLeft: 80,
-                    toDoList: ["Task 1", "Task 2", "Task 3", "Task 4"]
-                };
-            }, // data
-            // computed: { 
-            //     derivedProperty() {
-            //         return false;
-            //     }  
-            // }, // computed
-            // created() { 
-            // },
-            // mounted() { 
-            // },
-            methods: {
-                getUser() {
-                    return this.account
-                },
-            } // methods
-        });
-        const vm = app.mount('#app');
-
-        // calendar stuff
-        let ec = new EventCalendar(document.getElementById('ec'), {
-            view: 'dayGridMonth',
-            events: [
-                { title: 'Midterm Exam', start: '2024-10-22' },
-                { title: 'Group Study', start: '2024-10-29' },
-            ]
-        });
-
-    </script>
 
     <!-- script for event cards -->
     <script type="module" src="events.js"></script>

@@ -10,6 +10,7 @@ body {
     border-right: 1px solid #ccc;
     padding: 20px;
     overflow-y: auto;
+    z-index: 999;
 }
 
 .sidebar-content a {
@@ -42,11 +43,32 @@ body {
     margin-top: 700px;
 }
 
+.sidebar a img {
+    width: 70%;
+    height: auto;
+}
+
 @media (max-width: 768px) {
-    .sidebar{
+    .sidebar {
+        position: sticky;
+        height: auto;
         display: none;
     }
-    .main-content{
+
+    .sidebar a img {
+        width: 200px;
+    }
+
+    .main-content {
         margin-left: 0px;
+    }
+}
+
+@media (min-width: 769px) {
+    .sidebar-icon {
+        display: none;
+    }
+    .sidebar {
+        display: block;
     }
 }
