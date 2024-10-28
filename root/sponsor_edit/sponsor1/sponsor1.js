@@ -223,7 +223,9 @@ function saveEventData(eventKey, eventBox) {
   update(eventRef, updatedData)
     .then(() => {
       console.log("Event updated successfully.");
-      fetchEventsByOrganizer("Ocean Purpose Project"); // Refresh to show updated data
+      getSponsorOrg_name().then((org_name) => {
+        fetchEventsByOrganizer(org_name); // Refresh to show updated data
+      });
     })
     .catch((error) => {
       console.error("Error updating event:", error.message);
