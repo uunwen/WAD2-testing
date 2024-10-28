@@ -75,3 +75,4 @@ const app = Vue.createApp({
     } // methods
 });
 const vm = app.mount('#app');
+    

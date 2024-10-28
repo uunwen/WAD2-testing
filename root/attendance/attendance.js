@@ -1,22 +1,3 @@
-// Import required Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  get,
-  child,
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-// Firebase setting
-const appSettings = {
-  databaseURL:
-    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
-};
-
-// Initialize Realtime Database and get a reference to the service
-const app = initializeApp(appSettings);
-const database = getDatabase(app);
-
 // Get user info from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
