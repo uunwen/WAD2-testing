@@ -18,80 +18,92 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Function to display each event as a card
-function displayEventCard(parentElement, data, eventKey) {
-  // Create a card container
-  const cardElement = document.createElement("div");
-  cardElement.classList.add("card");
+const dbRef = ref(database); // Reference to the root of the database
 
-  // Create the Project Name as the header (h1) with a link
-  if (data["Project Name"]) {
-    const header = document.createElement("h1");
-    const link = document.createElement("a");
-    // Modify the href to point to the new directory structure
-    link.href = `csp_pages/${eventKey}/${eventKey}.html`;
-    link.textContent = data["Project Name"];
-    header.appendChild(link);
-    cardElement.appendChild(header); // Add the project name (with link) to the card
-  }
+const adminApp = Vue.createApp({
+  data() {
+    return {
+      admissionsPeriod: [],
+      capacity: [],
+      description: [],
+      location: [],
+      organiser: [],
+      projectName: [],
+      projectRequirements: [],
+      region: [],
+      sessions: [],
+      totalCSPHours: [],
+      volunteerPeriod: [],
+    };
+  }, // data
+  computed: {
 
-  // Display Description, Location, Volunteer Period, and Organiser
-  const fieldsToDisplay = [
-    "Description",
-    "Location",
-    "Volunteer Period",
-    "Organiser",
-  ];
-
-  fieldsToDisplay.forEach((field) => {
-    if (data[field]) {
-      const paragraph = document.createElement("p");
-      paragraph.innerHTML = `<strong>${field}:</strong> ${data[field]}`;
-      cardElement.appendChild(paragraph);
-    }
-  });
-
-  // Add the signup button (static and disabled)
-  const signupButton = document.createElement("button");
-  signupButton.textContent = "Sign Up";
-  signupButton.classList.add("signup-btn");
-  signupButton.disabled = true; // Disable the button
-
-  // Append the signup button to the card
-  cardElement.appendChild(signupButton);
-
-  // Append the card to the parent element
-  parentElement.appendChild(cardElement);
-}
-
-// Function to fetch and display all Firebase data
-function fetchAndDisplayData() {
-  const dbRef = ref(database); // Reference to the root of the database
-  const dataDisplayDiv = document.getElementById("dataDisplay"); // Div to show data
-
-  get(dbRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        dataDisplayDiv.innerHTML = ""; // Clear previous content
-        console.log("Data");
-        console.log(data.events);
-        // Assuming 'events' is the parent node of all event data
-        for (const eventKey in data.events) {
-          if (data.events.hasOwnProperty(eventKey)) {
-            displayEventCard(dataDisplayDiv, data.events[eventKey], eventKey); // Pass the eventKey
+  },
+  mounted() {
+    this.loadCommunityServices();
+  },
+  methods: {
+    getUser() {
+      return this.account
+    },
+    loadCommunityServices() {
+      get(dbRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            // dataDisplayDiv.innerHTML = ""; // Clear previous content
+            console.log(data.events);
+            // Assuming 'events' is the parent node of all event data
+            for (const eventKey in data.events) {
+              const eventDetails = data.events[eventKey];
+              this.admissionsPeriod.push(eventDetails["Admissions Period"]);
+              this.capacity.push(eventDetails["Capacity"]);
+              this.description.push(eventDetails["Description"]);
+              this.location.push(eventDetails["Location"]);
+              this.organiser.push(eventDetails["Organiser"]);
+              this.projectName.push(eventDetails["Project Name"]);
+              this.projectRequirements.push(eventDetails["Project Requirements"]);
+              this.region.push(eventDetails["Region"]);
+              this.sessions.push(eventDetails["Session(s)"]);
+              this.totalCSPHours.push(eventDetails["Total CSP hours"]);
+              this.volunteerPeriod.push(eventDetails["Volunteer Period"]);
+            };
           }
-        }
-      } else {
-        dataDisplayDiv.innerHTML = "<p>No data available</p>"; // Show message if no data is found
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      dataDisplayDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    });
-}
+          else {
+            // dataDisplayDiv.innerHTML = "<p>No data available</p>"; // Show message if no data is found
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          // dataDisplayDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        });
+    }
+  } // methods
+});
 
-// Fetch and display data when the page loads
-window.onload = fetchAndDisplayData;
-console.log("Data");
+adminApp.component('communityServiceRecords', {
+  props: ['index', 'admissionsPeriod', 'capacity', 'description', 'location',
+    'organiser', 'projectName', 'projectRequirements', 'region',
+    'sessions', 'totalCspHours', 'volunteerPeriod'],
+  template:
+    `
+      <tr>
+        <td>{{index}}</td>
+        <td>{{admissionsPeriod}}</td>
+        <td>{{capacity}}</td>
+        <td>{{description}}</td>
+        <td>{{location}}</td>
+        <td>{{organiser}}</td>
+        <td>{{projectName}}</td>
+        <td>{{projectRequirements}}</td>
+        <td>{{region}}</td>
+        <td>{{sessions}}</td>
+        <td>{{totalCspHours}}</td>
+        <td>{{volunteerPeriod}}</td>
+        <td>Status</td>
+      </tr>
+  `
+});
+
+const vm = adminApp.mount('#adminApp');
+// component must be declared before app.mount(...)
