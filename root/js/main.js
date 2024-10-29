@@ -75,12 +75,4 @@ const app = Vue.createApp({
     } // methods
 });
 const vm = app.mount('#app');
-
-// calendar stuff
-let ec = new EventCalendar(document.getElementById('ec'), {
-    view: 'dayGridMonth',
-    events: [
-        { title: 'Midterm Exam', start: '2024-10-22' },
-        { title: 'Group Study', start: '2024-10-29' },
-    ]
-});
+    

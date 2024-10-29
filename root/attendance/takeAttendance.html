@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/sidebar-checkbox.css">
+  <!-- <link rel="stylesheet" href="../css/events.css"> -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- calendar cdn -->
+  <script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.6.2/event-calendar.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.6.2/event-calendar.min.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+
+    button {
+      margin: 10px 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Bootstrap Navbar with icons -->
+  <nav class="navbar navbar-expand-lg position-sticky top-0">
+
+    <div class="container-fluid d-flex justify-content-end"> <!-- Align icons to the right -->
+      <!-- this links back to the homepage -->
+      <a href="student/main.html" class="navbar-brand"><img src="../img/social-services.png" alt="">RIGHTTRACK</a>
+      <div class="container-fluid">
+        <div class="row justify-content-center">
+          <div class="col-8">
+            <div class="search-container"> <!-- Flexbox container -->
+              <input type="text" placeholder="Search..." aria-label="Search">
+              <span class="search-icon">🔍</span> <!-- Search icon next to input -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Icon which shows the filters on hover -->
+      <div class="filter-wrapper">
+        <img src="../img/filter.png" alt="Settings" class="filter-icon">
+
+        <!-- Filters Menu (Hidden by default, shown on hover) -->
+        <div id="filter-menu" class="filters">
+          <h2>FILTERS</h2>
+
+          <div class="filter-group">
+            <span class="filter-label">Time:</span>
+            <div class="row filter-options">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Morning</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Afternoon</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Evening</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <span class="filter-label">Day:</span>
+            <div class="row filter-options">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Monday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Tuesday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Wednesday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Thursday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Friday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Saturday</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Sunday</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <span class="filter-label">Region:</span>
+            <div class="row filter-options">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Central</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">North</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">South</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">East</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">West</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <span class="filter-label">Commitment Level:</span>
+            <div class="row filter-options">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">Bi-weekly</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">1x / wk</div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="filter-option" onclick="toggleSelect(this)">One time event</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <span class="filter-label">Minimum Hours Needed:</span>
+            <div class="row filter-options">
+              <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
+                <input type="number" class="form-control" placeholder="Min (hours)"
+                  aria-label="Minimum Volunteer Period" min="0">
+              </div>
+            </div>
+          </div>
+
+          <button id="submit-btn">Submit</button>
+        </div>
+      </div>
+
+      <!-- Profile Icon -->
+      <div class="menu">
+        <span class="icon"><img src="../img/user.png" alt="Profile"></span>
+        <div class="menu-content">
+          <a href="../student/profile.html"><img src="../img/user.png" alt="Profile Icon">Profile</a>
+          <a href="../attendance/attendance.html"><img src="../img/attendance.png" alt="attendance Icon">Attendance</a>
+          <div class="separator"></div>
+          <a href="#"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Icon -->
+      <div class="menu sidebar-icon">
+        <span onclick="sidebarIconSelect()" class="icon"><img src="../img/layout.png" alt="sidebar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- sidebar -->
+  <div class="container-fluid" class="main">
+    <div class="row">
+      <div class="sidebar col-md-3" id="app">
+        <div v-if="getUser() == 'student'"
+          class="sidebar-content d-flex flex-column justify-content-center align-items-center">
+          <p class="sidebar-content text-center m-0">HOURS LEFT: </p>
+          <p class="sidebar-content text-center m-0">{{hoursLeft}}</p>
+          <hr class="sidebar-hr w-80">
+          <p class="sidebar-content text-center m-0">CALENDER</p>
+          <a href="#" class="w-80 text-center"><img src="../img/calendar.png" alt=""></a>
+          <hr class="sidebar-hr w-80 mt-4">
+          <p class="sidebar-content text-center m-0">TO-DO LIST</p>
+          <div class="w-80">
+            <div class="checkbox-wrapper d-flex flex-column">
+              <div v-for="(task, idx) in toDoList">
+                <input type="checkbox" class="check" :id="task+idx" />
+                <label :for="task+idx" class="label">
+                  <svg width="45" height="45" viewbox="0 0 95 95">
+                    <rect x="30" y="20" width="50" height="50" stroke="black" fill="none" />
+                    <g transform="translate(0,-952.36222)">
+                      <path d="m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4 "
+                        stroke="black" stroke-width="3" fill="none" class="path1" />
+                    </g>
+                  </svg>
+                  <span class="check-description">{{task}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="getUser() == 'admin'"
+          class="sidebar-content d-flex flex-column justify-content-center align-items-center">
+          <div class="sidebar-content d-flex flex-column w-80 mx-auto">
+            <p class="sidebar-content m-0"><a href="#">MENU</a> </p>
+            <hr class="sidebar-hr w-100 mx-auto">
+            <p class="sidebar-content m-0"><a href="#">APPROVE POSTS</a></p>
+            <p class="sidebar-content m-0"><a href="#">DATA</a> </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- events content -->
+      <div class="col-md-9 main-content" id="app2">
+        <h1>Attendance System</h1>
+        <div id="reader"></div>
+        <button @click="startAttendance" v-if="!isScanning">
+          Start Attendance
+        </button>
+        <button @click="stopAttendance" v-if="isScanning">Stop Attendance</button>
+
+        <div class="container">
+          <h2>Attendance List</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Attendance Taken</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Display students that taken their attendance -->
+              <tr v-for="student in attendanceList" :key="student.uid">
+                <td>{{ student.name }}</td>
+                <td>{{ student.timestamp }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- script for event cards -->
+  <script type="module" src="../js/events.js"></script>
+
+  <!-- Bootstrap JS bundle to be placed before the closing </body> tag -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="../js/main.js"></script> <!-- External JS file for filters -->
+
+  <script type="module" src="takeAttendance.js"></script>
+
+</body>
+
+</html>

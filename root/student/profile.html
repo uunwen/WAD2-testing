@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .profile-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            text-align: center;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+        }
+        .social-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+    
+</head>
+<body>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <img id="profile-picture" src="default-profile.jpg" alt="Profile Picture">
+            <h1 id="user-name">Loading...</h1>
+            <h3 id="user-username"></h3>
+            <p id="user-bio">Loading...</p>
+        </div>
+    
+        <h2>About Me</h2>
+        <p id="user-about">Loading...</p>
+    
+        <h2>Contact Information</h2>
+        <p id="user-email">Loading...</p>
+    
+        <h2>Social Links</h2>
+        <div class="social-links" id="social-links">
+            <!-- Dynamic links will be added here -->
+        </div>
+    </div>
+    
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <script src="profile.js"></script>
+
+</body>
+</html>
