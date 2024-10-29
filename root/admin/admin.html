@@ -74,16 +74,17 @@
                     <th>#</th>
                     <th>Admissions Period </th>
                     <th>Capacity</th>
-                    <th>Description</th>
+                    <!-- <th>Description</th> -->
                     <th>Location</th>
                     <th>Organiser</th>
                     <th>Project Name</th>
-                    <th>Project Requirements </th>
+                    <!--  <th>Project Requirements </th> -->
                     <th>Region</th>
                     <th>Session(s)</th>
                     <th>Total CSP hours</th>
                     <th>Volunteer Period </th>
                     <th>Status</th>
+                    <th>View Details</th>
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +93,7 @@
                         :capacity="capacity[idx]" :location="location[idx]" :organiser="organiser[idx]"
                         :project-name="projectName[idx]" :project-requirements="projectRequirements[idx]"
                         :region="region[idx]" :sessions="sessions[idx]" :total-csp-hours="totalCSPHours[idx]"
-                        :volunteer-period="volunteerPeriod[idx]">
+                        :volunteer-period="volunteerPeriod[idx]" :status="status[idx]" :event-key="eventKey" @update-status="updateStatus(idx)" >
                     </community-service-records>
                 </template>
             </tbody>
