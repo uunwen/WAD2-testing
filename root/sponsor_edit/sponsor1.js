@@ -1,3 +1,11 @@
+// search function from the search bar
+import { getSearch } from "./navbar.js";
+async function checkSearchValue() {
+  const searchValue = await getSearch();
+  console.log("Current search term:", searchValue);
+}
+checkSearchValue();
+
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
@@ -58,9 +66,9 @@ function displaySponsorDetails(sponsorData) {
 
   // Display sponsor statistics
   const sponsorStats = document.getElementById("sponsorStats");
-  const iconsRow = document.getElementById("iconsRow");
   sponsorStats.innerHTML = "";
-  iconsRow.innerHTML = "";
+  // const iconsRow = document.getElementById("iconsRow");
+  // iconsRow.innerHTML = "";
 
   const stats = [
     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
@@ -75,36 +83,36 @@ function displaySponsorDetails(sponsorData) {
     sponsorStats.appendChild(statItem);
   });
 
-  // Display contact icons
-  addIconLink(
-    iconsRow,
-    sponsorData["email_add"],
-    "fas fa-envelope",
-    `mailto:${sponsorData["email_add"]}`
-  );
-  addIconLink(
-    iconsRow,
-    sponsorData["facebook_link"],
-    "fab fa-facebook",
-    sponsorData["facebook_link"]
-  );
-  addIconLink(
-    iconsRow,
-    sponsorData["website"],
-    "fas fa-globe",
-    sponsorData["website"]
-  );
+  // // Display contact icons
+  // addIconLink(
+  //   iconsRow,
+  //   sponsorData["email_add"],
+  //   "fas fa-envelope",
+  //   `mailto:${sponsorData["email_add"]}`
+  // );
+  // addIconLink(
+  //   iconsRow,
+  //   sponsorData["facebook_link"],
+  //   "fab fa-facebook",
+  //   sponsorData["facebook_link"]
+  // );
+  // addIconLink(
+  //   iconsRow,
+  //   sponsorData["website"],
+  //   "fas fa-globe",
+  //   sponsorData["website"]
+  // );
 }
 
-function addIconLink(container, link, iconClass, href) {
-  if (link) {
-    const icon = document.createElement("a");
-    icon.href = href;
-    icon.target = "_blank";
-    icon.innerHTML = `<i class="${iconClass} icon-large"></i>`;
-    container.appendChild(icon);
-  }
-}
+// function addIconLink(container, link, iconClass, href) {
+//   if (link) {
+//     const icon = document.createElement("a");
+//     icon.href = href;
+//     icon.target = "_blank";
+//     icon.innerHTML = `<i class="${iconClass} icon-large"></i>`;
+//     container.appendChild(icon);
+//   }
+// }
 
 // Fetch and display events by organizer
 function fetchEventsByOrganizer(organizerName) {
@@ -281,7 +289,6 @@ async function getSponsorOrg_name() {
 
 // On window load, fetch sponsor data and events for the specified organizer
 window.onload = () => {
-  console.log(uid);
   getSponsorOrg_name().then((org_name) => {
     fetchSponsorData();
     fetchEventsByOrganizer(org_name);
