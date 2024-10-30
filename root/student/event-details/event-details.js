@@ -46,15 +46,18 @@ function displayEventDetails() {
                 if (data.hasOwnProperty(key) && key !== "Project Name") {
                     const card = document.createElement("div");
                     card.className = "card";
-                    card.innerHTML = (key === 'Organiser') ?
-                        `<strong>Organiser:</strong> <a href="#">${data[key]}</a>` :
-                        `<strong>${key}:</strong> ${data[key]}`;
-
+                    // Set dynamic link for the 'Organiser' section
                     if (key === 'Organiser') {
+                        const organiserName = data[key];
+                        card.innerHTML = `<strong>Organiser:</strong> <a href="#">${organiserName}</a>`;
                         const organiserLink = card.querySelector('a');
-                        findSponsorKey(data[key]).then(sponsorKey => {
-                            organiserLink.href = sponsorKey ? `sponsor-details.html?sponsorKey=${sponsorKey}` : "#";
+
+                        // Get the sponsorKey for dynamic linking
+                        findSponsorKey(organiserName).then(sponsorKey => {
+                            organiserLink.href = sponsorKey ? `../sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}` : "#";
                         });
+                    } else {
+                        card.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
                     }
                     eventContent.appendChild(card);
                 }
