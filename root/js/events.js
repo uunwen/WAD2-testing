@@ -20,30 +20,21 @@ const database = getDatabase(app);
 
 // Function to display each event as a card
 function displayEventCard(parentElement, data, eventKey) {
-  // Create a card container
   const cardElement = document.createElement("div");
   cardElement.classList.add("card");
 
-  // Create the Project Name as the header (h1) with a link
+  // Project Name with clickable link
   if (data["Project Name"]) {
     const header = document.createElement("h1");
     const link = document.createElement("a");
-    // Modify the href to point to the new directory structure
-    link.href = `csp_pages/${eventKey}/${eventKey}.html`;
+    link.href = `event-details/event-details.html?eventKey=${eventKey}`;
     link.textContent = data["Project Name"];
     header.appendChild(link);
-    cardElement.appendChild(header); // Add the project name (with link) to the card
+    cardElement.appendChild(header);
   }
 
-  // Display Description, Location, Volunteer Period, and Organiser
-  const fieldsToDisplay = [
-    "Description",
-    "Location",
-    "Volunteer Period",
-    "Organiser",
-  ];
-
-  fieldsToDisplay.forEach((field) => {
+  // Display selected fields
+  ["Description", "Location", "Volunteer Period", "Organiser"].forEach((field) => {
     if (data[field]) {
       const paragraph = document.createElement("p");
       paragraph.innerHTML = `<strong>${field}:</strong> ${data[field]}`;
@@ -55,19 +46,17 @@ function displayEventCard(parentElement, data, eventKey) {
   const signupButton = document.createElement("button");
   signupButton.textContent = "Sign Up";
   signupButton.classList.add("signup-btn");
-  signupButton.disabled = true; // Disable the button
-
-  // Append the signup button to the card
+  signupButton.disabled = true;
   cardElement.appendChild(signupButton);
 
   // Append the card to the parent element
   parentElement.appendChild(cardElement);
 }
 
-// Function to fetch and display all Firebase data
+// Function to fetch and display all events from Firebase
 function fetchAndDisplayData() {
-  const dbRef = ref(database); // Reference to the root of the database
-  const dataDisplayDiv = document.getElementById("dataDisplay"); // Div to show data
+  const dbRef = ref(database, "events"); // Reference to the "events" node
+  const dataDisplayDiv = document.getElementById("dataDisplay"); // Div to display the data
 
   get(dbRef)
     .then((snapshot) => {
@@ -75,14 +64,14 @@ function fetchAndDisplayData() {
         const data = snapshot.val();
         dataDisplayDiv.innerHTML = ""; // Clear previous content
 
-        // Assuming 'events' is the parent node of all event data
-        for (const eventKey in data.events) {
-          if (data.events.hasOwnProperty(eventKey)) {
-            displayEventCard(dataDisplayDiv, data.events[eventKey], eventKey); // Pass the eventKey
+        // Loop through each event and display it as a card
+        for (const eventKey in data) {
+          if (data.hasOwnProperty(eventKey)) {
+            displayEventCard(dataDisplayDiv, data[eventKey], eventKey); // Pass the eventKey to display each event card
           }
         }
       } else {
-        dataDisplayDiv.innerHTML = "<p>No data available</p>"; // Show message if no data is found
+        dataDisplayDiv.innerHTML = "<p>No data available</p>";
       }
     })
     .catch((error) => {

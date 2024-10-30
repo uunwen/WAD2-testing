@@ -76,6 +76,12 @@ function addIconLink(container, link, iconClass, href) {
   }
 }
 
+
+
+
+
+
+
 // Fetch and display events by organizer
 function fetchEventsByOrganizer(organizerName) {
   const eventsRef = ref(database, 'events');
