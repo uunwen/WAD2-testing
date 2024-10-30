@@ -1,3 +1,4 @@
+// Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -32,48 +33,63 @@ function displayEventDetails() {
     }
 
     const dbRef = ref(database, `events/${eventKey}`);
-    get(dbRef).then((snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            document.getElementById("eventTitle").textContent = data["Project Name"];
-            const eventDetailsContainer = document.getElementById("eventDetails");
-            eventDetailsContainer.innerHTML = "";
+    get(dbRef)
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                document.getElementById("eventTitle").textContent = data["Project Name"];
+                const eventDetailsContainer = document.getElementById("eventDetails");
+                eventDetailsContainer.innerHTML = "";
 
-            for (const key in data) {
-                if (data.hasOwnProperty(key) && key !== "Project Name") {
-                    const paragraph = document.createElement("p");
+                for (const key in data) {
+                    if (data.hasOwnProperty(key) && key !== "Project Name") {
+                        const paragraph = document.createElement("p");
 
-                    // If the key is 'Organiser', create a link
-                    if (key === 'Organiser') {
-                        const organiserName = data[key];
-                        paragraph.innerHTML = `<strong>Organiser:</strong> `;
-                        const organiserLink = document.createElement('a');
-                        organiserLink.textContent = organiserName;
-                        organiserLink.style.textDecoration = 'underline';
-                        organiserLink.style.color = 'blue';
+                        // If the key is 'Organiser', create a link
+                        if (key === 'Organiser') {
+                            const organiserName = data[key];
+                            paragraph.innerHTML = `<strong>Organiser:</strong> `;
+                            const organiserLink = document.createElement('a');
+                            organiserLink.textContent = organiserName;
+                            organiserLink.style.textDecoration = 'underline';
+                            organiserLink.style.color = 'blue';
 
-                        // Find sponsorKey based on organiser name
-                        findSponsorKey(organiserName).then(sponsorKey => {
-                            organiserLink.href = sponsorKey
-                                ? `http://localhost/WAD2-testing/root/student/sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}`
-                                : "#"; // Set a fallback if no sponsorKey found
-                        });
+                            // Find sponsorKey based on organiser name
+                            findSponsorKey(organiserName).then(sponsorKey => {
+                                organiserLink.href = sponsorKey
+                                    ? `http://localhost/WAD2-testing/root/student/sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}`
+                                    : "#"; // Set a fallback if no sponsorKey found
+                            });
 
-
-                        paragraph.appendChild(organiserLink);
-                    } else {
-                        paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+                            paragraph.appendChild(organiserLink);
+                        } else {
+                            paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+                        }
+                        eventDetailsContainer.appendChild(paragraph);
                     }
-                    eventDetailsContainer.appendChild(paragraph);
                 }
+
+                // Add a "Sign Up" button with a dynamic link
+                const signupButton = document.createElement("button");
+                signupButton.textContent = "Sign Up";
+                signupButton.className = "signup-button"; // Add the styling class
+
+                // Link to a signup form page for this specific event
+                const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+                signupButton.onclick = () => {
+                    window.location.href = signupLink;
+                };
+
+                // Append the Sign Up button to the event details container
+                document.querySelector('.button-container').appendChild(signupButton);
+            } else {
+                document.getElementById("eventDetails").innerHTML = "<p>Event details not available.</p>";
             }
-        } else {
-            document.getElementById("eventDetails").innerHTML = "<p>Event details not available.</p>";
-        }
-    }).catch((error) => {
-        console.error("Error fetching event details:", error);
-        document.getElementById("eventDetails").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    });
+        })
+        .catch((error) => {
+            console.error("Error fetching event details:", error);
+            document.getElementById("eventDetails").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        });
 }
 
 // Updated findSponsorKey function using 'org_name'
