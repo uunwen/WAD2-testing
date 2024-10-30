@@ -1,4 +1,4 @@
-// Import Firebase modules from CDN
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -14,103 +14,122 @@ const firebaseConfig = {
     measurementId: "G-LFFLPT7G58",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Helper to retrieve query parameters
+// Helper to get URL parameter
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
 
-// Display event details
+// Function to load event details into the details tab
 function displayEventDetails() {
     const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
-        document.getElementById("eventDetails").innerHTML = "<p>Event not found.</p>";
+        document.getElementById("eventDetailsContainer").innerHTML = "<p>Event not found.</p>";
         return;
     }
 
     const dbRef = ref(database, `events/${eventKey}`);
-    get(dbRef)
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                document.getElementById("eventTitle").textContent = data["Project Name"];
-                const eventDetailsContainer = document.getElementById("eventDetails");
-                eventDetailsContainer.innerHTML = "";
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
 
-                for (const key in data) {
-                    if (data.hasOwnProperty(key) && key !== "Project Name") {
-                        const paragraph = document.createElement("p");
+            // Set Project Name above the navbar
+            document.getElementById("eventTitle").textContent = data["Project Name"];
 
-                        // If the key is 'Organiser', create a link
-                        if (key === 'Organiser') {
-                            const organiserName = data[key];
-                            paragraph.innerHTML = `<strong>Organiser:</strong> `;
-                            const organiserLink = document.createElement('a');
-                            organiserLink.textContent = organiserName;
-                            organiserLink.style.textDecoration = 'underline';
-                            organiserLink.style.color = 'blue';
+            const eventContent = document.getElementById("eventContent");
+            eventContent.innerHTML = "";  // Clear previous content
 
-                            // Find sponsorKey based on organiser name
-                            findSponsorKey(organiserName).then(sponsorKey => {
-                                organiserLink.href = sponsorKey
-                                    ? `http://localhost/WAD2-testing/root/student/sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}`
-                                    : "#"; // Set a fallback if no sponsorKey found
-                            });
+            for (const key in data) {
+                if (data.hasOwnProperty(key) && key !== "Project Name") {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    // Set dynamic link for the 'Organiser' section
+                    if (key === 'Organiser') {
+                        const organiserName = data[key];
+                        card.innerHTML = `<strong>Organiser:</strong> <a href="#">${organiserName}</a>`;
+                        const organiserLink = card.querySelector('a');
 
-                            paragraph.appendChild(organiserLink);
-                        } else {
-                            paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
-                        }
-                        eventDetailsContainer.appendChild(paragraph);
+                        // Get the sponsorKey for dynamic linking
+                        findSponsorKey(organiserName).then(sponsorKey => {
+                            organiserLink.href = sponsorKey ? `../sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}` : "#";
+                        });
+                    } else {
+                        card.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
                     }
+                    eventContent.appendChild(card);
                 }
-
-                // Add a "Sign Up" button with a dynamic link
-                const signupButton = document.createElement("button");
-                signupButton.textContent = "Sign Up";
-                signupButton.className = "signup-button"; // Add the styling class
-
-                // Link to a signup form page for this specific event
-                const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
-                signupButton.onclick = () => {
-                    window.location.href = signupLink;
-                };
-
-                // Append the Sign Up button to the event details container
-                document.querySelector('.button-container').appendChild(signupButton);
-            } else {
-                document.getElementById("eventDetails").innerHTML = "<p>Event details not available.</p>";
             }
-        })
-        .catch((error) => {
-            console.error("Error fetching event details:", error);
-            document.getElementById("eventDetails").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-        });
+
+            // Add buttons to switch tabs
+            const buttonContainer = document.querySelector('.button-container');
+            buttonContainer.innerHTML = "";
+
+            const signupButton = document.createElement("button");
+            signupButton.textContent = "Sign Up";
+            signupButton.className = "signup-button";
+            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+            signupButton.onclick = () => {
+                window.location.href = signupLink;
+            };
+            buttonContainer.appendChild(signupButton);
+        } else {
+            document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
+        }
+    }).catch((error) => {
+        console.error("Error fetching event details:", error);
+        document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+    });
 }
 
-// Updated findSponsorKey function using 'org_name'
+// Helper function to find sponsor key
 function findSponsorKey(organiserName) {
     const sponsorsRef = ref(database, 'sponsors');
-    return get(sponsorsRef)
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const sponsors = snapshot.val();
-                for (const sponsorKey in sponsors) {
-                    if (sponsors[sponsorKey].org_name === organiserName) {
-                        return sponsorKey;
-                    }
+    return get(sponsorsRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const sponsors = snapshot.val();
+            for (const sponsorKey in sponsors) {
+                if (sponsors[sponsorKey].org_name === organiserName) {
+                    return sponsorKey;
                 }
             }
-            return null;
-        })
-        .catch((error) => {
-            console.error("Error fetching sponsor details:", error);
-            return null;
-        });
+        }
+        return null;
+    }).catch((error) => {
+        console.error("Error fetching sponsor details:", error);
+        return null;
+    });
 }
 
-window.onload = displayEventDetails;
+// Event listener setup
+document.addEventListener("DOMContentLoaded", () => {
+    const detailsTab = document.getElementById("detailsTab");
+    const photosTab = document.getElementById("photosTab");
+
+    detailsTab.addEventListener("click", () => showTab("details"));
+    photosTab.addEventListener("click", () => showTab("photos"));
+
+    // Load default tab on page load
+    showTab("details");
+});
+
+// Function to toggle between tabs
+function showTab(tabName) {
+    const detailsContainer = document.getElementById("eventDetailsContainer");
+    const photosContainer = document.getElementById("photosSection");
+
+    detailsContainer.style.display = (tabName === "details") ? "block" : "none";
+    photosContainer.style.display = (tabName === "photos") ? "block" : "none";
+
+    if (tabName === "details") {
+        displayEventDetails();  // Ensure event details reload if switched to details
+    }
+}
+
+
+// Load default tab
+window.onload = () => {
+    showTab('details');  // Show details tab on load
+};
