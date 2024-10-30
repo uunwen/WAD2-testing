@@ -1,6 +1,6 @@
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getDatabase, ref, get, } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -18,74 +18,78 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Function to display event data on the HTML page in a specific order
-function displayEventData(eventData) {
-    const headerElement = document.getElementById("eventHeader"); // h1 element for the Project Name
-    const dataDisplayDiv = document.getElementById("eventData"); // Div to display event data
+// Function to display each event as a card
+function displayEventCard(parentElement, data, eventKey) {
+    // Create a card container
+    const cardElement = document.createElement("div");
+    cardElement.classList.add("card");
 
-    // Clear previous content
-    dataDisplayDiv.innerHTML = '';
-
-    // Set the Project Name as the header
-    if (eventData['Project Name']) {
-        headerElement.textContent = eventData['Project Name'];
+    // Create the Project Name as the header (h1) with a link
+    if (data["Project Name"]) {
+        const header = document.createElement("h1");
+        const link = document.createElement("a");
+        // Modify the href to point to the new directory structure
+        link.href = `csp_pages/${eventKey}/${eventKey}.html`;
+        link.textContent = data["Project Name"];
+        header.appendChild(link);
+        cardElement.appendChild(header); // Add the project name (with link) to the card
     }
 
-    // Display the data in the desired order
-    const displayOrder = [
-        'Description',
-        'Organiser',
-        'Location',
-        'Session(s)',
-        'Volunteer Period',
-        'Capacity',
-        'Total CSP hours',
-        'Project Requirements',
-        'Region',
-        'Admissions Period'
+    // Display Description, Location, Volunteer Period, and Organiser
+    const fieldsToDisplay = [
+        "Description",
+        "Location",
+        "Volunteer Period",
+        "Organiser",
     ];
 
-    // Iterate through the displayOrder array and display the corresponding data
-    displayOrder.forEach(key => {
-        const paragraph = document.createElement('p');
-
-        // Special handling for the 'Organiser' field to add the link
-        if (key === 'Organiser' && eventData[key]) {
-            const organiserLink = document.createElement('a');
-            organiserLink.href = './sponsor_pages/sponsor1/sponsor1.html';
-            organiserLink.textContent = eventData[key];
-            organiserLink.style.textDecoration = 'underline';
-            organiserLink.style.color = 'blue';
-
-            paragraph.innerHTML = `<strong>Organiser:</strong> `;
-            paragraph.appendChild(organiserLink);
+    fieldsToDisplay.forEach((field) => {
+        if (data[field]) {
+            const paragraph = document.createElement("p");
+            paragraph.innerHTML = `<strong>${field}:</strong> ${data[field]}`;
+            cardElement.appendChild(paragraph);
         }
-        // Handle other fields, including Total CSP Hours, or if the field is empty or undefined
-        else if (eventData[key] || eventData[key] === "") {
-            paragraph.innerHTML = `<strong>${key}:</strong> ${eventData[key] || "N/A"}`;
-        }
-
-        dataDisplayDiv.appendChild(paragraph);
     });
+
+    // Add the signup button (static and disabled)
+    const signupButton = document.createElement("button");
+    signupButton.textContent = "Sign Up";
+    signupButton.classList.add("signup-btn");
+    signupButton.disabled = true; // Disable the button
+
+    // Append the signup button to the card
+    cardElement.appendChild(signupButton);
+
+    // Append the card to the parent element
+    parentElement.appendChild(cardElement);
 }
 
-// Function to fetch and display data for a specific event
-function fetchEventData(eventNumber) {
-    const eventRef = ref(database, `events/event${eventNumber}`); // Reference to event data in Firebase
+// Function to fetch and display all Firebase data
+function fetchAndDisplayData() {
+    const dbRef = ref(database); // Reference to the root of the database
+    const dataDisplayDiv = document.getElementById("dataDisplay"); // Div to show data
 
-    get(eventRef)
+    get(dbRef)
         .then((snapshot) => {
             if (snapshot.exists()) {
-                const eventData = snapshot.val();
-                console.log("Event Data Fetched:", eventData);
+                const data = snapshot.val();
+                dataDisplayDiv.innerHTML = ""; // Clear previous content
 
-                displayEventData(eventData); // Display the fetched event data
+                // Assuming 'events' is the parent node of all event data
+                for (const eventKey in data.events) {
+                    if (data.events.hasOwnProperty(eventKey)) {
+                        displayEventCard(dataDisplayDiv, data.events[eventKey], eventKey); // Pass the eventKey
+                    }
+                }
             } else {
-                document.getElementById("eventData").innerHTML = '<p>No data available for this event.</p>';
+                dataDisplayDiv.innerHTML = "<p>No data available</p>"; // Show message if no data is found
             }
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
-            document.getElementById("eventData").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            dataDisplayDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         });
 }
+
+// Fetch and display data when the page loads
+window.onload = fetchAndDisplayData;

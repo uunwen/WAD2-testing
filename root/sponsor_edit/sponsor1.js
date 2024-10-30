@@ -1,10 +1,8 @@
-// search function from the search bar
-import { getSearch } from "./navbar.js";
-async function checkSearchValue() {
-  const searchValue = await getSearch();
-  console.log("Current search term:", searchValue);
-}
-checkSearchValue();
+// import from navbar.js
+import { search, initializeSearch } from "./navbar.js";
+
+// initialize the search bar (OMFG I HATE MY LIFE)
+initializeSearch();
 
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -67,8 +65,6 @@ function displaySponsorDetails(sponsorData) {
   // Display sponsor statistics
   const sponsorStats = document.getElementById("sponsorStats");
   sponsorStats.innerHTML = "";
-  // const iconsRow = document.getElementById("iconsRow");
-  // iconsRow.innerHTML = "";
 
   const stats = [
     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
@@ -82,40 +78,10 @@ function displaySponsorDetails(sponsorData) {
     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
     sponsorStats.appendChild(statItem);
   });
-
-  // // Display contact icons
-  // addIconLink(
-  //   iconsRow,
-  //   sponsorData["email_add"],
-  //   "fas fa-envelope",
-  //   `mailto:${sponsorData["email_add"]}`
-  // );
-  // addIconLink(
-  //   iconsRow,
-  //   sponsorData["facebook_link"],
-  //   "fab fa-facebook",
-  //   sponsorData["facebook_link"]
-  // );
-  // addIconLink(
-  //   iconsRow,
-  //   sponsorData["website"],
-  //   "fas fa-globe",
-  //   sponsorData["website"]
-  // );
 }
 
-// function addIconLink(container, link, iconClass, href) {
-//   if (link) {
-//     const icon = document.createElement("a");
-//     icon.href = href;
-//     icon.target = "_blank";
-//     icon.innerHTML = `<i class="${iconClass} icon-large"></i>`;
-//     container.appendChild(icon);
-//   }
-// }
-
 // Fetch and display events by organizer
-function fetchEventsByOrganizer(organizerName) {
+function fetchEventsByOrganizer(organizerName, search) {
   const eventsRef = ref(database, "events");
   get(eventsRef)
     .then((snapshot) => {
@@ -124,7 +90,7 @@ function fetchEventsByOrganizer(organizerName) {
         const filteredEvents = Object.entries(allEvents).filter(
           ([, eventData]) => eventData["Organiser"] === organizerName
         );
-        displayFilteredEvents(filteredEvents);
+        displayFilteredEvents(filteredEvents, search);
       } else {
         document.getElementById("eventContainer").innerHTML =
           "<p>No events available.</p>";
@@ -139,7 +105,7 @@ function fetchEventsByOrganizer(organizerName) {
 }
 
 // Display filtered events with edit functionality
-function displayFilteredEvents(events) {
+function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
   eventContainer.innerHTML = "";
 
@@ -150,26 +116,28 @@ function displayFilteredEvents(events) {
   }
 
   events.forEach(([eventKey, eventData]) => {
-    const eventBox = document.createElement("div");
-    eventBox.className = "event-box";
+    if (eventData["Project Name"].includes(search)) {
+      const eventBox = document.createElement("div");
+      eventBox.className = "event-box";
 
-    // Create event header
-    const header = document.createElement("h3");
-    header.textContent = eventData["Project Name"] || "Unnamed Project";
-    eventBox.appendChild(header);
+      // Create event header
+      const header = document.createElement("h3");
+      header.textContent = eventData["Project Name"] || "Unnamed Project";
+      eventBox.appendChild(header);
 
-    // Display each detail of the event
-    for (const [key, value] of Object.entries(eventData)) {
-      const paragraph = document.createElement("p");
-      paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
-      paragraph.setAttribute("data-key", key);
-      eventBox.appendChild(paragraph);
+      // Display each detail of the event
+      for (const [key, value] of Object.entries(eventData)) {
+        const paragraph = document.createElement("p");
+        paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
+        paragraph.setAttribute("data-key", key);
+        eventBox.appendChild(paragraph);
+      }
+
+      // Add edit, save, and cancel buttons
+      createEditButtons(eventBox, eventKey);
+
+      eventContainer.appendChild(eventBox);
     }
-
-    // Add edit, save, and cancel buttons
-    createEditButtons(eventBox, eventKey);
-
-    eventContainer.appendChild(eventBox);
   });
 }
 
@@ -289,8 +257,12 @@ async function getSponsorOrg_name() {
 
 // On window load, fetch sponsor data and events for the specified organizer
 window.onload = () => {
-  getSponsorOrg_name().then((org_name) => {
-    fetchSponsorData();
-    fetchEventsByOrganizer(org_name);
-  });
+  // Get value from the fucking search bar
+  setInterval(() => {
+    getSponsorOrg_name().then((org_name) => {
+      fetchSponsorData();
+      fetchEventsByOrganizer(org_name, search);
+    });
+    console.log("Current state:", search);
+  }, 1000);
 };
