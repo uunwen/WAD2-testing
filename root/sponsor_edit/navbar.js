@@ -26,56 +26,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// // Retrive user info
-// const urlParams = new URLSearchParams(window.location.search);
-// const uid = urlParams.get("uid");
-
-// // Fetch sponsor's org_name
-// async function getSponsorOrg_name() {
-//   try {
-//     // Fetch sponsor data
-//     const sponsorRef = ref(database, "sponsors/" + uid);
-//     const snapshot = await get(sponsorRef);
-//     if (snapshot.exists()) {
-//       const sponsorData = snapshot.val();
-//       return sponsorData.org_name;
-//     }
-//   } catch (error) {
-//     console.log("getSponsorOrg_name function error occured: " + error);
-//   }
-// }
-
-// function isDisplay(filteredEvents, searchTerm) {
-//   console.log("tets" + filteredEvents);
-//   for (let i = 0; i < filteredEvents.length; i++) {
-//     console.log(filteredEvents[i][1]["Project Name"]);
-//     // if (title.includes(searchTerm)) {
-//     //   console.log(true);
-//     // }
-//   }
-// }
-
-// // Fetch and display events by organizer
-// async function fetchEventsByOrganizer() {
-//   const eventsRef = ref(database, "events");
-//   const organizerName = await getSponsorOrg_name();
-
-//   get(eventsRef)
-//     .then((snapshot) => {
-//       const allEvents = snapshot.val();
-//       const filteredEvents = Object.entries(allEvents).filter(
-//         ([, eventData]) => eventData["Organiser"] === organizerName
-//       );
-//       console.log(filteredEvents);
-//       return filteredEvents;
-//     })
-//     .catch((error) => {
-//       console.error("Error fetching events:", error.message);
-//     });
-// }
-
-// Search functionality with improved implementation
+// Search functionality
+// (only need this function for search, just replace the ids, the rest is specific for sponsor)
 export async function initializeSearch() {
+  // Replace this 2 depending on the nav-bar
   const searchInput = document.getElementById("searchInput");
   const projectsContainer = document.getElementById("projectsContainer");
 
@@ -94,10 +48,7 @@ export async function initializeSearch() {
   const searchProjects = debounce(async (searchTerm) => {
     try {
       // Export term into sponsor1.js
-      setInterval(() => {
-        console.log(search);
-        search = searchTerm;
-      }, 1000);
+      search = searchTerm;
     } catch (error) {
       console.error("Error searching projects:", error);
       if (projectsContainer) {
@@ -105,11 +56,12 @@ export async function initializeSearch() {
           "<p>Error searching projects. Please try again.</p>";
       }
     }
-  }, 1000);
+  }, 500);
 
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       searchProjects(e.target.value);
+      console.log("input" + e.target.value);
     });
   }
 }

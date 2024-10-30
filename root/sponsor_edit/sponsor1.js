@@ -1,7 +1,7 @@
-// import from navbar.js
+// import from navbar.js and get search bar value 
 import { search, initializeSearch } from "./navbar.js";
 
-// initialize the search bar (OMFG I HATE MY LIFE)
+// initialize the search bar
 initializeSearch();
 
 // Import Firebase modules from CDN
@@ -257,12 +257,11 @@ async function getSponsorOrg_name() {
 
 // On window load, fetch sponsor data and events for the specified organizer
 window.onload = () => {
-  // Get value from the fucking search bar
   setInterval(() => {
     getSponsorOrg_name().then((org_name) => {
       fetchSponsorData();
       fetchEventsByOrganizer(org_name, search);
     });
-    console.log("Current state:", search);
+    
   }, 1000);
 };
