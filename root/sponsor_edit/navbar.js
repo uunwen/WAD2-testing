@@ -26,8 +26,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Search functionality
-// (only need this function for search, just replace the ids, the rest is specific for sponsor)
+// Log search bar's info
 export async function initializeSearch() {
   // Replace this 2 depending on the nav-bar
   const searchInput = document.getElementById("searchInput");
@@ -48,7 +47,8 @@ export async function initializeSearch() {
   const searchProjects = debounce(async (searchTerm) => {
     try {
       // Export term into sponsor1.js
-      search = searchTerm;
+      search = searchTerm.toLowerCase();
+      console.log(search);
     } catch (error) {
       console.error("Error searching projects:", error);
       if (projectsContainer) {
@@ -61,7 +61,6 @@ export async function initializeSearch() {
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       searchProjects(e.target.value);
-      console.log("input" + e.target.value);
     });
   }
 }

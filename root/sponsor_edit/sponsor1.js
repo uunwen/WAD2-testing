@@ -1,5 +1,6 @@
-// import from navbar.js and get search bar value 
+// import from navbar.js and get search bar value
 import { search, initializeSearch } from "./navbar.js";
+let isEditing = true; // Flag to pause update from searchbar during editing
 
 // initialize the search bar
 initializeSearch();
@@ -116,7 +117,7 @@ function displayFilteredEvents(events, search) {
   }
 
   events.forEach(([eventKey, eventData]) => {
-    if (eventData["Project Name"].includes(search)) {
+    if (eventData["Project Name"].toLowerCase().includes(search)) {
       const eventBox = document.createElement("div");
       eventBox.className = "event-box";
 
@@ -141,22 +142,39 @@ function displayFilteredEvents(events, search) {
   });
 }
 
-function createEditButtons(eventBox, eventKey) {
+async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
   const saveBtn = createButton("Save", "save-btn", "none");
   const cancelBtn = createButton("Cancel", "cancel-btn", "none");
 
-  editBtn.addEventListener("click", () =>
-    enableEditEvent(eventBox, saveBtn, cancelBtn)
-  );
-  saveBtn.addEventListener("click", () => saveEventData(eventKey, eventBox));
-  cancelBtn.addEventListener("click", () =>
-    cancelEditEvent(eventKey, eventBox)
-  );
-
+  // Append buttons to the event box
   eventBox.appendChild(editBtn);
   eventBox.appendChild(saveBtn);
   eventBox.appendChild(cancelBtn);
+
+  // Event listeners for buttons
+  editBtn.addEventListener("click", () => {
+    enableEditEvent(eventBox, saveBtn, cancelBtn), (isEditing = false); //Pause search from updating
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    cancelEditEvent(eventKey, eventBox);
+    resetButtons(editBtn, saveBtn, cancelBtn); // Reset button visibility
+    isEditing = true; //enable search
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    await saveEventData(eventKey, eventBox);
+    resetButtons(editBtn, saveBtn, cancelBtn); // Reset button visibility
+    isEditing = true; //enable search
+  });
+}
+
+// Helper to reset button visibility after save/cancel actions
+function resetButtons(editBtn, saveBtn, cancelBtn) {
+  editBtn.style.display = "inline-block";
+  saveBtn.style.display = "none";
+  cancelBtn.style.display = "none";
 }
 
 function createButton(text, className, display = "inline-block") {
@@ -188,7 +206,7 @@ function enableEditEvent(eventBox, saveBtn, cancelBtn) {
 }
 
 // Save the edited event data to Firebase
-function saveEventData(eventKey, eventBox) {
+async function saveEventData(eventKey, eventBox) {
   const updatedData = {};
   eventBox.querySelectorAll("input").forEach((input) => {
     const key = input.getAttribute("data-key");
@@ -196,16 +214,15 @@ function saveEventData(eventKey, eventBox) {
   });
 
   const eventRef = ref(database, `events/${eventKey}`);
-  update(eventRef, updatedData)
-    .then(() => {
-      console.log("Event updated successfully.");
-      getSponsorOrg_name().then((org_name) => {
-        fetchEventsByOrganizer(org_name); // Refresh to show updated data
-      });
-    })
-    .catch((error) => {
-      console.error("Error updating event:", error.message);
-    });
+  try {
+    await update(eventRef, updatedData);
+    console.log("Event updated successfully.");
+
+    const org_name = await getSponsorOrg_name();
+    fetchEventsByOrganizer(org_name, search); // Refresh event data
+  } catch (error) {
+    console.error("Error updating event:", error.message);
+  }
 }
 
 // Cancel editing the event and restore original content
@@ -258,10 +275,12 @@ async function getSponsorOrg_name() {
 // On window load, fetch sponsor data and events for the specified organizer
 window.onload = () => {
   setInterval(() => {
-    getSponsorOrg_name().then((org_name) => {
-      fetchSponsorData();
-      fetchEventsByOrganizer(org_name, search);
-    });
-    
+    // Check whether event is editing
+    if (isEditing) {
+      getSponsorOrg_name().then((org_name) => {
+        fetchSponsorData();
+        fetchEventsByOrganizer(org_name, search);
+      });
+    }
   }, 1000);
 };
