@@ -1,4 +1,27 @@
-app.unmount("#app");
+// Import required Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  get,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+// Firebase settings
+const firebaseConfig = {
+  apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
+  authDomain: "wad-proj-2b37f.firebaseapp.com",
+  databaseURL:
+    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "wad-proj-2b37f",
+  storageBucket: "wad-proj-2b37f.appspot.com",
+  messagingSenderId: "873354832788",
+  appId: "1:873354832788:web:41105e10dd0f7651607d81",
+  measurementId: "G-LFFLPT7G58",
+};
+
+// Initialize Realtime Database and get a reference to the service
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 const createApp = Vue.createApp({
   data() {
@@ -69,4 +92,4 @@ const createApp = Vue.createApp({
       });
     },
   }, // methods
-}).mount("#app2");
+}).mount("#app");
