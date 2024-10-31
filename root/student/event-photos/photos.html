@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Photos</title>
+    <style>
+        .photos-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .photo-item img {
+            width: 200px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Event Photos</h1>
+    <div class="photos-container" id="photosContainer"></div>
+
+    <script type="module">
+        // Firebase imports and setup, similar to your main JS file
+
+        const eventKey = new URLSearchParams(window.location.search).get("eventKey");
+        const dbRef = ref(database, `events/${eventKey}/photos`);
+
+        get(dbRef).then(snapshot => {
+            if (snapshot.exists()) {
+                const photos = snapshot.val();
+                const photosContainer = document.getElementById("photosContainer");
+                for (const photo of photos) {
+                    const photoDiv = document.createElement("div");
+                    photoDiv.className = "photo-item";
+                    photoDiv.innerHTML = `<img src="${photo.url}" alt="Event Photo">`;
+                    photosContainer.appendChild(photoDiv);
+                }
+            }
+        }).catch(error => {
+            console.error("Error loading photos:", error);
+        });
+    </script>
+</body>
+
+</html>

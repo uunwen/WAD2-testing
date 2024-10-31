@@ -56,6 +56,20 @@
             text-shadow: 1px 1px #b3e0ff;
         }
 
+        /* Event links styling */
+        #eventLinks {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        #eventLinks a {
+            color: #3399ff;
+            text-decoration: underline;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
         /* Event details styling */
         #eventData {
             margin: 40px auto;
@@ -98,16 +112,14 @@
         <!-- The header where the Project Name will be displayed -->
         <h1 id="eventHeader">Event Details</h1>
 
+        <!-- Div where dynamic event links will be displayed -->
+        <div id="eventLinks"></div>
+
+        <!-- Pagination controls for navigating between pages of events -->
+        <div id="paginationControls"></div>
+
         <!-- Div where the event data will be displayed -->
         <div id="eventData"></div>
-
-        <!-- Event buttons to simulate clicking on different events -->
-        <div>
-            <button class="event-btn" onclick="fetchEventData(1)">Event 1</button>
-            <button class="event-btn" onclick="fetchEventData(2)">Event 2</button>
-            <button class="event-btn" onclick="fetchEventData(3)">Event 3</button>
-            <!-- Add more buttons for other events as needed -->
-        </div>
     </div>
 
     <!-- Footer -->
@@ -115,8 +127,8 @@
         © 2024 Event Details | Created with Love
     </footer>
 
-    <!-- Include your JavaScript file (event.js) -->
-    <script type="module" src="event.js"></script>
+    <!-- Include your JavaScript file (events.js) -->
+    <script type="module" src="events.js"></script>
 </body>
 
 </html>
