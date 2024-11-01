@@ -52,7 +52,7 @@
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
-            background-color: #e8f5e9;
+            background-color: #e0f1f4;
             font-weight: 600;
             font-size: 1em;
         }
@@ -71,7 +71,7 @@
 
         #iconRow a:hover {
             transform: scale(1.2);
-            color: #4CAF50;
+            color: #4c9baf;
             /* Changes color on hover for better visibility */
         }
 
@@ -82,7 +82,7 @@
             margin: 10px 0;
             text-align: left;
             padding: 10px;
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #e0f1f4;
             background-color: #f9f9f9;
             border-radius: 4px;
         }
@@ -92,6 +92,27 @@
             color: #333;
             font-weight: 500;
         }
+
+
+        .back-button {
+            background-color: #e0f1f4;
+            color: black;
+            padding: 12px;
+            border: 1px solid #e0f1f4;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Hover effect for the back button */
+        .back-button:hover {
+            background-color: #d1e8ed;
+            /* Slightly darker background */
+            color: #333;
+            /* Darker text for contrast */
+            transform: scale(1.05);
+            /* Slightly enlarge the button */
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            /* Ensure smooth enlargement */
+        }
     </style>
 
 
@@ -99,6 +120,17 @@
 </head>
 
 <body>
+
+    <!-- Back Button -->
+    <div style="text-align: left; margin: 10px;">
+        <button class="btn back-button" onclick="goBack()">
+            <i class="bi bi-arrow-left"></i> Back
+        </button>
+    </div>
+
+
+
+
     <div id="sponsorDetailsContainer">
         <!-- Sponsor name as header -->
         <h1 id="sponsorTitle"></h1>
@@ -117,7 +149,7 @@
 
 
         <div id="sponsorStats"
-            style="display: flex; justify-content: space-around; background-color: #eaf4e0; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            style="display: flex; justify-content: space-around; background-color: #e0f1f4; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
             <div style="text-align: center;">
                 <div id="followers" style="font-size: 1.5em; font-weight: bold;"></div>
                 <div>Followers</div>
@@ -136,6 +168,12 @@
             <!-- Sponsor information will be displayed here -->
         </div>
 
+        <script>
+            // Back button function
+            function goBack() {
+                window.history.back();
+            }
+        </script>
 </body>
 
 </html>
