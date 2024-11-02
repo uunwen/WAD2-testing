@@ -14,7 +14,7 @@ body {
   transition: height 0.3s; /* Smooth transition for height change */
 }
 
-/* Navbar links */
+/* Navbar links  --- sorry support to be side bar but my fat fingers types all the ids wrongly, so pls just use this... */
 .navbar-links {
   list-style: none; /* Remove bullet points */
   padding: 0; /* Remove default padding */

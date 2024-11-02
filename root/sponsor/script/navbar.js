@@ -77,6 +77,7 @@ async function getSponsorData(uid) {
   }
 }
 
+
 // navbar
 export function createNavbar() {
   const urlParams = new URLSearchParams(window.location.search);

@@ -42,20 +42,10 @@
     <!-- sidebar -->
     <div class="container-fluid" class="main" id="app">
       <div class="row">
-        <div class="sidebar col-md-3">
-          <ul class="navbar-links">
-            <li>
-              <a href="./sponsor1.?uid=${uid}"
-                ><img src="../img/house.png" /> Home</a
-              >
-            </li>
-            <li>
-              <a href="./takeAttendance.html?uid=${uid}"
-                ><img src="../img/attendance.png" /> Attendance</a
-              >
-            </li>
-          </ul>
-        </div>
+        <div class="sidebar col-md-3" id="navbar-links"></div>
+
+        <!-- Drop down list to select events -->
+         
 
         <!-- QR scanner -->
         <main class="col-md-9 main-content">
@@ -109,5 +99,6 @@
         }
       });
     </script>
+    <script src="./script/sidebar.js"></script>
   </body>
 </html>

@@ -36,7 +36,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
 
 // Fetch and display sponsor data
-function fetchSponsorData() {
+export function fetchSponsorData() {
   const sponsorRef = ref(database, "sponsors/" + uid);
   get(sponsorRef)
     .then((snapshot) => {
@@ -258,7 +258,7 @@ function displayEventData(eventData, eventBox) {
   createEditButtons(eventBox, eventData.eventKey);
 }
 
-async function getSponsorOrg_name() {
+export async function getSponsorOrg_name() {
   try {
     // Fetch sponsor data
     const sponsorRef = ref(database, "sponsors/" + uid);
