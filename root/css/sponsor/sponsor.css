@@ -68,6 +68,29 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.delete-btn {
+  float: right;
+  background-color: transparent;
+  color: #ff4d4d;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  border-radius: 8px;
+}
+
+.delete-btn:hover {
+  color: #ffffff;
+  background-color: #ff4d4d;
+  border-radius: 8px;
+}
+
+.delete-btn:active {
+  background-color: #e63939; 
+  border-radius: 8px;
+}
+
 .edit-btn {
   padding: 8px 16px;
   background-color: #28a745;
@@ -110,4 +133,3 @@ h1 {
   padding: 10px;
   font-size: 14px;
 }
-

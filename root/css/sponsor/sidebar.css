@@ -14,20 +14,18 @@ body {
   transition: height 0.3s; /* Smooth transition for height change */
 }
 
-/* Navbar links */
-.navbar-links {
-  list-style: none; /* Remove bullet points */
+.sidebar {
   padding: 0; /* Remove default padding */
   margin: 0; /* Remove default margin */
 }
 
-/* Navbar link items */
-.navbar-links li {
+.sidebar li {
   margin-bottom: 15px; /* Space between items */
+  list-style-type: none; /* Remove bullets */
 }
 
 /* Link styles */
-.navbar-links a {
+.sidebar a {
   text-decoration: none; /* Remove underline */
   color: #333; /* Dark text color */
   display: flex; /* Use flexbox for alignment */
@@ -38,14 +36,14 @@ body {
 }
 
 /* Image styles */
-.navbar-links img {
+.sidebar img {
   margin-right: 10px; /* Space between image and text */
   width: 20px; /* Set image width */
   height: 20px; /* Set image height */
 }
 
 /* Hover effect for links */
-.navbar-links a:hover {
+.sidebar a:hover {
   background-color: #e2e6ea; /* Change background on hover */
   color: #007bff; /* Change text color on hover */
 }

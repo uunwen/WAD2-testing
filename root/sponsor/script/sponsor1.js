@@ -1,6 +1,7 @@
 // import from navbar.js and get search bar value
 import { search, initializeSearch } from "./navbar.js";
-let isEditing = true; // Flag to pause update from searchbar during editing
+export let isEditing = true; // Flag to pause update from searchbar during editing
+export let filteredEventsArr;
 
 // initialize the search bar
 initializeSearch();
@@ -12,6 +13,7 @@ import {
   ref,
   get,
   update,
+  set,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Firebase configuration
@@ -36,7 +38,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
 
 // Fetch and display sponsor data
-function fetchSponsorData() {
+export function fetchSponsorData() {
   const sponsorRef = ref(database, "sponsors/" + uid);
   get(sponsorRef)
     .then((snapshot) => {
@@ -82,27 +84,35 @@ function displaySponsorDetails(sponsorData) {
 }
 
 // Fetch and display events by organizer
-function fetchEventsByOrganizer(organizerName, search) {
-  const eventsRef = ref(database, "events");
-  get(eventsRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const allEvents = snapshot.val();
-        const filteredEvents = Object.entries(allEvents).filter(
-          ([, eventData]) => eventData["Organiser"] === organizerName
-        );
-        displayFilteredEvents(filteredEvents, search);
-      } else {
-        document.getElementById("eventContainer").innerHTML =
-          "<p>No events available.</p>";
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching events:", error.message);
-      document.getElementById(
-        "eventContainer"
-      ).innerHTML = `<p>Error fetching events: ${error.message}</p>`;
-    });
+export async function fetchAndDisplayEvents(organizerName, search) {
+  try {
+    const filteredEvents = await getFilteredEventsByOrganizer(organizerName);
+    displayFilteredEvents(filteredEvents, search);
+  } catch (error) {
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error fetching events: ${error.message}</p>`;
+  }
+}
+
+// Fetch events from organizer
+export async function getFilteredEventsByOrganizer(organizerName) {
+  try {
+    const eventsRef = ref(database, "events");
+    const snapshot = await get(eventsRef);
+
+    if (snapshot.exists()) {
+      const allEvents = snapshot.val();
+      const filteredEvents = Object.entries(allEvents).filter(
+        ([, eventData]) => eventData["Organiser"] === organizerName
+      );
+      return filteredEvents;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
+    throw error;
+  }
 }
 
 // Display filtered events with edit functionality
@@ -116,41 +126,48 @@ function displayFilteredEvents(events, search) {
     return;
   }
 
-  events.forEach(([eventKey, eventData]) => {
-    if (eventData["Project Name"].toLowerCase().includes(search)) {
-      const eventBox = document.createElement("div");
-      eventBox.className = "event-box";
+  try {
+    events.forEach(([eventKey, eventData]) => {
+      if (eventData["Project Name"].toLowerCase().includes(search)) {
+        const eventBox = document.createElement("div");
+        eventBox.className = "event-box";
 
-      // Create event header
-      const header = document.createElement("h3");
-      header.textContent = eventData["Project Name"] || "Unnamed Project";
-      eventBox.appendChild(header);
+        // Create event header
+        const header = document.createElement("h3");
+        header.textContent = eventData["Project Name"] || "Unnamed Project";
+        eventBox.appendChild(header);
 
-      // Display each detail of the event
-      for (const [key, value] of Object.entries(eventData)) {
-        const paragraph = document.createElement("p");
-        paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
-        paragraph.setAttribute("data-key", key);
-        eventBox.appendChild(paragraph);
+        // Display each detail of the event
+        for (const [key, value] of Object.entries(eventData)) {
+          const paragraph = document.createElement("p");
+          paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
+          paragraph.setAttribute("data-key", key);
+          eventBox.appendChild(paragraph);
+        }
+
+        // Add edit, save, and cancel buttons
+        createEditButtons(eventBox, eventKey);
+        eventContainer.appendChild(eventBox);
       }
-
-      // Add edit, save, and cancel buttons
-      createEditButtons(eventBox, eventKey);
-
-      eventContainer.appendChild(eventBox);
-    }
-  });
+    });
+  } catch (error) {
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+  }
 }
 
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
   const saveBtn = createButton("Save", "save-btn", "none");
   const cancelBtn = createButton("Cancel", "cancel-btn", "none");
+  const deleteBtn = createButton("Delete", "delete-btn");
 
   // Append buttons to the event box
   eventBox.appendChild(editBtn);
   eventBox.appendChild(saveBtn);
   eventBox.appendChild(cancelBtn);
+  eventBox.appendChild(deleteBtn);
 
   // Event listeners for buttons
   editBtn.addEventListener("click", () => {
@@ -168,6 +185,35 @@ async function createEditButtons(eventBox, eventKey) {
     resetButtons(editBtn, saveBtn, cancelBtn); // Reset button visibility
     isEditing = true; //enable search
   });
+
+  deleteBtn.addEventListener("click", async () => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
+    if (confirmDelete) {
+      await deleteEvent(eventKey, eventBox);
+    }
+  });
+}
+
+// Add new function to handle event deletion
+async function deleteEvent(eventKey, eventBox) {
+  const eventRef = ref(database, `events/${eventKey}`);
+  try {
+    // Remove the event from Firebase
+    await set(eventRef, null);
+    console.log("Event deleted successfully.");
+
+    // Remove the event box from the UI
+    eventBox.remove();
+
+    // Refresh the events display
+    const org_name = await getSponsorOrg_name();
+    fetchAndDisplayEvents(org_name, search);
+  } catch (error) {
+    console.error("Error deleting event:", error.message);
+    alert("Failed to delete event: " + error.message);
+  }
 }
 
 // Helper to reset button visibility after save/cancel actions
@@ -258,7 +304,7 @@ function displayEventData(eventData, eventBox) {
   createEditButtons(eventBox, eventData.eventKey);
 }
 
-async function getSponsorOrg_name() {
+export async function getSponsorOrg_name() {
   try {
     // Fetch sponsor data
     const sponsorRef = ref(database, "sponsors/" + uid);
@@ -271,16 +317,3 @@ async function getSponsorOrg_name() {
     console.log("getSponsorOrg_name function error occured: " + error);
   }
 }
-
-// On window load, fetch sponsor data and events for the specified organizer
-window.onload = () => {
-  setInterval(() => {
-    // Check whether event is editing
-    if (isEditing) {
-      getSponsorOrg_name().then((org_name) => {
-        fetchSponsorData();
-        fetchEventsByOrganizer(org_name, search);
-      });
-    }
-  }, 1000);
-};
