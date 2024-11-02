@@ -1,6 +1,7 @@
-// Import Firebase modules
+/// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -14,8 +15,13 @@ const firebaseConfig = {
     measurementId: "G-LFFLPT7G58",
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
+
+// Initialize Realtime Database and Firestore separately
 const database = getDatabase(app);
+const db = getFirestore(app);
+
 
 // Helper to get URL parameter
 function getQueryParam(param) {
@@ -43,9 +49,11 @@ function displayEventDetails() {
             eventContent.innerHTML = "";  // Clear previous content
 
             for (const key in data) {
-                if (data.hasOwnProperty(key) && key !== "Project Name") {
+                // Ensure key is valid and exclude specific keys
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name") {
                     const card = document.createElement("div");
                     card.className = "card";
+
                     // Set dynamic link for the 'Organiser' section
                     if (key === 'Organiser') {
                         const organiserName = data[key];
@@ -62,6 +70,7 @@ function displayEventDetails() {
                     eventContent.appendChild(card);
                 }
             }
+
 
             // Add buttons to switch tabs
             const buttonContainer = document.querySelector('.button-container');
@@ -103,16 +112,91 @@ function findSponsorKey(organiserName) {
     });
 }
 
+
+
+// Function to load and display event photos from Firestore
+async function displayEventPhotos() {
+    const eventKey = getQueryParam("eventKey");
+    if (!eventKey) {
+        console.error('Event key is missing in the URL.');
+        document.getElementById("photo-gallery").innerHTML = "<p>No event specified.</p>";
+        return;
+    }
+
+    try {
+        // Get project name from event details
+        const projectName = document.getElementById("eventTitle").textContent; // Assumes event title is set
+        if (!projectName) {
+            console.error('Project name not found.');
+            document.getElementById("photo-gallery").innerHTML = "<p>Project name not available.</p>";
+            return;
+        }
+
+        // Query Firestore for the event with the specified project name
+        const eventsRef = collection(db, "events");
+        const q = query(eventsRef, where("Project Name", "==", projectName));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const photos = data.Photos;
+
+                if (photos && Array.isArray(photos)) {
+                    const photoGallery = document.getElementById('photo-gallery');
+                    photoGallery.innerHTML = ''; // Clear existing content
+
+                    photos.forEach(photoUrl => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = photoUrl;
+                        imgElement.alt = 'Event Photo';
+                        imgElement.style.width = '200px';
+                        imgElement.style.margin = '10px';
+                        photoGallery.appendChild(imgElement);
+                    });
+                } else {
+                    document.getElementById('photo-gallery').innerHTML = '<p>No photos available for this event.</p>';
+                }
+            });
+        } else {
+            document.getElementById('photo-gallery').innerHTML = '<p>No matching event found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching photos:', error);
+        document.getElementById('photo-gallery').innerHTML = `<p>Error fetching photos: ${error.message}</p>`;
+    }
+}
+
+// Load the photos tab when the Photos section is activated
+document.getElementById('photosTab').addEventListener('click', () => {
+    showTab('photos');
+    displayEventPhotos();
+});
+
+
+
 // Event listener setup
 document.addEventListener("DOMContentLoaded", () => {
     const detailsTab = document.getElementById("detailsTab");
     const photosTab = document.getElementById("photosTab");
 
-    detailsTab.addEventListener("click", () => showTab("details"));
-    photosTab.addEventListener("click", () => showTab("photos"));
+    detailsTab.addEventListener("click", () => {
+        showTab("details");
+        // Add active class to detailsTab and remove from others
+        detailsTab.classList.add("active");
+        photosTab.classList.remove("active");
+    });
+
+    photosTab.addEventListener("click", () => {
+        showTab("photos");
+        // Add active class to photosTab and remove from others
+        photosTab.classList.add("active");
+        detailsTab.classList.remove("active");
+    });
 
     // Load default tab on page load
     showTab("details");
+    detailsTab.classList.add("active"); // Make detailsTab active by default
 });
 
 // Function to toggle between tabs
@@ -125,8 +209,12 @@ function showTab(tabName) {
 
     if (tabName === "details") {
         displayEventDetails();  // Ensure event details reload if switched to details
+    } else if (tabName === "photos") {
+        displayEventPhotos();  // Load photos when "photos" tab is active
     }
 }
+
+
 
 
 // Load default tab
