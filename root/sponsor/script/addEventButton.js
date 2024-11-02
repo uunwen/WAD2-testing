@@ -15,5 +15,9 @@ function createFloatingButton(text, url) {
   document.body.appendChild(button);
 }
 
+// Retrive user info
+const urlParams = new URLSearchParams(window.location.search);
+const uid = urlParams.get("uid");
+
 // Create the button
-createFloatingButton("+", "./upload.html");
+createFloatingButton("+", "./upload.html?uid=" + uid);
