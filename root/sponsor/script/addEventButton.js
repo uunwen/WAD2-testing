@@ -1,3 +1,7 @@
+/**
+ * @author Chan Yun Wen
+ */
+
 // Function to create the floating button
 function createFloatingButton(text, url) {
   const button = document.createElement("button");

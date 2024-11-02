@@ -1,6 +1,7 @@
 // import from navbar.js and get search bar value
 import { search, initializeSearch } from "./navbar.js";
-let isEditing = true; // Flag to pause update from searchbar during editing
+export let isEditing = true; // Flag to pause update from searchbar during editing
+export let filteredEventsArr;
 
 // initialize the search bar
 initializeSearch();
@@ -82,7 +83,7 @@ function displaySponsorDetails(sponsorData) {
 }
 
 // Fetch and display events by organizer
-function fetchEventsByOrganizer(organizerName, search) {
+export function fetchEventsByOrganizer(organizerName, search) {
   const eventsRef = ref(database, "events");
   get(eventsRef)
     .then((snapshot) => {
@@ -91,6 +92,7 @@ function fetchEventsByOrganizer(organizerName, search) {
         const filteredEvents = Object.entries(allEvents).filter(
           ([, eventData]) => eventData["Organiser"] === organizerName
         );
+        filteredEventsArr = filteredEvents;
         displayFilteredEvents(filteredEvents, search);
       } else {
         document.getElementById("eventContainer").innerHTML =
@@ -272,15 +274,15 @@ export async function getSponsorOrg_name() {
   }
 }
 
-// On window load, fetch sponsor data and events for the specified organizer
-window.onload = () => {
-  setInterval(() => {
-    // Check whether event is editing
-    if (isEditing) {
-      getSponsorOrg_name().then((org_name) => {
-        fetchSponsorData();
-        fetchEventsByOrganizer(org_name, search);
-      });
-    }
-  }, 1000);
-};
+// // On window load, fetch sponsor data and events for the specified organizer
+// window.onload = () => {
+//   setInterval(() => {
+//     // Check whether event is editing
+//     if (isEditing) {
+//       getSponsorOrg_name().then((org_name) => {
+//         fetchSponsorData();
+//         fetchEventsByOrganizer(org_name, search);
+//       });
+//     }
+//   }, 1000);
+// };

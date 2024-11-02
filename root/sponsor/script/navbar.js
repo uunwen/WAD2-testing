@@ -1,3 +1,7 @@
+/**
+ * @author Chan Yun Wen
+ */
+
 // Export searched term variable to sponsor1.js
 export let search = "";
 
@@ -76,7 +80,6 @@ async function getSponsorData(uid) {
     return null;
   }
 }
-
 
 // navbar
 export function createNavbar() {

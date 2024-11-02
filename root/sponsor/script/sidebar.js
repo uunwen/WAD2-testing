@@ -1,10 +1,14 @@
+/**
+ * @author Chan Yun Wen
+ */
+
 // Retrive user info
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
 
 // Create the HTML structure
 const navbarLinks = document.createElement("ul");
-navbarLinks.classList.add("navbar-links");
+navbarLinks.classList.add("sideBar");
 
 // Define the menu items
 const menuItems = [
@@ -41,4 +45,4 @@ menuItems.forEach((item) => {
 });
 
 // Append the navbar to the DOM, for example in a div with id 'navbar'
-document.getElementById("navbar-links").appendChild(navbarLinks);
+document.getElementById("sidebar").appendChild(navbarLinks);

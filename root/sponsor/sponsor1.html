@@ -26,7 +26,7 @@
     <!-- sidebar -->
     <div class="container-fluid" class="main" id="app">
       <div class="row">
-        <div class="sidebar col-md-3" id="navbar-links"></div>
+        <div class="sidebar col-md-3" id="sidebar"></div>
 
         <!-- events content -->
         <main class="col-md-9 main-content">
@@ -61,25 +61,28 @@
 
     <br /><br />
     <script type="module" src="./script/addEventButton.js"></script>
-    <script type="module" src="./script/sponsor1.js">
-      // import {
-      //   getSponsorOrg_name,
-      //   fetchSponsorData,
-      //   fetchEventsByOrganizer,
-      // } from "./script/sponsor1.js";
+    <script type="module">
+      import {
+        getSponsorOrg_name,
+        fetchSponsorData,
+        fetchEventsByOrganizer,
+        isEditing,
+      } from "./script/sponsor1.js";
 
-      // // On window load, fetch sponsor data and events for the specified organizer
-      // window.onload = () => {
-      //   setInterval(() => {
-      //     // Check whether event is editing
-      //     if (isEditing) {
-      //       getSponsorOrg_name().then((org_name) => {
-      //         fetchSponsorData();
-      //         fetchEventsByOrganizer(org_name, search);
-      //       });
-      //     }
-      //   }, 1000);
-      // };
+      import { search } from "./script/navbar.js";
+
+      // On window load, fetch sponsor data and events for the specified organizer
+      window.onload = () => {
+        setInterval(() => {
+          // Check whether event is editing
+          if (isEditing) {
+            getSponsorOrg_name().then((org_name) => {
+              fetchSponsorData();
+              fetchEventsByOrganizer(org_name, search);
+            });
+          }
+        }, 1000);
+      };
     </script>
     <script type="module">
       import { createNavbar, initializeSearch } from "./script/navbar.js";

@@ -1,3 +1,7 @@
+/**
+ * @author Chan Yun Wen
+ */
+
 // Import required Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
