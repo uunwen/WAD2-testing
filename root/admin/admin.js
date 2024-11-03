@@ -25,16 +25,15 @@ const adminApp = Vue.createApp({
     return {
       allEvents: [],
       selectedEvents: [],
-      textBox: "",
+      filterProjectName: "",
+      filterAdmission: "allAdmission",
     };
   },
   mounted() {
     this.loadCommunityServices();
   },
   watch: {
-    textBox() {
-      this.updateCommunityServices();
-    }
+
   },
   methods: {
     async loadCommunityServices() {
@@ -71,9 +70,48 @@ const adminApp = Vue.createApp({
       }
     },
     updateCommunityServices() {
-      this.selectedEvents = this.allEvents.filter(event =>
-        event["Project Name"].toLowerCase().includes(this.textBox.toLowerCase())
-      );
+      const date = new Date();
+      this.selectedEvents = []; // Clear previous selections
+
+      // Filter Admission Period Status  
+      // Iterate over all events
+      for (const event of this.allEvents) {
+        // Split the Admissions Period and trim any whitespace
+        const admissionsPeriod = event["Admissions Period"].split('–').map(period => period.trim());
+
+        // Check if the admissions period has two parts before proceeding
+        if (admissionsPeriod.length === 2) {
+          // Parse the start and end dates
+          const startDate = new Date(admissionsPeriod[0]);
+          const endDate = new Date(admissionsPeriod[1]);
+
+          // Check if the current date is within the admissions period
+          if (this.filterAdmission === "allAdmission") {
+            this.selectedEvents.push(event)
+          }
+          else if (this.filterAdmission === "ongoingAdmission" && date >= startDate && date <= endDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added ongoing event: ${event['Project Name']}`);
+          }
+          else if (this.filterAdmission === "upcomingAdmission" && date < startDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added upcoming event: ${event['Project Name']}`);
+          }
+          else if (this.filterAdmission === "completedAdmission" && date > endDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added completed event: ${event['Project Name']}`);
+          }
+        }
+      }
+
+      // Filter Project Name
+      if (this.filterProjectName != "") {
+        this.selectedEvents = this.selectedEvents.filter(event =>
+          event["Project Name"].toLowerCase().includes(this.filterProjectName.toLowerCase())
+        );
+      }
+      // Iterate over selected events
+      console.log(this.selectedEvents);
     }
   }
 });
