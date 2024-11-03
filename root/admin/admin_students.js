@@ -23,37 +23,33 @@ const dbRef = ref(database); // Reference to the root of the database
 const adminApp = Vue.createApp({
   data() {
     return {
-      allEvents: [],
-      selectedEvents: [],
+      allStudents: [],
+      selectedStudents: [],
       minHour: 0,
       maxHour: 0,
-      organisers: [],
       filterMinHours: this.minHour,
       filterMaxHours: this.maxHour,
-      filterProjectStatus: "allProjects",
-      filterProjectName: "",
-      filterAdmission: "allAdmission",
-      filterOrganiser: "allOrganisers"
+      filterStudentName: "",
     };
   },
   mounted() {
-    this.loadCommunityServices();
+    this.loadStudents();
   },
   watch: {
 
   },
   methods: {
-    async loadCommunityServices() {
+    async loadStudents() {
       get(dbRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            this.allEvents = Object.keys(data.events).map(eventKey => ({
-              ...data.events[eventKey],
-              eventKey,
+            this.allStudents = Object.keys(data.students).map(studentKey => ({
+              ...data.students[studentKey],
+              studentKey,
             }));
-            // Initially set selectedEvents to allEvents
-            this.selectedEvents = this.allEvents;
+            // Initially set selectedStudents to allStudents
+            this.selectedStudents = this.allStudents;
             this.findFilterParameters();
           } else {
             console.log("No data available");
@@ -63,144 +59,54 @@ const adminApp = Vue.createApp({
           console.error("Error fetching data:", error);
         });
     },
-    async updateStatus(index) {
-      const selectedEvent = this.selectedEvents[index];
-      console.log(selectedEvent);
-      if (selectedEvent.Status === "Not Approved") {
-        try {
-          const statusRef = ref(database, `events/${selectedEvent.eventKey}`);
-          await update(statusRef, { Status: "Approved" });
-          selectedEvent.Status = "Approved"; // Update the local data
-          console.log("Status successfully updated!");
-        } catch (error) {
-          console.error("Error updating status:", error);
-        }
-      }
-    },
     findFilterParameters() {
-      if (this.allEvents.length > 0) {
-        const firstEventHours = this.allEvents[0]["Total CSP hours"];
-        this.minHour = firstEventHours;
-        this.maxHour = firstEventHours;
+      if (this.allStudents.length > 0) {
+        const firstHour = this.allStudents[0]["hours_left"];
+        this.minHour = firstHour;
+        this.maxHour = firstHour;
       }
-      for (const event of this.allEvents) {
-        const hours = event["Total CSP hours"];
-        const organiser = event["Organiser"];
+      for (const student of this.allStudents) {
+        const hours = student["hours_left"];
         if (hours < this.minHour) {
           this.minHour = hours;
         }
         if (hours > this.maxHour) {
           this.maxHour = hours;
         }
-        if (!this.organisers.includes(organiser)) {
-          this.organisers.push(organiser);
-        }
       }
 
       this.filterMinHours = this.minHour
       this.filterMaxHours = this.maxHour
-      console.log("Organiser", this.organiser);
-      console.log("Min hours:", this.minHour);
-      console.log("Max hours:", this.maxHour);
     },
-    updateCommunityServices() {
-      const date = new Date();
-      this.selectedEvents = []; // Clear previous selections
+    updateRecords() {
 
-      // Filter Admission Period Status  
-      // Iterate over all events
-      for (const event of this.allEvents) {
-        // Split the Admissions Period and trim any whitespace
-        const admissionsPeriod = event["Admissions Period"].split('–').map(period => period.trim());
+      this.selectedStudents = this.allStudents.filter(student => {
+        // Filter by student name
+        const matchesName = this.filterStudentName === "" || student.name.toLowerCase().includes(this.filterStudentName.toLowerCase());
+        
+        // Filter by hours left
+        const matchesHours = student.hours_left >= this.filterMinHours && student.hours_left <= this.filterMaxHours;
 
-        // Check if the admissions period has two parts before proceeding
-        if (admissionsPeriod.length === 2) {
-          // Parse the start and end dates
-          const startDate = new Date(admissionsPeriod[0]);
-          const endDate = new Date(admissionsPeriod[1]);
-
-          // Check if the current date is within the admissions period
-          if (this.filterAdmission === "allAdmission") {
-            this.selectedEvents.push(event)
-          }
-          else if (this.filterAdmission === "ongoingAdmission" && date >= startDate && date <= endDate) {
-            this.selectedEvents.push(event);
-            console.log(`Added ongoing event: ${event['Project Name']}`);
-          }
-          else if (this.filterAdmission === "upcomingAdmission" && date < startDate) {
-            this.selectedEvents.push(event);
-            console.log(`Added upcoming event: ${event['Project Name']}`);
-          }
-          else if (this.filterAdmission === "completedAdmission" && date > endDate) {
-            this.selectedEvents.push(event);
-            console.log(`Added completed event: ${event['Project Name']}`);
-          }
-        }
-      }
-
-      // Filter Project Name
-      if (this.filterProjectName != "") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Project Name"].toLowerCase().includes(this.filterProjectName.toLowerCase())
-        );
-      }
-
-      //Filter Project Status
-      if (this.filterProjectStatus == "approvedProjects") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Status"] == "Approved"
-        );
-      }
-      else if (this.filterProjectStatus == "notApprovedProjects") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Status"] == "Not Approved"
-        );
-      }
-
-      // Filter Organisers
-      if (this.filterOrganiser != "allOrganisers") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Organiser"] == this.filterOrganiser
-        );
-      }
-
-      // Filter Total CSP Hours
-      this.selectedEvents = this.selectedEvents.filter(event => 
-        event["Total CSP hours"] <= this.filterMaxHours && event["Total CSP hours"] >= this.filterMinHours
-      );
+        // Return true if both conditions match
+        return matchesName && matchesHours;
+      });
     }
-
   }
 });
 
 
-adminApp.component('communityServiceRecords', {
+adminApp.component('studentRecords', {
   props: ['record', 'index'],
-  emits: ["updateStatus"],
+  emits: [],
   template: `
         <tr>
             <td class="align-middle">{{ index }}</td>
-            <td class="align-middle">{{ record['Admissions Period'] }}</td>
-            <td class="align-middle">{{ record.Capacity }}</td>
-            <td class="align-middle">{{ record.Location }}</td>
-            <td class="align-middle">{{ record.Organiser }}</td>
-            <td class="align-middle">{{ record['Project Name'] }}</td>
-            <td class="align-middle">{{ record.Region }}</td>
-            <td class="align-middle">{{ record['Session(s)'] }}</td>
-            <td class="align-middle">{{ record['Total CSP hours'] }}</td>
-            <td class="align-middle">{{ record['Volunteer Period'] }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
-            <td class="align-middle"><button class="btn btn-light">View</button></td>
+            <td class="align-middle">{{ record.name }}</td>
+            <td class="align-middle">{{ record.email }}</td>
+            <td class="align-middle">{{ record.hours_left }}</td>
         </tr>
   `
 });
 
-adminApp.component('organisersList', {
-  props: ['organiser'],
-  emits: [],
-  template: `
-        <option :value="organiser">{{organiser}}</option>
-  `
-});
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)

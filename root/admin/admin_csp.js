@@ -99,9 +99,6 @@ const adminApp = Vue.createApp({
 
       this.filterMinHours = this.minHour
       this.filterMaxHours = this.maxHour
-      console.log("Organiser", this.organiser);
-      console.log("Min hours:", this.minHour);
-      console.log("Max hours:", this.maxHour);
     },
     updateCommunityServices() {
       const date = new Date();
