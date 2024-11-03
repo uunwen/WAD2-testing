@@ -124,15 +124,13 @@ async function displayEventPhotos() {
     }
 
     try {
-        // Get project name from event details
-        const projectName = document.getElementById("eventTitle").textContent; // Assumes event title is set
+        const projectName = document.getElementById("eventTitle").textContent;
         if (!projectName) {
             console.error('Project name not found.');
             document.getElementById("photo-gallery").innerHTML = "<p>Project name not available.</p>";
             return;
         }
 
-        // Query Firestore for the event with the specified project name
         const eventsRef = collection(db, "events");
         const q = query(eventsRef, where("Project Name", "==", projectName));
         const querySnapshot = await getDocs(q);
@@ -146,12 +144,19 @@ async function displayEventPhotos() {
                     const photoGallery = document.getElementById('photo-gallery');
                     photoGallery.innerHTML = ''; // Clear existing content
 
+                    // Append each photo directly into the grid container
                     photos.forEach(photoUrl => {
                         const imgElement = document.createElement('img');
                         imgElement.src = photoUrl;
                         imgElement.alt = 'Event Photo';
-                        imgElement.style.width = '200px';
-                        imgElement.style.margin = '10px';
+
+                        // Apply CSS directly to the image element
+                        imgElement.style.width = '100%';  // Ensures the image fits the card width
+                        imgElement.style.height = '300px'; // Sets a fixed height for all images
+                        imgElement.style.objectFit = 'cover'; // Ensures the image covers the space without distortion
+                        imgElement.style.borderRadius = '8px'; // Optional rounded corners
+                        imgElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'; // Optional shadow for styling
+
                         photoGallery.appendChild(imgElement);
                     });
                 } else {
@@ -166,6 +171,32 @@ async function displayEventPhotos() {
         document.getElementById('photo-gallery').innerHTML = `<p>Error fetching photos: ${error.message}</p>`;
     }
 }
+
+
+
+
+// Ensure each image element gets proper styling when created
+function displayPhotoGallery() {
+    const photoEndpoint = 'https://example.com/api/photos';
+
+    fetch(photoEndpoint)
+        .then(response => response.json())
+        .then(data => {
+            const photoGallery = document.getElementById('photo-gallery');
+            photoGallery.innerHTML = ''; // Clear existing photos
+            data.forEach(photo => {
+                const imgElement = document.createElement('img');
+                imgElement.src = photo; // Ensure this matches your data format
+                imgElement.alt = 'Photo';
+                photoGallery.appendChild(imgElement); // Append directly
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching photos:', error);
+        });
+}
+
+
 
 // Load the photos tab when the Photos section is activated
 document.getElementById('photosTab').addEventListener('click', () => {
