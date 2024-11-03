@@ -10,6 +10,12 @@ import {
   get,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+// Import filtered event from sponsor1.js
+import {
+  getSponsorOrg_name,
+  getFilteredEventsByOrganizer,
+} from "./sponsor1.js";
+
 // Firebase settings
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
@@ -97,3 +103,23 @@ const createApp = Vue.createApp({
     },
   }, // methods
 }).mount("#app");
+
+async function updateOptions() {
+  const org_name = await getSponsorOrg_name();
+  let filteredEvent = await getFilteredEventsByOrganizer(org_name);
+
+  const eventsSelect = document.getElementById("events");
+
+  // Clear existing options
+  eventsSelect.innerHTML = "";
+
+  // Populate with new options
+  for (let i = 0; i < filteredEvent.length; i++) {
+    let event = await filteredEvent[i][1]["Project Name"];
+    const option = document.createElement("option");
+    option.text = event;
+    eventsSelect.add(option);
+  }
+}
+
+updateOptions();
