@@ -123,16 +123,37 @@ window.sponsorLogin = async function sponsorLogin() {
   }
 };
 
-// Function to show/hide forms
+// Function to show/hide forms and scroll to the selected form
+// window.showForm = function (formId) {
+//   const forms = [
+//     "loginOptions",
+//     "communityServiceForm",
+//     "userForm",
+//     "adminForm",
+//   ];
+
+//   forms.forEach((form) => {
+//     document.getElementById(form).style.display = form === formId ? "block" : "none";
+//   });
+
+  // Scroll smoothly to the form if it's not the main login options
+//   if (formId !== "loginOptions") {
+//     document.getElementById(formId).scrollIntoView({ behavior: 'smooth' });
+//   }
+// };
+
+// Function to show the modal form
 window.showForm = function (formId) {
-  const forms = [
-    "loginOptions",
-    "communityServiceForm",
-    "userForm",
-    "adminForm",
-  ];
-  forms.forEach((form) => {
-    document.getElementById(form).style.display =
-      form === formId ? "block" : "none";
-  });
+  const modal = document.getElementById(formId + "Modal");
+  if (modal) {
+      modal.style.display = "flex"; // Show the modal as a flex container
+  }
+};
+
+// Function to hide the modal form
+window.hideModal = function (formId) {
+  const modal = document.getElementById(formId);
+  if (modal) {
+      modal.style.display = "none"; // Hide the modal
+  }
 };
