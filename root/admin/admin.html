@@ -22,6 +22,20 @@
         .main-content {
             width: 95%;
             margin-top: 25px;
+            position: relative;
+        }
+
+        .filter-wrapper {
+            position: absolute;
+            /* Position it absolutely */
+            top: 10px;
+            /* Distance from the top of the container */
+            right: 20px;
+            /* Distance from the right of the container */
+        }
+
+        .filters {
+            width: 900px;
         }
     </style>
 </head>
@@ -64,11 +78,98 @@
                 </div>
             </div>
         </div>
+
     </nav>
 
-    <div class="container-fluid main-content overflow-scroll mx-auto text-center" class="main" id="adminApp">
+    <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
+        <div class="filter-wrapper position-absolute">
+            <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
+
+            
+            <!-- Filters Menu (Hidden by default, shown on hover) -->
+            <div id="filter-menu" class="filters">
+                <h2>FILTERS</h2>
+
+                <div class="filter-group ">
+                    <div class="row">
+                        <span class="filter-label">Admission Status: </span>
+                        <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
+                            <select v-model="filterAdmission" class="form-select" aria-label="Admission Status">
+                                <option value="allAdmission" selected>All Admission</option>
+                                <option value="ongoingAdmission">Ongoing Admission</option>
+                                <option value="upcomingAdmission">Upcoming Admission</option>
+                                <option value="completedAdmission">Completed Admission</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group ">
+                    <span class="filter-label">Capacity</span>
+                    <div class="row filter-options ">
+                        <div class="col-lg-1 col-md-1 col-sm-1 mb-2">
+                            <p>From </p>
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-5 mb-2">
+                            <input type="number" class="form-control" placeholder="Min Capacity"
+                                aria-label="Minimum Volunteer Period" min="0" />
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-sm-1 mb-2">
+                            <p> To </p>
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-5 mb-2">
+                            <input type="number" class="form-control" placeholder="Max Capacity"
+                                aria-label="Minimum Volunteer Period" min="1" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group ">
+                    <span class="filter-label">Day: </span>
+                    <div class="row filter-options ">
+                        <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
+                            <select class="form-select" aria-label="Volunteer Day">
+                                <option value="All" selected>All Days</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group ">
+                    <span class="filter-label">Project Name:</span>
+                    <div class="row filter-options ">
+                        <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
+                            <input type="text" class="form-control" placeholder="E.g. Beach Clean Up"
+                                aria-label="Project Name" v-model="filterProjectName" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Total CSP Hours:</span>
+                    <div class="row filter-options">
+                        <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
+                            <input type="number" class="form-control" placeholder="Total Hours"
+                                aria-label="Total Hours" min="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <button id="submit-btn" @click="updateCommunityServices">Submit</button>
+            </div>
+        </div>
         <h1>Community Services</h1>
-        <table class="table">
+        <p id="enteredText">{{filterProjectName}}</p>
+        <table class="table  overflow-scroll">
             <thead>
                 <tr>
                     <th>#</th>
@@ -88,13 +189,8 @@
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(record, idx) in admissionsPeriod">
-                    <community-service-records :index="Number(idx) + 1" :admissions-period="record" :description="description[idx]"
-                        :capacity="capacity[idx]" :location="location[idx]" :organiser="organiser[idx]"
-                        :project-name="projectName[idx]" :project-requirements="projectRequirements[idx]"
-                        :region="region[idx]" :sessions="sessions[idx]" :total-csp-hours="totalCSPHours[idx]"
-                        :volunteer-period="volunteerPeriod[idx]" :status="status[idx]" :event-key="eventKey" @update-status="updateStatus(idx)" >
-                    </community-service-records>
+                <template v-for="(record, idx) in selectedEvents" :key="record.eventKey">
+                    <community-service-records :record="record" :index="idx + 1" @update-status="updateStatus(idx)" />
                 </template>
             </tbody>
         </table>

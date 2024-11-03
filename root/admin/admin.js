@@ -23,105 +23,118 @@ const dbRef = ref(database); // Reference to the root of the database
 const adminApp = Vue.createApp({
   data() {
     return {
-      admissionsPeriod: [],
-      capacity: [],
-      description: [],
-      location: [],
-      organiser: [],
-      projectName: [],
-      projectRequirements: [],
-      region: [],
-      sessions: [],
-      totalCSPHours: [],
-      volunteerPeriod: [],
-      status: [],
-      eventKey: [],
+      allEvents: [],
+      selectedEvents: [],
+      filterProjectName: "",
+      filterAdmission: "allAdmission",
     };
-  }, // data
-  computed: {
-
   },
   mounted() {
     this.loadCommunityServices();
   },
+  watch: {
+
+  },
   methods: {
-    getUser() {
-      return this.account
-    },
     async loadCommunityServices() {
       get(dbRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            // dataDisplayDiv.innerHTML = ""; // Clear previous content
-            console.log(data.events);
-            // Assuming 'events' is the parent node of all event data
-            for (const eventKey in data.events) {
-              this.eventKey.push(eventKey);
-              const eventDetails = data.events[eventKey];
-              this.admissionsPeriod.push(eventDetails["Admissions Period"]);
-              this.capacity.push(eventDetails["Capacity"]);
-              this.description.push(eventDetails["Description"]);
-              this.location.push(eventDetails["Location"]);
-              this.organiser.push(eventDetails["Organiser"]);
-              this.projectName.push(eventDetails["Project Name"]);
-              this.projectRequirements.push(eventDetails["Project Requirements"]);
-              this.region.push(eventDetails["Region"]);
-              this.sessions.push(eventDetails["Session(s)"]);
-              this.status.push(eventDetails["Status"]);
-              this.totalCSPHours.push(eventDetails["Total CSP hours"]);
-              this.volunteerPeriod.push(eventDetails["Volunteer Period"]);
-            };
-          }
-          else {
-            // dataDisplayDiv.innerHTML = "<p>No data available</p>"; // Show message if no data is found
+            this.allEvents = Object.keys(data.events).map(eventKey => ({
+              ...data.events[eventKey],
+              eventKey,
+            }));
+            // Initially set selectedEvents to allEvents
+            this.selectedEvents = this.allEvents;
+          } else {
+            console.log("No data available");
           }
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
-          // dataDisplayDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         });
     },
     async updateStatus(index) {
-      console.log(index);
-      console.log(this.status[index]);
-      if (this.status[index] === "Not Approved") {
+      const selectedEvent = this.selectedEvents[index];
+      console.log(selectedEvent);
+      if (selectedEvent.Status === "Not Approved") {
         try {
-          const statusRef = ref(database, `events/${this.eventKey[index]}`);
+          const statusRef = ref(database, `events/${selectedEvent.eventKey}`);
           await update(statusRef, { Status: "Approved" });
-          this.status[index] = "Approved"; // Update the local data
-          console.log("Document successfully updated!");
+          selectedEvent.Status = "Approved"; // Update the local data
+          console.log("Status successfully updated!");
         } catch (error) {
-          console.error("Error updating document:", error);
+          console.error("Error updating status:", error);
         }
       }
+    },
+    updateCommunityServices() {
+      const date = new Date();
+      this.selectedEvents = []; // Clear previous selections
+
+      // Filter Admission Period Status  
+      // Iterate over all events
+      for (const event of this.allEvents) {
+        // Split the Admissions Period and trim any whitespace
+        const admissionsPeriod = event["Admissions Period"].split('–').map(period => period.trim());
+
+        // Check if the admissions period has two parts before proceeding
+        if (admissionsPeriod.length === 2) {
+          // Parse the start and end dates
+          const startDate = new Date(admissionsPeriod[0]);
+          const endDate = new Date(admissionsPeriod[1]);
+
+          // Check if the current date is within the admissions period
+          if (this.filterAdmission === "allAdmission") {
+            this.selectedEvents.push(event)
+          }
+          else if (this.filterAdmission === "ongoingAdmission" && date >= startDate && date <= endDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added ongoing event: ${event['Project Name']}`);
+          }
+          else if (this.filterAdmission === "upcomingAdmission" && date < startDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added upcoming event: ${event['Project Name']}`);
+          }
+          else if (this.filterAdmission === "completedAdmission" && date > endDate) {
+            this.selectedEvents.push(event);
+            console.log(`Added completed event: ${event['Project Name']}`);
+          }
+        }
+      }
+
+      // Filter Project Name
+      if (this.filterProjectName != "") {
+        this.selectedEvents = this.selectedEvents.filter(event =>
+          event["Project Name"].toLowerCase().includes(this.filterProjectName.toLowerCase())
+        );
+      }
+      // Iterate over selected events
+      console.log(this.selectedEvents);
     }
-  } // methods
+  }
 });
 
+
 adminApp.component('communityServiceRecords', {
-  props: ['eventKey', 'index', 'admissionsPeriod', 'capacity', 'description', 'location',
-    'organiser', 'projectName', 'projectRequirements', 'region',
-    'sessions', 'totalCspHours', 'volunteerPeriod', 'status'],
+  props: ['record', 'index'],
   emits: ["updateStatus"],
-  template:
-    `
-      <tr>
-        <td>{{index}}</td>
-        <td>{{admissionsPeriod}}</td>
-        <td>{{capacity}}</td>
-        <!-- <td>{{description}}</td> -->
-        <td>{{location}}</td>
-        <td>{{organiser}}</td>
-        <td>{{projectName}}</td>
-        <!-- <td>{{projectRequirements}}</td> -->
-        <td>{{region}}</td>
-        <td>{{sessions}}</td>
-        <td>{{totalCspHours}}</td>
-        <td>{{volunteerPeriod}}</td>
-        <td><button id="{{index}}" class="btn btn-light" @click="$emit('updateStatus')">{{status}}</button></td>
-        <td><button class="btn btn-light">View</button></td>
-      </tr>
+  template: `
+        <tr>
+            <td>{{ index }}</td>
+            <td>{{ record['Admissions Period'] }}</td>
+            <td>{{ record.Capacity }}</td>
+            <td>{{ record.Location }}</td>
+            <td>{{ record.Organiser }}</td>
+            <td>{{ record['Project Name'] }}</td>
+            <td>{{ record.Region }}</td>
+            <td>{{ record['Session(s)'] }}</td>
+            <td>{{ record['Total CSP hours'] }}</td>
+            <td>{{ record['Volunteer Period'] }}</td>
+            <td><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
+            <td><button class="btn btn-light">View</button></td>
+        </tr>
   `
 });
 
