@@ -68,6 +68,8 @@
 
     <div class="container-fluid main-content overflow-scroll mx-auto text-center" class="main" id="adminApp">
         <h1>Community Services</h1>
+        <input v-model="textBox" type="text" :keyup="updateCommunityServices()">
+        <p id="enteredText">{{textBox}}</p>
         <table class="table">
             <thead>
                 <tr>
@@ -88,13 +90,8 @@
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(record, idx) in admissionsPeriod">
-                    <community-service-records :index="Number(idx) + 1" :admissions-period="record" :description="description[idx]"
-                        :capacity="capacity[idx]" :location="location[idx]" :organiser="organiser[idx]"
-                        :project-name="projectName[idx]" :project-requirements="projectRequirements[idx]"
-                        :region="region[idx]" :sessions="sessions[idx]" :total-csp-hours="totalCSPHours[idx]"
-                        :volunteer-period="volunteerPeriod[idx]" :status="status[idx]" :event-key="eventKey" @update-status="updateStatus(idx)" >
-                    </community-service-records>
+                <template v-for="(record, idx) in selectedEvents" :key="record.eventKey">
+                    <community-service-records :record="record" :index="idx" @update-status="updateStatus(idx)" />
                 </template>
             </tbody>
         </table>
