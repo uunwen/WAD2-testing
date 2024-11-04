@@ -21,9 +21,7 @@
 <body>
 
     <div style="text-align: left; margin: 10px;">
-        <button class="btn back-button" onclick="goBack()">
-            ← Back
-        </button>
+        <button class="btn back-button" onclick="goBack()">← Back</button>
     </div>
 
     <!-- Project Name Title -->
@@ -37,18 +35,17 @@
 
     <!-- Event Details Section -->
     <div id="eventDetailsContainer">
+        <!-- Cover photo container -->
+        <div id="cover-photo-container"></div>
         <div id="eventContent"></div>
         <div class="button-container"></div>
     </div>
-
 
     <!-- Photos Section -->
     <div id="photosSection" style="display: none;">
         <h2>Photo Gallery</h2>
         <div id="photo-gallery" class="photo-gallery"></div>
     </div>
-
-
 
     <script>
         // Function to toggle between tabs
@@ -65,13 +62,11 @@
             document.getElementById(tabName + 'Section').style.display = 'block';
             document.getElementById(tabName + 'Tab').classList.add('active');
 
-            // If the details tab is selected, load event details
+            // If the details tab is selected, load event details and display the cover photo
             if (tabName === 'details') {
                 displayEventDetails();
             }
         }
-
-
 
         // Back button function
         function goBack() {
