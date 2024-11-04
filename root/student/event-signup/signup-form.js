@@ -24,6 +24,31 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+
+// Function to display a success message
+function displaySuccessMessage(eventName) {
+    // Create a new element to show the success message
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `Successfully signed up for ${eventName}`;
+    messageElement.style.color = 'green';
+    messageElement.style.textAlign = 'center';
+    messageElement.style.marginTop = '20px';
+    messageElement.id = 'successMessage';
+
+    // Append the message element to the signup form container or body
+    const formContainer = document.getElementById('signupFormContainer');
+    formContainer.appendChild(messageElement);
+
+    // Remove the message after a few seconds
+    setTimeout(() => {
+        if (document.getElementById('successMessage')) {
+            formContainer.removeChild(messageElement);
+        }
+    }, 5000);
+}
+
+
+
 // Load event name in form header
 const eventName = getQueryParam("eventName");
 document.getElementById("eventName").textContent = eventName || "the Event";
@@ -139,10 +164,11 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
         school,
         contact
     }).then(() => {
-        alert("You have successfully signed up for the event!");
+        displaySuccessMessage(eventName); // Display success message
         document.getElementById("signupForm").reset(); // Clear form
     }).catch((error) => {
-        console.error("Error submitting data:", error);
-        alert("An error occurred while signing up. Please try again.");
+        console.error("Detailed Error:", error);
+        alert(`Error: ${error.message}`);
     });
+
 });
