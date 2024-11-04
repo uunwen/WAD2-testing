@@ -1,47 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Sign-ups</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <h1>Event Sign-ups</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Sign-ups</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Event Sign-ups</h1>
 
-  <label for="event-select">Select Event:</label>
-  <select id="event-select">
-    <!-- Options will be populated dynamically -->
-  </select>
-  
-  <!-- Drop down list to select events --> 
-  <div id="dropDown"> 
-    <!-- Todo: disable user selection after attandance system start scanning --> 
-    <label for="events">Select Event:</label> 
-    <select id="events" v-model="selectedEvent"></select> 
-  </div>
-  
-  <table id="student-table">
-    <thead>
-      <tr>
-        <th>Name</th> <!-- Header for Name -->
-      </tr>
-    </thead>
-    <tbody id="student-table-body">
-      <!-- Rows will be added dynamically by JavaScript -->
-    </tbody>
-  </table>
-  
-  <!-- Counter for total students signed up -->
-  <div id="total-count">
-    Total Students Signed Up: <span id="student-count">0</span>
-  </div>
+    <!-- Drop down list to select events -->
+    <div id="event-select" class="dropDown">
+      <!-- Todo: disable user selection after attandance system start scanning -->
+      <label for="events">Select Event:</label>
+      <select id="events" v-model="selectedEvent"></select>
+    </div>
 
-  <!-- Firebase Libraries -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <table id="student-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <!-- Header for Name -->
+        </tr>
+      </thead>
+      <tbody id="student-table-body">
+        <!-- Rows will be added dynamically by JavaScript -->
+      </tbody>
+    </table>
 
-  <!-- Your custom JavaScript -->
-  <script src="script.js"></script>
-</body>
+    <!-- Counter for total students signed up -->
+    <div id="total-count">
+      Total Students Signed Up: <span id="student-count">0</span>
+    </div>
+
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <!-- Your custom JavaScript -->
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
