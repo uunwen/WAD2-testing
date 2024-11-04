@@ -48,7 +48,7 @@ async function fetchEventSignUps() {
     }
 }
 
-// Function to create the pie chart
+// Function to create the bar chart
 function createChart(eventNames, signUpCounts, eventKeys) {
     const ctx = document.getElementById('signupChart').getContext('2d');
     const colors = [
@@ -73,7 +73,7 @@ function createChart(eventNames, signUpCounts, eventKeys) {
     const datasetColors = colors.slice(0, eventNames.length);
 
     const signupChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'bar',
         data: {
             labels: eventNames,
             datasets: [{
@@ -85,6 +85,14 @@ function createChart(eventNames, signUpCounts, eventKeys) {
             }]
         },
         options: {
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            },
             onClick: (evt) => {
                 const activePoints = signupChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
                 if (activePoints.length) {
