@@ -33,7 +33,8 @@ const adminApp = Vue.createApp({
       filterProjectStatus: "allProjects",
       filterProjectName: "",
       filterAdmission: "allAdmission",
-      filterOrganiser: "allOrganisers"
+      filterOrganiser: "allOrganisers",
+      showPopup: false,
     };
   },
   mounted() {
@@ -43,6 +44,12 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    closePopup() {
+      this.showPopup = false;
+    },
+    showPopup() {
+      this.showPopup = true;
+    },
     async loadCommunityServices() {
       get(dbRef)
         .then((snapshot) => {
@@ -176,7 +183,7 @@ adminApp.component('communityServiceRecords', {
   emits: ["updateStatus"],
   template: `
         <tr>
-            <td class="align-middle">{{ index }}</td>
+            <td class="align-middle"><b>{{ index }}</b></td>
             <td class="align-middle">{{ record['Admissions Period'] }}</td>
             <td class="align-middle">{{ record.Capacity }}</td>
             <td class="align-middle">{{ record.Location }}</td>

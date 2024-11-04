@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Projects</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
@@ -41,6 +41,31 @@
             right: 25px;
             top: 125px;
             height: 100%;
+        }
+
+        /* Basic styling for the popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .popup-display {
+            display: none;
         }
     </style>
 </head>
@@ -97,7 +122,8 @@
 
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Project Application Status:</span>
-                    <select v-model="filterProjectStatus" class="form-select w-100" aria-label="Project Application Status">
+                    <select v-model="filterProjectStatus" class="form-select w-100"
+                        aria-label="Project Application Status">
                         <option value="allProjects" selected>All</option>
                         <option value="approvedProjects">Approved</option>
                         <option value="notApprovedProjects">Not Approved</option>
@@ -149,7 +175,7 @@
                     <select v-model="filterOrganiser" class="form-select w-100" aria-label="Orgainsers">
                         <option selected value="allOrganisers" selected>All Organisers</option>
                         <template v-for="organiser in organisers">
-                            <organisers-list :organiser="organiser"/>
+                            <organisers-list :organiser="organiser" />
                         </template>
                     </select>
                 </div>
@@ -182,7 +208,17 @@
                     <community-service-records :record="record" :index="idx + 1" @update-status="updateStatus(idx)" />
                 </template>
             </tbody>
+
+
         </table>
+    </div>
+    <button @click="showPopup = true">Open Popup</button>
+    <div v-if="showPopup" class="popup-overlay popup-display" @click="closePopup">
+        <div class="popup-content popup-display">
+            <h2>Popup Title</h2>
+            <p>This is a mini popup page.</p>
+            <button @click="closePopup">Close Popup</button>
+        </div>
     </div>
 
     <!-- script for event cards -->
