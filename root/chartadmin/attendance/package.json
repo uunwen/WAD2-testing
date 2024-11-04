@@ -1,0 +1,15 @@
+{
+  "name": "attendance",
+  "version": "1.0.0",
+  "description": "```terminal\r npm init --y\r npm i html5-qrcode\r ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "html5-qrcode": "^2.3.8"
+  }
+}

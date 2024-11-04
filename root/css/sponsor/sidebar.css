@@ -1,0 +1,49 @@
+/* Sidebar styles */
+body {
+  display: flex; /* Use flexbox for the body */
+  min-height: 100vh; /* Ensure the body takes at least the full height of the viewport */
+  margin: 0; /* Remove default margin */
+}
+
+.sidebar {
+  background-color: #f8f9fa; /* Light background color */
+  padding: 20px; /* Add padding */
+  border-right: 1px solid #ddd; /* Light border on the right */
+  height: auto; /* Dynamic height based on content */
+  position: relative; /* Position relative to its parent */
+  transition: height 0.3s; /* Smooth transition for height change */
+}
+
+.sidebar {
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+.sidebar li {
+  margin-bottom: 15px; /* Space between items */
+  list-style-type: none; /* Remove bullets */
+}
+
+/* Link styles */
+.sidebar a {
+  text-decoration: none; /* Remove underline */
+  color: #333; /* Dark text color */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center align items vertically */
+  padding: 10px; /* Add padding */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth background change */
+}
+
+/* Image styles */
+.sidebar img {
+  margin-right: 10px; /* Space between image and text */
+  width: 20px; /* Set image width */
+  height: 20px; /* Set image height */
+}
+
+/* Hover effect for links */
+.sidebar a:hover {
+  background-color: #e2e6ea; /* Change background on hover */
+  color: #007bff; /* Change text color on hover */
+}
