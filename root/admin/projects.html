@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Projects</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
@@ -23,19 +23,49 @@
             width: 95%;
             margin-top: 25px;
             position: relative;
+            margin-top: 4.5%;
         }
 
         .filter-wrapper {
             position: absolute;
             /* Position it absolutely */
-            top: 10px;
+            top: -10px;
             /* Distance from the top of the container */
-            right: 20px;
+            right: 30px;
             /* Distance from the right of the container */
         }
 
         .filters {
-            width: 900px;
+            width: 600px;
+            position: fixed;
+            right: 25px;
+            top: 125px;
+            height: 100%;
+        }
+
+        /* Basic styling for the popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .popup-display {
+            display: none;
         }
     </style>
 </head>
@@ -43,7 +73,7 @@
 <body>
 
     <!-- Bootstrap Navbar with icons -->
-    <nav class="navbar navbar-expand-lg position-sticky top-0">
+    <nav class="navbar navbar-expand-lg  fixed-top top-0">
         <a href="admin.html" class="navbar-brand brand-icon"><img src="../img/social-services.png" alt="">RIGHTTRACK</a>
 
         <div class="container-fluid d-flex justify-content-end"> <!-- Align icons to the right -->
@@ -85,91 +115,76 @@
         <div class="filter-wrapper position-absolute">
             <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
 
-            
+
             <!-- Filters Menu (Hidden by default, shown on hover) -->
             <div id="filter-menu" class="filters">
                 <h2>FILTERS</h2>
 
-                <div class="filter-group ">
-                    <div class="row">
-                        <span class="filter-label">Admission Status: </span>
-                        <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
-                            <select v-model="filterAdmission" class="form-select" aria-label="Admission Status">
-                                <option value="allAdmission" selected>All Admission</option>
-                                <option value="ongoingAdmission">Ongoing Admission</option>
-                                <option value="upcomingAdmission">Upcoming Admission</option>
-                                <option value="completedAdmission">Completed Admission</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
+                    <span class="filter-label mb-1">Project Application Status:</span>
+                    <select v-model="filterProjectStatus" class="form-select w-100"
+                        aria-label="Project Application Status">
+                        <option value="allProjects" selected>All</option>
+                        <option value="approvedProjects">Approved</option>
+                        <option value="notApprovedProjects">Not Approved</option>
+                    </select>
                 </div>
 
-                <div class="filter-group ">
-                    <span class="filter-label">Capacity</span>
-                    <div class="row filter-options ">
-                        <div class="col-lg-1 col-md-1 col-sm-1 mb-2">
-                            <p>From </p>
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-5 mb-2">
-                            <input type="number" class="form-control" placeholder="Min Capacity"
-                                aria-label="Minimum Volunteer Period" min="0" />
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-sm-1 mb-2">
-                            <p> To </p>
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-5 mb-2">
-                            <input type="number" class="form-control" placeholder="Max Capacity"
-                                aria-label="Minimum Volunteer Period" min="1" />
-                        </div>
-                    </div>
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
+                    <span class="filter-label mb-1">Admission Period Status:</span>
+                    <select v-model="filterAdmission" class="form-select w-100" aria-label="Admission Status">
+                        <option value="allAdmission" selected>All Admission</option>
+                        <option value="ongoingAdmission">Ongoing Admission</option>
+                        <option value="upcomingAdmission">Upcoming Admission</option>
+                        <option value="completedAdmission">Completed Admission</option>
+                    </select>
                 </div>
 
-                <div class="filter-group ">
-                    <span class="filter-label">Day: </span>
-                    <div class="row filter-options ">
-                        <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
-                            <select class="form-select" aria-label="Volunteer Day">
-                                <option value="All" selected>All Days</option>
-                                <option value="Monday">Monday</option>
-                                <option value="Tuesday">Tuesday</option>
-                                <option value="Wednesday">Wednesday</option>
-                                <option value="Thursday">Thursday</option>
-                                <option value="Friday">Friday</option>
-                                <option value="Saturday">Saturday</option>
-                                <option value="Sunday">Sunday</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-group ">
-                    <span class="filter-label">Project Name:</span>
-                    <div class="row filter-options ">
-                        <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
-                            <input type="text" class="form-control" placeholder="E.g. Beach Clean Up"
-                                aria-label="Project Name" v-model="filterProjectName" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-group">
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label">Total CSP Hours:</span>
-                    <div class="row filter-options">
-                        <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
-                            <input type="number" class="form-control" placeholder="Total Hours"
-                                aria-label="Total Hours" min="0" />
+                    <div class="row filter-options ">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="mx-2">
+                                <p class="mb-0">From</p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="number" class="form-control w-100" :placeholder="minHour"
+                                    aria-label="Minimum CSP Hours" v-model="filterMinHours" :min="minHour" />
+                            </div>
+                            <div class="mx-2">
+                                <p class="mb-0">To</p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="number" class="form-control" :placeholder="maxHour"
+                                    aria-label="Maximum CSP Hours" v-model="filterMaxHours" :min="minHour" />
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
+                    <span class="filter-label mb-1">Project Name:</span>
+                    <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
+                        <input type="text" class="form-control" placeholder="E.g. Beach Clean Up"
+                            aria-label="Project Name" v-model="filterProjectName" />
+                    </div>
+                </div>
+
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
+                    <span class="filter-label mb-1">Organisers:</span>
+                    <select v-model="filterOrganiser" class="form-select w-100" aria-label="Orgainsers">
+                        <option selected value="allOrganisers" selected>All Organisers</option>
+                        <template v-for="organiser in organisers">
+                            <organisers-list :organiser="organiser" />
+                        </template>
+                    </select>
                 </div>
 
                 <button id="submit-btn" @click="updateCommunityServices">Submit</button>
             </div>
         </div>
         <h1>Community Services</h1>
-        <p id="enteredText">{{filterProjectName}}</p>
-        <table class="table  overflow-scroll">
+        <table class="table overflow-auto table-responsive">
             <thead>
                 <tr>
                     <th>#</th>
@@ -193,11 +208,21 @@
                     <community-service-records :record="record" :index="idx + 1" @update-status="updateStatus(idx)" />
                 </template>
             </tbody>
+
+
         </table>
+    </div>
+    <button @click="showPopup = true">Open Popup</button>
+    <div v-if="showPopup" class="popup-overlay popup-display" @click="closePopup">
+        <div class="popup-content popup-display">
+            <h2>Popup Title</h2>
+            <p>This is a mini popup page.</p>
+            <button @click="closePopup">Close Popup</button>
+        </div>
     </div>
 
     <!-- script for event cards -->
-    <script type="module" src="admin.js"></script>
+    <script type="module" src="admin_csp.js"></script>
 
     <!-- Bootstrap JS bundle to be placed before the closing </body> tag -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -14,6 +14,13 @@
     <!-- Options will be populated dynamically -->
   </select>
   
+  <!-- Drop down list to select events --> 
+  <div id="dropDown"> 
+    <!-- Todo: disable user selection after attandance system start scanning --> 
+    <label for="events">Select Event:</label> 
+    <select id="events" v-model="selectedEvent"></select> 
+  </div>
+  
   <table id="student-table">
     <thead>
       <tr>
