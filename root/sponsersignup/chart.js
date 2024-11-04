@@ -32,7 +32,7 @@ async function fetchEventSignUps() {
 
             // Count the number of students signed up for the current event
             for (const userKey in students) {
-                if (students[userKey][eventKey] === true) {
+                if (students[userKey].signup_list && students[userKey].signup_list.includes(events[eventKey]["Project Name"])) {
                     count++;
                 }
             }
@@ -89,8 +89,11 @@ function createChart(eventNames, signUpCounts, eventKeys) {
                 const activePoints = signupChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
                 if (activePoints.length) {
                     const firstPoint = activePoints[0];
+                    const eventName = eventNames[firstPoint.index]; // Get the corresponding event name
                     const eventKey = eventKeys[firstPoint.index]; // Get the corresponding event key
-                    window.location.href = `index.html?eventKey=${eventKey}`; // Navigate to index.html with eventKey
+
+                    // Pass the event name into the URL and redirect
+                    window.location.href = `index.html?eventKey=${eventKey}&eventName=${encodeURIComponent(eventName)}`; // Navigate to index.html with eventKey and eventName
                 }
             }
         }
