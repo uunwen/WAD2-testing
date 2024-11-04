@@ -31,8 +31,6 @@ async function fetchProjectListAndEvents(uid) {
         const snapshot = await database.ref(`sponsors/${uid}/project_list`).once('value');
         const projectList = snapshot.val();
 
-        
-
         // Clear previous options
         eventSelect.innerHTML = '';
 
