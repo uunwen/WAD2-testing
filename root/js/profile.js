@@ -44,6 +44,8 @@ auth.onAuthStateChanged(user => {
           console.log(studentData);
           // Populate the profile information
           document.getElementById('user-name').innerText = studentData.name || "User Name";
+          // Display the graduation year
+          document.getElementById('graduation-year').innerText = `Expected Graduation Year: ${studentData.graduation_year}`;
           document.getElementById('profile-picture').src = "default-profile.jpg"; // Adjust for profile picture if you have one
 
           // You can also display hours left if needed
