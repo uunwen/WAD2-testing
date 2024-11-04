@@ -25,16 +25,8 @@ const adminApp = Vue.createApp({
     return {
       allEvents: [],
       selectedEvents: [],
-      minHour: 0,
-      maxHour: 0,
-      organisers: [],
-      filterMinHours: this.minHour,
-      filterMaxHours: this.maxHour,
-      filterProjectStatus: "allProjects",
       filterProjectName: "",
       filterAdmission: "allAdmission",
-      filterOrganiser: "allOrganisers",
-      showPopup: false,
     };
   },
   mounted() {
@@ -44,12 +36,6 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
-    closePopup() {
-      this.showPopup = false;
-    },
-    showPopup() {
-      this.showPopup = true;
-    },
     async loadCommunityServices() {
       get(dbRef)
         .then((snapshot) => {
@@ -61,7 +47,6 @@ const adminApp = Vue.createApp({
             }));
             // Initially set selectedEvents to allEvents
             this.selectedEvents = this.allEvents;
-            this.findFilterParameters();
           } else {
             console.log("No data available");
           }
@@ -83,29 +68,6 @@ const adminApp = Vue.createApp({
           console.error("Error updating status:", error);
         }
       }
-    },
-    findFilterParameters() {
-      if (this.allEvents.length > 0) {
-        const firstEventHours = this.allEvents[0]["Total CSP hours"];
-        this.minHour = firstEventHours;
-        this.maxHour = firstEventHours;
-      }
-      for (const event of this.allEvents) {
-        const hours = event["Total CSP hours"];
-        const organiser = event["Organiser"];
-        if (hours < this.minHour) {
-          this.minHour = hours;
-        }
-        if (hours > this.maxHour) {
-          this.maxHour = hours;
-        }
-        if (!this.organisers.includes(organiser)) {
-          this.organisers.push(organiser);
-        }
-      }
-
-      this.filterMinHours = this.minHour
-      this.filterMaxHours = this.maxHour
     },
     updateCommunityServices() {
       const date = new Date();
@@ -148,32 +110,9 @@ const adminApp = Vue.createApp({
           event["Project Name"].toLowerCase().includes(this.filterProjectName.toLowerCase())
         );
       }
-
-      //Filter Project Status
-      if (this.filterProjectStatus == "approvedProjects") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Status"] == "Approved"
-        );
-      }
-      else if (this.filterProjectStatus == "notApprovedProjects") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Status"] == "Not Approved"
-        );
-      }
-
-      // Filter Organisers
-      if (this.filterOrganiser != "allOrganisers") {
-        this.selectedEvents = this.selectedEvents.filter(event =>
-          event["Organiser"] == this.filterOrganiser
-        );
-      }
-
-      // Filter Total CSP Hours
-      this.selectedEvents = this.selectedEvents.filter(event => 
-        event["Total CSP hours"] <= this.filterMaxHours && event["Total CSP hours"] >= this.filterMinHours
-      );
+      // Iterate over selected events
+      console.log(this.selectedEvents);
     }
-
   }
 });
 
@@ -183,28 +122,21 @@ adminApp.component('communityServiceRecords', {
   emits: ["updateStatus"],
   template: `
         <tr>
-            <td class="align-middle"><b>{{ index }}</b></td>
-            <td class="align-middle">{{ record['Admissions Period'] }}</td>
-            <td class="align-middle">{{ record.Capacity }}</td>
-            <td class="align-middle">{{ record.Location }}</td>
-            <td class="align-middle">{{ record.Organiser }}</td>
-            <td class="align-middle">{{ record['Project Name'] }}</td>
-            <td class="align-middle">{{ record.Region }}</td>
-            <td class="align-middle">{{ record['Session(s)'] }}</td>
-            <td class="align-middle">{{ record['Total CSP hours'] }}</td>
-            <td class="align-middle">{{ record['Volunteer Period'] }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
-            <td class="align-middle"><button class="btn btn-light">View</button></td>
+            <td>{{ index }}</td>
+            <td>{{ record['Admissions Period'] }}</td>
+            <td>{{ record.Capacity }}</td>
+            <td>{{ record.Location }}</td>
+            <td>{{ record.Organiser }}</td>
+            <td>{{ record['Project Name'] }}</td>
+            <td>{{ record.Region }}</td>
+            <td>{{ record['Session(s)'] }}</td>
+            <td>{{ record['Total CSP hours'] }}</td>
+            <td>{{ record['Volunteer Period'] }}</td>
+            <td><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
+            <td><button class="btn btn-light">View</button></td>
         </tr>
   `
 });
 
-adminApp.component('organisersList', {
-  props: ['organiser'],
-  emits: [],
-  template: `
-        <option :value="organiser">{{organiser}}</option>
-  `
-});
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)

@@ -271,7 +271,6 @@ async function saveEventData(eventKey, eventBox) {
   }
 }
 
-
 // Cancel editing the event and restore original content
 function cancelEditEvent(eventKey, eventBox) {
   const eventRef = ref(database, `events/${eventKey}`);

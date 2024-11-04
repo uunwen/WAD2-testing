@@ -52,10 +52,6 @@ body {
     width: 100%;
 }
 
-nav {
-    z-index: 1000;
-}
-
 @media (max-width: 768px) {
     .sidebar {
         position: sticky;
