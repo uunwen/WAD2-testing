@@ -56,53 +56,40 @@ logEntireDatabase();
 window.googleSignIn = async function googleSignIn(userType) {
   const provider = new GoogleAuthProvider();
   try {
-    const result = await signInWithPopup(auth, provider);
+    signInWithPopup(auth, provider).then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
 
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
 
-    // The signed-in user info.
-    const user = result.user;
-    const userRef = ref(database, `${userType}s/${user.uid}`);
-
-    // Check if the user is already registered
-    const snapshot = await get(userRef);
-    if (!snapshot.exists()) {
-      // Only set data if user is not already registered
-      const userData = {
-        name: user.displayName,
-        email: user.email,
-      };
-      
       if (userType == "student") {
-        userData.hours_left = 80; // default 80hrs
+        set(ref(database, "students/" + user.uid), {
+          name: user.displayName,
+          email: user.email,
+          hours_left: 80, // default 80hrs
+        });
 
-        // Get the current year
-        const currentYear = new Date().getFullYear();
-        // Generate a random number between 1 and 4
-        const randomNumber = Math.floor(Math.random() * 4) + 1;
-        // Calculate graduation year
-        const graduationYear = currentYear + randomNumber;
-        userData.graduation_year = graduationYear;
+        // Redirect to Student.html after
+        window.location.href = `../student/main.html?uid=${
+          user.uid
+        }&name=${encodeURIComponent(user.displayName)}`;
       }
+      if (userType == "admin") {
+        set(ref(database, "admins/" + user.uid), {
+          name: user.displayName,
+          email: user.email,
+        });
 
-      await set(userRef, userData);
-      console.log("User data set successfully.");
-    } else {
-      console.log("User already registered.");
-    }
-
-    // Redirect based on user type
-    if (userType == "student") {
-      window.location.href = `../student/main.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
-    } else if (userType == "admin") {
-      window.location.href = `../admin.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
-    }
-    
+        // Redirect to Student.html after
+        window.location.href = `../admin.html?uid=${
+          user.uid
+        }&name=${encodeURIComponent(user.displayName)}`;
+      }
+    });
   } catch (error) {
-    console.error("Error during Google sign-in:", error);
-    alert("There was an error during sign-in. Please try again.");
+    alert("Wrong username/password");
   }
 };
 
