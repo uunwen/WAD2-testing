@@ -113,39 +113,39 @@
         }
 
         /* Overlay background */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
-    display: none; /* Initially hidden */
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+            display: none; /* Initially hidden */
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
 
-/* Modal content */
-.modal-content {
-    background: #f8f9fa;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+        /* Modal content */
+        .modal-content {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
 
-/* Close button */
-.close-modal {
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
-    color: #333;
-}
+        /* Close button */
+        .close-modal {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -227,38 +227,6 @@
         <button onclick="sponsorLogin()">Login</button>
         <button onclick="hideModal('communityServiceFormModal')">Back</button>
     </div>
-</div>
-
-<!-- Login Forms (Hidden Initially) -->
-<!-- <div id="communityServiceForm" class="login-form" style="display: none; text-align: center; padding: 2rem;">
-    <h2>Community Service Login</h2>
-    Username: <input type="text" id="sponsorId" required /><br />
-    Password: <input type="password" id="sponsorPwd" required /><br />
-    <button onclick="sponsorLogin()">Login</button>
-    <button onclick="showForm('loginOptions')">Back</button>
-</div>
-
-<div id="userForm" class="login-form" style="display: none; text-align: center; padding: 2rem;">
-    <h2>Student Login</h2>
-    <p>Please login with your school Google account, e.g., john.low.2021@smu.edu.sg</p>
-    <button id="googleSignIn" onclick="googleSignIn('student')">
-        <img src="../img/Google__G__logo.png" style="width: 20px;"/> Login
-    </button>
-    <button onclick="showForm('loginOptions')">Back</button>
-</div>
-
-<div id="adminForm" class="login-form" style="display: none; text-align: center; padding: 2rem;">
-    <h2>Administrator Login</h2>
-    <p>Please login with your work Google account, e.g., faculty.name@smu.edu.sg</p>
-    <button id="googleSignIn" onclick="googleSignIn('admin')">
-        <img src="../img/Google__G__logo.png" style="width: 20px;"/> Login
-    </button>
-    <button onclick="showForm('loginOptions')">Back</button>
-</div> -->
-
-<!-- Welcome Section -->
-<div class="welcome-section">
-    <p>Join us in creating positive change! RightTrack connects students with local organizations seeking passionate volunteers.</p>
 </div>
 
 <!-- Scripts -->
