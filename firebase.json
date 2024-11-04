@@ -13,11 +13,20 @@
     }
   ],
   "hosting": {
-    "public": "public",
+    "public": "root",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+<<<<<<< HEAD
+=======
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/admin.html"
+      }
+>>>>>>> 956a60ddf8f18006a9de033991e03b02e5df9e1e
     ]
   },
   "database": {

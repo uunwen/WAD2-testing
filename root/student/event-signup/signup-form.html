@@ -44,7 +44,8 @@
 
         input[type="text"],
         input[type="email"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
             padding: 10px;
             font-size: 1em;
@@ -86,44 +87,82 @@
             background-color: #007BFF;
             color: #fff;
         }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            display: block;
+            margin-top: 5px;
+        }
     </style>
     <script type="module" src="signup-form.js"></script>
 </head>
 
 <body>
     <div id="signupFormContainer">
-        <!-- Back Button -->
         <button class="back-button" onclick="history.back()">Back</button>
 
         <h1>Sign Up for <span id="eventName"></span></h1>
-        <form id="signupForm">
+        <form id="signupForm" novalidate>
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" required>
+                <span class="error-message" id="nameError"></span>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" required>
+                <span class="error-message" id="emailError"></span>
             </div>
             <div class="form-group">
                 <label for="telegram">Telegram Handle</label>
-                <input type="text" id="telegram" required>
+                <input type="text" id="telegram" pattern="^@.*" required placeholder="e.g., @username">
+                <span class="error-message" id="telegramError"></span>
             </div>
             <div class="form-group">
                 <label for="age">Age</label>
                 <input type="number" id="age" required>
+                <span class="error-message" id="ageError"></span>
             </div>
             <div class="form-group">
                 <label for="school">School</label>
-                <input type="text" id="school" required>
+                <select id="school" required>
+                    <option value="" disabled selected>Select your school</option>
+                    <option value="SCIS">School of Computing and Information Systems</option>
+                    <option value="SOB">School of Business</option>
+                    <option value="SOE">School of Economics</option>
+                    <option value="SOA">School of Accountancy</option>
+                    <option value="SOL">School of Law</option>
+                    <option value="SOSS">School of Social Sciences</option>
+                    <option value="CIS">College of Integrative Studies</option>
+                </select>
+                <span class="error-message" id="schoolError"></span>
             </div>
             <div class="form-group">
                 <label for="contact">Contact Number</label>
                 <input type="text" id="contact" required>
+                <span class="error-message" id="contactError"></span>
             </div>
+
             <button type="submit">Submit</button>
         </form>
     </div>
+
+    <script>
+        // Display the event name from URL
+        const eventName = new URLSearchParams(window.location.search).get('eventName');
+        document.getElementById("eventName").textContent = eventName || "the Event";
+
+        // Add live validation for the Telegram handle input
+        document.getElementById("telegram").addEventListener("input", function () {
+            if (!this.value.startsWith('@')) {
+                this.setCustomValidity("Please include an '@' at the start of the Telegram handle.");
+                this.reportValidity();
+            } else {
+                this.setCustomValidity(""); // Clear the custom error when valid
+            }
+        });
+    </script>
 </body>
 
 </html>
