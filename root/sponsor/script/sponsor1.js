@@ -3,7 +3,7 @@ import { search, initializeSearch } from "./navbar.js";
 export let isEditing = true; // Flag to pause update from searchbar during editing
 export let filteredEventsArr;
 
-// initialize the search bar
+// Initialize the search bar
 initializeSearch();
 
 // Import Firebase modules from CDN
@@ -20,8 +20,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL:
-    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
@@ -33,13 +32,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Retrive user info
+// Retrieve user info
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
-  const sponsorRef = ref(database, "sponsors/" + uid);
+  const sponsorRef = ref(database, `sponsors/${uid}`);
   get(sponsorRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -52,9 +51,8 @@ export function fetchSponsorData() {
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-      document.getElementById(
-        "sponsorDescription"
-      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+      document.getElementById("sponsorDescription").innerHTML =
+        `<p>Error fetching data: ${error.message}</p>`;
     });
 }
 
@@ -89,9 +87,8 @@ export async function fetchAndDisplayEvents(organizerName, search) {
     const filteredEvents = await getFilteredEventsByOrganizer(organizerName);
     displayFilteredEvents(filteredEvents, search);
   } catch (error) {
-    document.getElementById(
-      "eventContainer"
-    ).innerHTML = `<p>Error fetching events: ${error.message}</p>`;
+    document.getElementById("eventContainer").innerHTML =
+      `<p>Error fetching events: ${error.message}</p>`;
   }
 }
 
@@ -121,8 +118,7 @@ function displayFilteredEvents(events, search) {
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML =
-      "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
     return;
   }
 
@@ -151,9 +147,8 @@ function displayFilteredEvents(events, search) {
       }
     });
   } catch (error) {
-    document.getElementById(
-      "eventContainer"
-    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById("eventContainer").innerHTML =
+      `<p>Error displaying events: ${error.message}</p>`;
   }
 }
 
@@ -171,43 +166,38 @@ async function createEditButtons(eventBox, eventKey) {
 
   // Event listeners for buttons
   editBtn.addEventListener("click", () => {
-    enableEditEvent(eventBox, saveBtn, cancelBtn), (isEditing = false); //Pause search from updating
+    enableEditEvent(eventBox, saveBtn, cancelBtn);
+    isEditing = false; // Pause search updates during editing
   });
 
   cancelBtn.addEventListener("click", () => {
     cancelEditEvent(eventKey, eventBox);
-    resetButtons(editBtn, saveBtn, cancelBtn); // Reset button visibility
-    isEditing = true; //enable search
+    resetButtons(editBtn, saveBtn, cancelBtn);
+    isEditing = true; // Enable search updates
   });
 
   saveBtn.addEventListener("click", async () => {
     await saveEventData(eventKey, eventBox);
-    resetButtons(editBtn, saveBtn, cancelBtn); // Reset button visibility
-    isEditing = true; //enable search
+    resetButtons(editBtn, saveBtn, cancelBtn);
+    isEditing = true; // Enable search updates
   });
 
   deleteBtn.addEventListener("click", async () => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this event? This action cannot be undone."
-    );
+    const confirmDelete = confirm("Are you sure you want to delete this event? This action cannot be undone.");
     if (confirmDelete) {
       await deleteEvent(eventKey, eventBox);
     }
   });
 }
 
-// Add new function to handle event deletion
+// Delete event function
 async function deleteEvent(eventKey, eventBox) {
   const eventRef = ref(database, `events/${eventKey}`);
   try {
-    // Remove the event from Firebase
     await set(eventRef, null);
     console.log("Event deleted successfully.");
-
-    // Remove the event box from the UI
     eventBox.remove();
 
-    // Refresh the events display
     const org_name = await getSponsorOrg_name();
     fetchAndDisplayEvents(org_name, search);
   } catch (error) {
@@ -216,7 +206,7 @@ async function deleteEvent(eventKey, eventBox) {
   }
 }
 
-// Helper to reset button visibility after save/cancel actions
+// Reset button visibility after save/cancel actions
 function resetButtons(editBtn, saveBtn, cancelBtn) {
   editBtn.style.display = "inline-block";
   saveBtn.style.display = "none";
@@ -265,14 +255,13 @@ async function saveEventData(eventKey, eventBox) {
     console.log("Event updated successfully.");
 
     const org_name = await getSponsorOrg_name();
-    fetchEventsByOrganizer(org_name, search); // Refresh event data
+    fetchAndDisplayEvents(org_name, search);
   } catch (error) {
     console.error("Error updating event:", error.message);
   }
 }
 
-
-// Cancel editing the event and restore original content
+// Cancel editing and restore original content
 function cancelEditEvent(eventKey, eventBox) {
   const eventRef = ref(database, `events/${eventKey}`);
   get(eventRef)
@@ -307,14 +296,13 @@ function displayEventData(eventData, eventBox) {
 
 export async function getSponsorOrg_name() {
   try {
-    // Fetch sponsor data
-    const sponsorRef = ref(database, "sponsors/" + uid);
+    const sponsorRef = ref(database, `sponsors/${uid}`);
     const snapshot = await get(sponsorRef);
     if (snapshot.exists()) {
       const sponsorData = snapshot.val();
       return sponsorData.org_name;
     }
   } catch (error) {
-    console.log("getSponsorOrg_name function error occured: " + error);
+    console.error("Error in getSponsorOrg_name function:", error.message);
   }
 }
