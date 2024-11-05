@@ -42,12 +42,6 @@ function displayEventCard(parentElement, data, eventKey) {
     }
   });
 
-  // Add the signup button (static and disabled)
-  const signupButton = document.createElement("button");
-  signupButton.textContent = "Sign Up";
-  signupButton.classList.add("signup-btn");
-  signupButton.disabled = true;
-  cardElement.appendChild(signupButton);
 
   // Append the card to the parent element
   parentElement.appendChild(cardElement);
