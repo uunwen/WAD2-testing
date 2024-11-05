@@ -42,6 +42,7 @@
             top: 125px;
             height: auto;
         }
+
     </style>
 </head>
 
@@ -98,8 +99,8 @@
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Student Name:</span>
                     <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
-                        <input type="text" class="form-control" placeholder="E.g. Lennard"
-                            aria-label="Student Name" v-model="filterStudentName" />
+                        <input type="text" class="form-control" placeholder="E.g. Lennard" aria-label="Student Name"
+                            v-model="filterStudentName" />
                     </div>
                 </div>
 
@@ -134,7 +135,7 @@
                     </select>
                 </div>
 
-                
+
 
 
                 <button id="submit-btn" @click="updateRecords">Submit</button>
@@ -153,7 +154,7 @@
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedStudents" :key="record.eventKey">
-                    <student-records :record="record" :index="idx + 1"/>
+                    <student-records :record="record" :index="idx + 1" />
                 </template>
             </tbody>
         </table>
