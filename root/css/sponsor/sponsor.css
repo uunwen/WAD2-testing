@@ -160,3 +160,10 @@ h1 {
   display: none;
   /* Hidden by default */
 }
+
+.event-success-message {
+  font-size: 16px;
+  color: green;
+  margin-top: 10px;
+  /* Ensure that 'display' is controlled by JavaScript */
+}

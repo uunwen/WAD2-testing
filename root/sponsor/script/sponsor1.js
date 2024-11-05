@@ -384,30 +384,41 @@ async function saveEventData(eventKey, eventBox) {
   try {
     await update(eventRef, updatedData);
 
-    // Display success message for this specific event
-    const eventSuccessMessage = eventBox.querySelector(`div[id="eventSuccessMessage-${eventKey}"]`);
-    if (eventSuccessMessage) {
-      eventSuccessMessage.style.display = "block";
-      setTimeout(() => {
-        eventSuccessMessage.style.display = "none";
-      }, 3000);
+    // Log for debugging to confirm function is reached
+    console.log("Event data updated successfully.");
+
+    // Create or select the success message div for the specific event container
+    let eventSuccessMessage = eventBox.querySelector(".event-success-message");
+    if (!eventSuccessMessage) {
+      eventSuccessMessage = document.createElement("div");
+      eventSuccessMessage.className = "event-success-message";
+      eventSuccessMessage.textContent = "Changes saved successfully.";
+      eventBox.appendChild(eventSuccessMessage);
+      console.log("Success message div created and appended.");
     } else {
-      console.warn("Event success message div not found");
+      console.log("Success message div found.");
     }
 
-    // Refresh the displayed events
-    const org_name = await getSponsorOrg_name();
-    fetchAndDisplayEvents(org_name, search);
+    // Display the success message
+    eventSuccessMessage.style.display = "block";
+    console.log("Success message displayed.");
+    setTimeout(() => {
+      eventSuccessMessage.style.display = "none";
+      console.log("Success message hidden after timeout.");
+    }, 15000);
+
+    // Delay refreshing the events to allow the success message to display
+    setTimeout(async () => {
+      const org_name = await getSponsorOrg_name();
+      fetchAndDisplayEvents(org_name, search);
+      console.log("Events refreshed after success message timeout.");
+    }, 3100); // Slightly longer than the timeout for the success message
+
   } catch (error) {
     console.error("Error updating event:", error.message);
     alert("Failed to save changes.");
   }
 }
-
-
-
-
-
 
 
 
