@@ -127,7 +127,7 @@ window.sponsorLogin = async function sponsorLogin() {
       window.location.href = `../sponsor/sponsor1.html?uid=${sponsorId}`;
     } else {
       console.log("WRONG PWD");
-      document.getElementById("errorMessage").innerHTML =
+      document.getElementById("errorMessage").innerText =
         "Invalid username or password!";
       document.getElementById("errorMessage").style.display = "block"; // Show error message
     }
