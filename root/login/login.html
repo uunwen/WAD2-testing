@@ -1,115 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet"> 
 
+    <!-- Custom CSS -->
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <!-- Import css for login page   -->
-    <link rel="stylesheet" href="../css/login.css" />
-    <link rel="stylesheet" href="../css/nav.css">
+        /* Navigation Bar */
+        nav.navbar {
+            background-color: rgb(209, 207, 207);
+            color: black;
+            position: sticky;
+            top: 0; /* This ensures it stays at the top when scrolled */
+            z-index: 1000; /* Keeps it on top of other elements */
+            padding: 0.5rem 1rem; /* Adjust padding to reduce height */
+        }
 
-    <!-- Import javascript  -->
-    <script type="module" src="login.js"></script>
-  </head>
+        /* Flex alignment for icons and labels */
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center; /* Vertically center-aligns icon and text */
+        }
 
-  <body>
+        .navbar-nav .nav-item .icon {
+            margin-right: 0.5rem; /* Space between icon and text */
+        }
 
-    <nav class="navbar navbar-expand-lg position-sticky top-0">
-      <span class="icon"style="pointer-events: none;"><img src="../img/social-services.png" alt="Social Services Logo"></span>
-      <b>RIGHTTRACK</b>
-  
-      <div class="container-fluid d-flex justify-content-end">
-          <ul class="navbar-nav d-flex flex-row">
-              <!-- Profile Icon -->
-              <li class="nav-item d-flex flex-column align-items-center">
-                  <span class="icon" onclick="showForm('userForm')"><img src="../img/students.png" alt="Students Icon"></span>
-                  <a class="nav-link" href="#" onclick="showForm('userForm'); event.preventDefault();">Students</a>
-              </li>
-  
-              <!-- Community Services Icon -->
-              <li class="nav-item d-flex flex-column align-items-center mx-3">
-                  <span class="icon" onclick="showForm('communityServiceForm')"><img src="../img/public-health.png" alt="Community Services Icon"></span>
-                  <a class="nav-link" href="#" onclick="showForm('communityServiceForm'); event.preventDefault();">Community Services</a>
-              </li>
-  
-              <!-- admin Icon -->
-              <li class="nav-item d-flex flex-column align-items-center mx-3">
-                  <span class="icon" onclick="showForm('adminForm')"><img src="../img/admin.png" alt="Admin Icon"></span>
-                  <a class="nav-link" href="#" onclick="showForm('adminForm'); event.preventDefault();">Administrator</a>
-              </li>
-          </ul>
-      </div>
-  </nav>
-  
-    
+        .navbar-nav .nav-link {
+            padding: 0; /* Remove default padding for tighter layout */
+            font-size: 0.9rem;
+            color: black;
+            text-decoration: none;
+        }
 
-    <div class="background">
-      <div class="image"><img src="../img/smu.jpg" /></div>
-      <div class="container">
-        <h1>Welcome</h1>
-        <hr />
+        .navbar-nav .nav-link:hover {
+            color: #0056b3;
+        }
 
-        <div
-          id="loginOptions"
-          class="login-options"
-          class="d-flex justify-content-center"
-        >
-          <button onclick="showForm('communityServiceForm')">
-            Community Service Login
-          </button>
-          <button onclick="showForm('userForm')">User Login</button>
-          <button   >Administrator Login</button>
-        </div>
+        /* Hero Section */
+        .hero {
+            position: relative;
+            background: url('../img/smu.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+        }
 
-        <div id="communityServiceForm" class="login-form" style="display: none">
-          <h2>
-            <img src="../img/social-services.png" /> Community Service Login
-          </h2>
-          <!-- Add community service login form here -->
-          Username: <input type="text" id="sponsorId" required /><br />
-          Password: <input type="password" id="sponsorPwd" required /><br />
-          <button onclick="sponsorLogin()">Login</button>
-          <button onclick="showForm('loginOptions')">Back</button>
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        }
 
-          <p id="errorMessage" style="color: red; display: none"></p>
-        </div>
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+        }
 
-        <div id="userForm" class="login-form" style="display: none">
-          <h2>Student Login</h2>
-          <p class="smuLoginInfo">
-            Please login with your school google account, e.g. john.low.2021@smu.edu.sg
-          </p>
-          <button id="googleSignIn" onclick="googleSignIn('student')">
-            <img src="../img/Google__G__logo.png" />Login
-          </button>
-          <button onclick="showForm('loginOptions')">Back</button>
-        </div>
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
 
-        <div id="adminForm" class="login-form" style="display: none">
-          <h2>Administrator Login</h2>
-          <!-- Add admin login form here -->
-          <p class="smuLoginInfo">
-            Please login with your work google account, e.g. faculty.name@smu.edu.sg
-          </p>
-          <button id="googleSignIn" onclick="googleSignIn('admin')">
-            <img src="../img/Google__G__logo.png" />Login
-          </button>
-          <button onclick="showForm('loginOptions')">Back</button>
-        </div>
-      </div>
+        .hero-content p {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            padding: 2rem;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        .welcome-section p {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* Login Buttons */
+        .login-options button {
+            margin: 1rem 0.5rem;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .login-options button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Overlay background */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+            display: none; /* Initially hidden */
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* Modal content */
+        .modal-content {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Close button */
+        .close-modal {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg position-sticky top-0">
+    <span class="icon" style="pointer-events: none;">
+        <img src="../img/social-services.png" alt="Social Services Logo" style="width: 30px;">
+    </span>
+    <b class="ms-2">RIGHTTRACK</b>
+
+    <div class="container-fluid d-flex justify-content-end">
+        <ul class="navbar-nav d-flex flex-row">
+            <li class="nav-item d-flex align-items-center mx-2">
+                <img src="../img/students.png" alt="Students Icon" class="icon me-1" style="width: 30px;">
+                <a class="nav-link" href="#" onclick="showForm('userForm'); event.preventDefault();">Students</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mx-2">
+                <img src="../img/public-health.png" alt="Community Services Icon" class="icon me-1" style="width: 30px;">
+                <a class="nav-link" href="#" onclick="showForm('communityServiceForm'); event.preventDefault();">Community Services</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mx-2">
+                <img src="../img/admin.png" alt="Admin Icon" class="icon me-1" style="width: 30px;">
+                <a class="nav-link" href="#" onclick="showForm('adminForm'); event.preventDefault();">Administrator</a>
+            </li>
+        </ul>
     </div>
+</nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <p>Your gateway to meaningful community service opportunities. RightTrack connects students with local organizations seeking passionate volunteers. Discover, engage, and make a difference in your community with ease. Join us in creating positive change!</p>
-      </div>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Welcome to RightTrack</h1>
+        <p>"Your gateway to meaningful community service opportunities. Discover, engage, and make a difference in your community with ease."</p>
+
+        <!-- Login Options -->
+        <div id="loginOptions" class="login-options d-flex justify-content-center">
+            <button onclick="showForm('userForm')">Student Login</button>
+            <button onclick="showForm('communityServiceForm')">Community Service Login</button>
+            <button onclick="showForm('adminForm')">Administrator Login</button>
+        </div>
     </div>
+</section>
 
-    <script type="module" src="login.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+<!-- Modal for student Login -->
+<div id="userFormModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="hideModal('userFormModal')">&times;</span>
+        <h2>Student Login</h2>
+        <p>Please login with your school Google account, e.g., john.low.2021@smu.edu.sg</p>
+        <button id="googleSignIn" onclick="googleSignIn('student')">
+            <img src="../img/Google__G__logo.png" style="width: 20px;"/> Login
+        </button>
+        <button onclick="hideModal('userFormModal')">Back</button>
+    </div>
+</div>
+
+<!-- Modal for admin Login -->
+<div id="adminFormModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="hideModal('adminFormModal')">&times;</span>
+        <h2>Administrator Login</h2>
+        <p>Please login with your work Google account, e.g., faculty.name@smu.edu.sg</p>
+        <button id="googleSignIn" onclick="googleSignIn('admin')">
+            <img src="../img/Google__G__logo.png" style="width: 20px;"/> Login
+        </button>
+        <button onclick="hideModal('adminFormModal')">Back</button>
+    </div>
+</div>
+
+<!-- Modal for com service Login -->
+<div id="communityServiceFormModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="hideModal('communityServiceFormModal')">&times;</span>
+        <h2>Community Service Login</h2>
+        Username: <input type="text" id="sponsorId" required /><br />
+        Password: <input type="password" id="sponsorPwd" required /><br />
+        <button onclick="sponsorLogin()">Login</button>
+        <button onclick="hideModal('communityServiceFormModal')">Back</button>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="login.js"></script>
+</body>
 </html>
