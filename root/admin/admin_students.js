@@ -27,6 +27,7 @@ const adminApp = Vue.createApp({
       selectedStudents: [],
       minHour: 0,
       maxHour: 0,
+      filterGraduation: "allGraduationYear",
       filterMinHours: this.minHour,
       filterMaxHours: this.maxHour,
       filterStudentName: "",
@@ -79,16 +80,33 @@ const adminApp = Vue.createApp({
       this.filterMaxHours = this.maxHour
     },
     updateRecords() {
-
       this.selectedStudents = this.allStudents.filter(student => {
         // Filter by student name
-        const matchesName = this.filterStudentName === "" || student.name.toLowerCase().includes(this.filterStudentName.toLowerCase());
-        
-        // Filter by hours left
-        const matchesHours = student.hours_left >= this.filterMinHours && student.hours_left <= this.filterMaxHours;
+        const matchesName = this.filterStudentName === "" ||
+          student.name.toLowerCase().includes(this.filterStudentName.toLowerCase());
 
-        // Return true if both conditions match
-        return matchesName && matchesHours;
+        // Filter by hours left
+        const matchesHours = student.hours_left >= this.filterMinHours &&
+          student.hours_left <= this.filterMaxHours;
+
+        const currentYear = new Date().getFullYear();
+        let matchesGraduationYear = true; // Default to true if no filter is applied
+
+        // Graduation year filtering logic
+        if (this.filterGraduation != "allGraduationYear") {
+          const graduationYear = student.graduation_year; // Assuming graduationYear is a property in the student object
+
+          if (this.filterGraduation == "within1Year") {
+            matchesGraduationYear = graduationYear == currentYear + 1; // Graduating next year
+          } else if (this.filterGraduation == "within2Years") {
+            matchesGraduationYear = graduationYear === currentYear + 1 || graduationYear === currentYear + 2; // Graduating in one or two years
+          }
+          console.log(graduationYear);
+        }
+
+        
+        // Return true if all conditions match
+        return matchesName && matchesHours && matchesGraduationYear;
       });
     }
   }
@@ -103,6 +121,7 @@ adminApp.component('studentRecords', {
             <td class="align-middle">{{ index }}</td>
             <td class="align-middle">{{ record.name }}</td>
             <td class="align-middle">{{ record.email }}</td>
+            <td class="align-middle">{{ record['graduation_year'] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
         </tr>
   `

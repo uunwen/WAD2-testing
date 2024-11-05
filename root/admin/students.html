@@ -125,6 +125,15 @@
                     </div>
                 </div>
 
+                <div class="filter-group border d-flex flex-column align-items-start p-2">
+                    <span class="filter-label mb-1">Graduation Year:</span>
+                    <select v-model="filterGraduation" class="form-select w-100" aria-label="graduation year">
+                        <option value="allGraduationYear" selected>All Graduation Year</option>
+                        <option value="within1Year">Within 1 Year</option>
+                        <option value="within2Years">Within 2 Years</option>
+                    </select>
+                </div>
+
                 
 
 
@@ -138,6 +147,7 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Graduation Year</th>
                     <th>Hours Left</th>
                 </tr>
             </thead>
