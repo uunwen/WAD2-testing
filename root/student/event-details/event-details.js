@@ -22,12 +22,24 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const db = getFirestore(app);
 
-
 // Helper to get URL parameter
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
+
+// Call this function to load event details and other data when needed
+window.onload = () => {
+    const eventKey = getQueryParam("eventKey"); // Dynamically get the eventKey from the URL
+    if (eventKey) {
+        displayEventDetails();  // Load event details
+    } else {
+        console.warn("Event key not found in URL.");
+    }
+
+    // Load default tab (details)
+    showTab('details');
+};
 
 // Function to load event details into the details tab
 function displayEventDetails() {
@@ -71,7 +83,6 @@ function displayEventDetails() {
                 }
             }
 
-
             // Add buttons to switch tabs
             const buttonContainer = document.querySelector('.button-container');
             buttonContainer.innerHTML = "";
@@ -111,8 +122,6 @@ function findSponsorKey(organiserName) {
         return null;
     });
 }
-
-
 
 // Function to load and display event photos from Firestore
 async function displayEventPhotos() {
@@ -172,39 +181,11 @@ async function displayEventPhotos() {
     }
 }
 
-
-
-
-// Ensure each image element gets proper styling when created
-function displayPhotoGallery() {
-    const photoEndpoint = 'https://example.com/api/photos';
-
-    fetch(photoEndpoint)
-        .then(response => response.json())
-        .then(data => {
-            const photoGallery = document.getElementById('photo-gallery');
-            photoGallery.innerHTML = ''; // Clear existing photos
-            data.forEach(photo => {
-                const imgElement = document.createElement('img');
-                imgElement.src = photo; // Ensure this matches your data format
-                imgElement.alt = 'Photo';
-                photoGallery.appendChild(imgElement); // Append directly
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching photos:', error);
-        });
-}
-
-
-
 // Load the photos tab when the Photos section is activated
 document.getElementById('photosTab').addEventListener('click', () => {
     showTab('photos');
     displayEventPhotos();
 });
-
-
 
 // Event listener setup
 document.addEventListener("DOMContentLoaded", () => {
@@ -229,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showTab("details");
     detailsTab.classList.add("active"); // Make detailsTab active by default
 });
-
 // Function to toggle between tabs
 function showTab(tabName) {
     const detailsContainer = document.getElementById("eventDetailsContainer");

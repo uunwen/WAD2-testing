@@ -229,8 +229,6 @@ export async function getFilteredEventsByOrganizer(organizerName) {
 
 
 
-
-
 // Display filtered events with edit functionality
 function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
@@ -252,12 +250,14 @@ function displayFilteredEvents(events, search) {
         header.textContent = eventData["Project Name"] || "Unnamed Project";
         eventBox.appendChild(header);
 
-        // Display each detail of the event
+        // Display each detail of the event, excluding "signups"
         for (const [key, value] of Object.entries(eventData)) {
-          const paragraph = document.createElement("p");
-          paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
-          paragraph.setAttribute("data-key", key);
-          eventBox.appendChild(paragraph);
+          if (key !== "signups") { // Skip "signups" key
+            const paragraph = document.createElement("p");
+            paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
+            paragraph.setAttribute("data-key", key);
+            eventBox.appendChild(paragraph);
+          }
         }
 
         // Add edit, save, and cancel buttons
@@ -276,8 +276,7 @@ function displayFilteredEvents(events, search) {
       }
     });
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML =
-      `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById("eventContainer").innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
 
