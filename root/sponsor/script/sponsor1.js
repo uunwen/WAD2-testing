@@ -20,7 +20,8 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
@@ -51,8 +52,9 @@ export function fetchSponsorData() {
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-      document.getElementById("sponsorDescription").innerHTML =
-        `<p>Error fetching data: ${error.message}</p>`;
+      document.getElementById(
+        "sponsorDescription"
+      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
 
@@ -87,8 +89,9 @@ export async function fetchAndDisplayEvents(organizerName, search) {
     const filteredEvents = await getFilteredEventsByOrganizer(organizerName);
     displayFilteredEvents(filteredEvents, search);
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML =
-      `<p>Error fetching events: ${error.message}</p>`;
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error fetching events: ${error.message}</p>`;
   }
 }
 
@@ -118,7 +121,8 @@ function displayFilteredEvents(events, search) {
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML =
+      "<p>No events found for the specified organizer.</p>";
     return;
   }
 
@@ -147,8 +151,9 @@ function displayFilteredEvents(events, search) {
       }
     });
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML =
-      `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
 
@@ -183,7 +188,9 @@ async function createEditButtons(eventBox, eventKey) {
   });
 
   deleteBtn.addEventListener("click", async () => {
-    const confirmDelete = confirm("Are you sure you want to delete this event? This action cannot be undone.");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
     if (confirmDelete) {
       await deleteEvent(eventKey, eventBox);
     }
@@ -305,4 +312,52 @@ export async function getSponsorOrg_name() {
   } catch (error) {
     console.error("Error in getSponsorOrg_name function:", error.message);
   }
+}
+
+export async function getEventfromUid(eventUid) {
+  try {
+    // Get event data based of event uid
+    const eventRef = ref(database, "events/" + eventUid);
+    const snapshot = await get(eventRef);
+    if (snapshot.exists()) {
+      const event = snapshot.val();
+      return event;
+    }
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
+  }
+
+  onValue(eventRef, (snapshot) => {
+    const data = snapshot.val();
+    updateStarCount(postElement, data);
+  });
+}
+
+export function getDurationFromEventSession(session) {
+  // Extract the time part of the string
+  const timeRange = session.split(", ")[1];
+  const [startTime, endTime] = timeRange.split(" - ");
+
+  // Helper function to convert time to a Date object
+  function parseTime(time) {
+    const [timePart, meridian] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (meridian === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (meridian === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return new Date(1970, 0, 1, hours, minutes);
+  }
+
+  // Calculate the duration
+  const start = parseTime(startTime);
+  const end = parseTime(endTime);
+
+  const durationInMilliseconds = end - start;
+  const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
+
+  return durationInHours;
 }

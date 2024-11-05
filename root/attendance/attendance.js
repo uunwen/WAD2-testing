@@ -1,12 +1,11 @@
 // Get user info from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get("uid");
-const name = urlParams.get("name");
 
 // Display welcome message
 document.getElementById(
   "welcomeMessage"
-).textContent = `Welcome, ${name}!`;
+).textContent = `Welcome`;
 
 // // Get today's date, NOT COMPLETE BUT DO NOT DELET FIRST
 // var date = moment();
