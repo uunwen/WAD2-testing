@@ -25,19 +25,14 @@ async function fetchEventSignUps() {
         const signUpCounts = [];
         const eventKeys = []; // Store the event keys for linking
 
+        // Iterate through each event
         for (const eventKey in events) {
-            const signUps = await database.ref(`students`).once('value');
-            const students = signUps.val();
-            let count = 0;
+            const event = events[eventKey];
+            const signUps = event.signups || {}; // Get the sign-ups for this event (empty object if no signups)
+            
+            const count = Object.keys(signUps).length; // Count the number of students who signed up
 
-            // Count the number of students signed up for the current event
-            for (const userKey in students) {
-                if (students[userKey].signup_list && students[userKey].signup_list.includes(events[eventKey]["Project Name"])) {
-                    count++;
-                }
-            }
-
-            eventNames.push(events[eventKey]["Project Name"]); // Get the project name
+            eventNames.push(event["Project Name"]); // Get the project name
             signUpCounts.push(count); // Add count to the array
             eventKeys.push(eventKey); // Store the event key
         }
@@ -55,18 +50,7 @@ function createChart(eventNames, signUpCounts, eventKeys) {
         'rgba(255, 99, 132, 0.6)', // Red
         'rgba(54, 162, 235, 0.6)', // Blue
         'rgba(255, 206, 86, 0.6)', // Yellow
-        'rgba(75, 192, 192, 0.6)', // Teal
-        'rgba(153, 102, 255, 0.6)', // Purple
-        'rgba(255, 159, 64, 0.6)', // Orange
-        'rgba(201, 203, 207, 0.6)', // Grey
-        'rgba(255, 99, 71, 0.6)', // Tomato
-        'rgba(0, 128, 0, 0.6)', // Green
-        'rgba(100, 149, 237, 0.6)', // Cornflower Blue
-        'rgba(255, 20, 147, 0.6)', // Deep Pink
-        'rgba(255, 105, 180, 0.6)', // Hot Pink
-        'rgba(210, 180, 140, 0.6)', // Tan
-        'rgba(0, 0, 255, 0.6)', // Blue
-        'rgba(255, 0, 255, 0.6)', // Magenta
+        // Add more colors as needed
     ];
 
     // Ensure the number of colors is equal to the number of events
@@ -97,11 +81,10 @@ function createChart(eventNames, signUpCounts, eventKeys) {
                 const activePoints = signupChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
                 if (activePoints.length) {
                     const firstPoint = activePoints[0];
-                    const eventName = eventNames[firstPoint.index]; // Get the corresponding event name
                     const eventKey = eventKeys[firstPoint.index]; // Get the corresponding event key
 
-                    // Pass the event name into the URL and redirect
-                    window.location.href = `index.html?eventKey=${eventKey}&eventName=${encodeURIComponent(eventName)}`; // Navigate to index.html with eventKey and eventName
+                    // Pass the event key into the URL and redirect to indexadmin.html
+                    window.location.href = `indexadmin.html?eventKey=${eventKey}`; // Navigate to indexadmin.html with eventKey
                 }
             }
         }

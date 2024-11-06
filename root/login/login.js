@@ -56,40 +56,58 @@ logEntireDatabase();
 window.googleSignIn = async function googleSignIn(userType) {
   const provider = new GoogleAuthProvider();
   try {
-    signInWithPopup(auth, provider).then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
+    const result = await signInWithPopup(auth, provider);
 
-      // The signed-in user info.
-      const user = result.user;
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
 
+    // The signed-in user info.
+    const user = result.user;
+    const userRef = ref(database, `${userType}s/${user.uid}`);
+
+    // Check if the user is already registered
+    const snapshot = await get(userRef);
+    if (!snapshot.exists()) {
+      // Only set data if user is not already registered
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+      };
+      
       if (userType == "student") {
-        set(ref(database, "students/" + user.uid), {
-          name: user.displayName,
-          email: user.email,
-          hours_left: 80, // default 80hrs
-        });
+        userData.hours_left = 80; // default 80hrs
 
-        // Redirect to Student.html after
-        window.location.href = `../student/main.html?uid=${
-          user.uid
-        }&name=${encodeURIComponent(user.displayName)}`;
+        // Get the current year
+        const currentYear = new Date().getFullYear();
+        // Generate a random number between 1 and 4
+        const randomNumber = Math.floor(Math.random() * 4) + 1;
+        // Calculate graduation year
+        const graduationYear = currentYear + randomNumber;
+        userData.graduation_year = graduationYear;
       }
-      if (userType == "admin") {
-        set(ref(database, "admins/" + user.uid), {
-          name: user.displayName,
-          email: user.email,
-        });
 
-        // Redirect to Student.html after
-        window.location.href = `../admin.html?uid=${
-          user.uid
-        }&name=${encodeURIComponent(user.displayName)}`;
-      }
-    });
+      await set(userRef, userData);
+      console.log("User data set successfully.");
+    } else {
+      console.log("User already registered.");
+    }
+    sessionStorage.setItem('user', JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      userType: userType,
+    }));
+
+    // Redirect based on user type
+    if (userType == "student") {
+      window.location.href = `../student/main.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
+    } else if (userType == "admin") {
+      window.location.href = `../admin.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
+    }
+    
   } catch (error) {
-    alert("Wrong username/password");
+    console.error("Error during Google sign-in:", error);
+    alert("There was an error during sign-in. Please try again.");
   }
 };
 
@@ -114,7 +132,7 @@ window.sponsorLogin = async function sponsorLogin() {
       window.location.href = `../sponsor/sponsor1.html?uid=${sponsorId}`;
     } else {
       console.log("WRONG PWD");
-      document.getElementById("errorMessage").innerHTML =
+      document.getElementById("errorMessage").innerText =
         "Invalid username or password!";
       document.getElementById("errorMessage").style.display = "block"; // Show error message
     }
@@ -122,25 +140,6 @@ window.sponsorLogin = async function sponsorLogin() {
     console.error("Error during community service login:", error);
   }
 };
-
-// Function to show/hide forms and scroll to the selected form
-// window.showForm = function (formId) {
-//   const forms = [
-//     "loginOptions",
-//     "communityServiceForm",
-//     "userForm",
-//     "adminForm",
-//   ];
-
-//   forms.forEach((form) => {
-//     document.getElementById(form).style.display = form === formId ? "block" : "none";
-//   });
-
-  // Scroll smoothly to the form if it's not the main login options
-//   if (formId !== "loginOptions") {
-//     document.getElementById(formId).scrollIntoView({ behavior: 'smooth' });
-//   }
-// };
 
 // Function to show the modal form
 window.showForm = function (formId) {

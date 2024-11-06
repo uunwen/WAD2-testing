@@ -35,7 +35,6 @@
     /* Smooth transition */
 }
 
-
 /* Card Container */
 .card-container {
     display: flex;
@@ -60,7 +59,6 @@
     display: none;
 }
 
-
 .navbar a {
     text-decoration: none;
     color: #333;
@@ -73,7 +71,6 @@
     border-bottom: 2px solid #007BFF;
 }
 
-
 .nav-link:hover {
     font-size: 1.4em;
     color: #007BFF;
@@ -82,7 +79,6 @@
 .nav-link.active {
     color: #007BFF;
 }
-
 
 /* Sign Up Button Styling */
 .signup-button {
@@ -150,11 +146,6 @@
     /* Ensure smooth enlargement */
 }
 
-
-
-
-
-
 .photo-gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -182,8 +173,6 @@
     /* Increase shadow for effect */
 }
 
-
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .photo-gallery {
@@ -197,4 +186,25 @@
         grid-template-columns: 1fr;
         /* 1 column for very small screens */
     }
+}
+
+
+.custom-back-button {
+    background-color: #e0f1f4;
+    color: black;
+    padding: 15px;
+    border-radius: 15%;
+    border: 1px solid #e0f1f4;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-back-button:hover {
+    background-color: #d1e8ed;
+    /* Slightly darker background */
+    color: #333;
+    /* Darker text for contrast */
+    transform: scale(1.05);
+    /* Slightly enlarge the button */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    /* Ensure smooth enlargement */
 }

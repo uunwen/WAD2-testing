@@ -87,7 +87,7 @@ h1 {
 }
 
 .delete-btn:active {
-  background-color: #e63939; 
+  background-color: #e63939;
   border-radius: 8px;
 }
 
@@ -126,10 +126,44 @@ h1 {
 }
 
 #aboutTextarea {
-  display: none;
+  display: block;
+  /* Change display from 'none' to 'block' for when it is shown */
   width: 100%;
-  height: 100px;
+  height: 150px;
+  /* Adjust as needed */
   margin-top: 10px;
   padding: 10px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+
+
+/* Style when content is in edit mode */
+#aboutContent.edit-mode {
+  border: 1px solid white;
+  /* Light border to indicate edit mode */
+  background-color: #f9f9f9;
+  /* Light background color */
+  outline: 0.5px solid black;
+  /* Remove blue border outline */
+  padding: 10px;
+  /* Add padding for better UX */
+}
+
+
+#successMessage {
+  font-size: 16px;
+  color: green;
+  display: none;
+  /* Hidden by default */
+}
+
+.event-success-message {
+  font-size: 16px;
+  color: green;
+  margin-top: 10px;
+  /* Ensure that 'display' is controlled by JavaScript */
 }

@@ -67,6 +67,23 @@
         .popup-display {
             display: none;
         }
+
+        
+        table td.green{
+            color: green;
+        }
+
+        table td.red {
+            color: red;
+        }
+
+        table td.orange {
+            color: orange;
+        }
+
+        table td.black {
+            color: black;
+        }
     </style>
 </head>
 
@@ -205,7 +222,7 @@
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedEvents" :key="record.eventKey">
-                    <community-service-records :record="record" :index="idx + 1" @update-status="updateStatus(idx)" />
+                    <community-service-records :record="record" :index="idx + 1" @update-tasklist="updateTasklist(idx)" />
                 </template>
             </tbody>
 

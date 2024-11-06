@@ -113,7 +113,9 @@ const adminApp = Vue.createApp({
 
       // Filter Admission Period Status  
       // Iterate over all events
+
       for (const event of this.allEvents) {
+
         // Split the Admissions Period and trim any whitespace
         const admissionsPeriod = event["Admissions Period"].split('–').map(period => period.trim());
 
@@ -169,21 +171,28 @@ const adminApp = Vue.createApp({
       }
 
       // Filter Total CSP Hours
-      this.selectedEvents = this.selectedEvents.filter(event => 
+      this.selectedEvents = this.selectedEvents.filter(event =>
         event["Total CSP hours"] <= this.filterMaxHours && event["Total CSP hours"] >= this.filterMinHours
       );
-    }
+    },
 
   }
 });
 
+adminApp.component('organisersList', {
+  props: ['organiser'],
+  emits: [],
+  template: `
+        <option :value="organiser">{{organiser}}</option>
+  `
+});
 
 adminApp.component('communityServiceRecords', {
   props: ['record', 'index'],
   emits: ["updateStatus"],
   template: `
         <tr>
-            <td class="align-middle"><b>{{ index }}</b></td>
+            <td :class="checkStatus(record.Status, record['Admissions Period'])" class="align-middle"><b>{{ index }}</b></td>
             <td class="align-middle">{{ record['Admissions Period'] }}</td>
             <td class="align-middle">{{ record.Capacity }}</td>
             <td class="align-middle">{{ record.Location }}</td>
@@ -196,15 +205,44 @@ adminApp.component('communityServiceRecords', {
             <td class="align-middle"><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
             <td class="align-middle"><button class="btn btn-light">View</button></td>
         </tr>
-  `
+  `,
+  methods: {
+    checkStatus(status, admissionPeriod) {
+      console.log(admissionPeriod);
+      if (status == "Not Approved") {
+        return "red";
+      }
+      else {
+        try {
+          const admission = admissionPeriod.split('–').map(period => period.trim());
+
+          // Check if the admissions period has two parts before proceeding
+          if (admission.length == 2) {
+
+            const date = new Date();
+            // Parse the start and end dates
+            const startDate = new Date(admission[0]);
+            const endDate = new Date(admission[1]);
+
+            if (date >= startDate && date <= endDate) {
+              return "green"
+            }
+            else if (date < startDate) {
+              return "orange"
+            }
+            else {
+              return "black"
+            }
+          }
+        }
+        catch {
+
+        }
+      }
+      return "black"
+    }
+  }
 });
 
-adminApp.component('organisersList', {
-  props: ['organiser'],
-  emits: [],
-  template: `
-        <option :value="organiser">{{organiser}}</option>
-  `
-});
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)

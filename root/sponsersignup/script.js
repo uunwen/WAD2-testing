@@ -1,3 +1,4 @@
+
 // Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
@@ -15,32 +16,57 @@ const app = firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 // Get references to HTML elements
-const eventInput = document.getElementById('event-input'); // Search bar for event name
+const eventSelect = document.getElementById('event-select');
 const studentTableBody = document.getElementById('student-table-body');
-const studentCountDisplay = document.getElementById('student-count'); // Reference to the count display
-const searchButton = document.getElementById('search-button'); // Search button
+const studentCountDisplay = document.getElementById('student-count');
 
-// Function to fetch and display students based on the event name
-async function fetchAndDisplayStudents(eventName) {
+// Function to get the UID from the URL
+function getUIDFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('uid'); // Get the uid parameter from the URL
+}
+
+// Function to fetch project list for the sponsor and populate dropdown
+async function fetchProjectListAndEvents(uid) {
+    try {
+        const snapshot = await database.ref(`sponsors/${uid}/project_list`).once('value');
+        const projectList = snapshot.val();
+
+        
+
+        // Clear previous options
+        eventSelect.innerHTML = '';
+
+        // Loop through each project and create options for the dropdown
+        for (const projectKey in projectList) {
+            const projectName = projectList[projectKey]; // Assuming project name is stored directly
+            const option = document.createElement('option');
+            option.value = projectKey; // Use projectKey as the value
+            option.textContent = projectName; // Display project name
+            eventSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error fetching project list:', error);
+    }
+}
+
+// Fetch students based on the selected event
+async function fetchAndDisplayStudents(eventField) {
     studentTableBody.innerHTML = ''; // Clear previous table rows
     studentCountDisplay.textContent = '0'; // Reset count display
-    console.log('Fetching data for event name:', eventName);
 
     try {
         const snapshot = await database.ref('students').once('value');
         const students = snapshot.val();
-        console.log('Fetched students data:', students); // Log the entire student data
 
         let studentCount = 0; // Counter for students signed up
 
-        // Loop through the users and display those who signed up for the entered event name
+        // Loop through the users and display those who signed up for the selected event
         for (const userKey in students) {
             const user = students[userKey];
-            console.log('User:', user); // Log each user
 
-            // Check if the user has signed up for the event by looking for the event name in the signup_list
-            if (user.signup_list && user.signup_list.includes(eventName)) {
-                console.log(`User signed up: ${user.name}`); // Log student name
+            // Check if the user has signed up for the selected event
+            if (user[eventField] === true) {
                 addStudentRow(userKey, user); // Pass both the key and data to add row
                 studentCount++; // Increment the counter
             }
@@ -50,14 +76,14 @@ async function fetchAndDisplayStudents(eventName) {
         studentCountDisplay.textContent = studentCount;
 
         if (studentCount === 0) {
-            console.log(`No students signed up for ${eventName}`);
+            console.log(`No students signed up for ${eventField}`);
         }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-// Function to add a row to the student table
+// Add a row for each student
 function addStudentRow(userKey, user) {
     const row = document.createElement('tr');
     const cell = document.createElement('td');
@@ -73,18 +99,18 @@ function addStudentRow(userKey, user) {
     studentTableBody.appendChild(row); // Append the row to the table body
 }
 
-// Event listener for the search button
-searchButton.addEventListener('click', () => {
-    const eventName = eventInput.value.trim(); // Get the trimmed value from the input
-    console.log(`Searching for event: ${eventName}`); // Log the event name
-    if (eventName) {
-        fetchAndDisplayStudents(eventName); // Fetch and display students for the entered event name
-    } else {
-        console.log('Please enter an event name.'); // Log if no event name is provided
-    }
+// Event listener for when the dropdown value changes
+eventSelect.addEventListener('change', (event) => {
+    const selectedEvent = event.target.value;
+    fetchAndDisplayStudents(selectedEvent);
 });
 
-// Call fetchEvents on page load (if needed, depending on your logic)
-// window.onload = () => {
-//     fetchEvents(); // Fetch events when the page loads (uncomment if you want this)
-// };
+// Call fetchEvents on page load
+window.onload = () => {
+    const uid = getUIDFromURL(); // Get the uid from URL
+    if (uid) {
+        fetchProjectListAndEvents(uid); // Fetch project list for the given uid
+    } else {
+        console.error('No UID found in URL.');
+    }
+};
