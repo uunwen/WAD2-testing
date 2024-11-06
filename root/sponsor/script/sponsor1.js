@@ -106,7 +106,7 @@ function displaySponsorDetails(sponsorData) {
   // } --------------------------------------------------------
 }
 
-// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH WITH TAKEATTENDANCE  --------------------------------------------------------
+// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH --------------------------------------------------------
 
 // // Event listener for the edit button
 // document.getElementById("editAboutBtn").addEventListener("click", () => {
@@ -191,7 +191,7 @@ function displaySponsorDetails(sponsorData) {
 //   }
 // });
 
-// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH WITH TAKEATTENDANCE  --------------------------------------------------------
+// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH --------------------------------------------------------
 
 // Call this function after all your imports and initializations
 window.onload = () => {
