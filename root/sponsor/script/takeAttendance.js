@@ -9,6 +9,7 @@ import {
   ref,
   get,
   update,
+  child,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Import filtered event from sponsor1.js
@@ -49,14 +50,12 @@ const createApp = Vue.createApp({
       selectedEvent: "", // Track selected event
       org_name: null,
       filteredEvent: [],
-      userUid: userData.uid,
-      
+      userUid: "",
     };
   },
   async mounted() {
     this.org_name = await getSponsorOrg_name();
     this.filteredEvent = await getFilteredEventsByOrganizer(this.org_name);
-    console.log(this.filteredEvent[0][1]);
   },
 
   methods: {
@@ -109,7 +108,7 @@ const createApp = Vue.createApp({
     },
 
     async handleCheckin(userData) {
-      // TO-DO: WTF IS EVENTID,
+      // TO-DO: EVENTID?
       // Create new function to fix eventID --- ????????
       const eventUid = await this.getEventUid(this.selectedEvent);
       if (!eventUid) {
@@ -117,21 +116,11 @@ const createApp = Vue.createApp({
         alert("Event not found in the system");
         return;
       }
-      // TO-DO: WTF IS EVENTID --- ????????
+      // TO-DO: EVENTID --- ????????
 
-      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
-
-      console.log(eventUid);
-      const event = await getEventfromUid(eventUid); //get event from uid
-      console.log(event["Session(s)"]);
-      const duration = getDurationFromEventSession(event["Session(s)"]); //get duratin from session
-      console.log(duration);
-
-      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
-
-      console.log();
       const updatedCheckin = {};
 
+      // TO-DO:
       if (userData[eventUid] === false) {
         try {
           const studentRef = ref(database, `students/${this.userUid}`);
@@ -159,33 +148,74 @@ const createApp = Vue.createApp({
       const eventUid = await this.getEventUid(this.selectedEvent);
 
       // Verify that the user checked in earlier (event value is true)
+      // To-do: NEED TO PREVENT DOUBLE SCANNINIG ---
       if (userData[eventUid] === true) {
         this.isEndAttendance = false;
         try {
-          // Get event hours
-
-          // To-do: GET HOURS CORROSPONDING TO THE EVENT SESSION ----
-
-          let eventHours = 2;
-          const userHoursLeft = userData["hours_left"];
-
-          // Calculate new hours_left
+          let name = userData.name;
+          let timestamp = new Date().toLocaleString();
 
           // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
-          // To-do: NEED TO PREVENT DOUBLE SCANNINIG ---
+          let actualDuration = getDurationInHours(
+            this.attendanceList[this.attendanceList.length - 1]
+              .clockInTimestamp,
+            timestamp
+          );
+
+          // GET HOURS BASED ON SESSION
+          const event = await getEventfromUid(eventUid);
+          const duration = getDurationFromEventSession(event["Session(s)"]);
+
+          // FIND DIFFERENCE BETWEEN SESSION AND ACTUAL CLOCKIN HOURS
+          let diffInActualnSessionDuration = actualDuration - duration;
+          console.log(
+            diffInActualnSessionDuration,
+            diffInActualnSessionDuration <= 0
+          );
+
+          let eventHours;
+
+          if (diffInActualnSessionDuration > 0) {
+            eventHours = duration;
+          } else if (diffInActualnSessionDuration <= 0) {
+            eventHours = duration + diffInActualnSessionDuration;
+            // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
+            let missedHours = duration - eventHours;
+            get(child(ref(database), `events/${eventUid}/signups`))
+              .then((snapshot) => {
+                if (snapshot.exists()) {
+                  const eventInfo = snapshot.val();
+                  eventInfo["missed_hours"] = missedHours;
+                  // to-do: CANNOT IDENTIFY WHERE IS THE CORROSPONDING SIGN-UPS FOR STUDENT,
+                  console.log(eventInfo);
+                } else {
+                  console.log("No data available");
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
+          } else {
+            alert("Failed to process checkout");
+          }
+
+          // Calculate new hours_left
+          const userHoursLeft = userData["hours_left"];
+
           const updatedHours = {};
           const studentRef = ref(database, `students/${this.userUid}`);
           updatedHours["hours_left"] = userHoursLeft - eventHours;
 
-          // Update to firebase
-          await update(studentRef, updatedHours);
-
           // Add to checkout list for display
           this.checkoutList.push({
-            name: userData.name,
-            clockOutTimestamp: new Date().toLocaleString(),
+            name: name,
+            clockOutTimestamp: timestamp,
             hoursDeducted: eventHours,
           });
+
+          // Update to firebase
+          await update(studentRef, updatedHours);
         } catch (error) {
           console.error("Failed to update hours:", error);
           alert("Failed to process checkout");
@@ -259,6 +289,22 @@ async function updateOptions() {
     option.text = event;
     eventsSelect.add(option);
   }
+}
+
+// for handleCheckout
+function getDurationInHours(dateString1, dateString2) {
+  // Parse the date strings into Date objects
+  const date1 = new Date(dateString1);
+  const date2 = new Date(dateString2);
+
+  // Calculate the difference in milliseconds
+  const diffInMilliseconds = date2 - date1;
+
+  // Convert milliseconds to hours
+  const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+
+  // Round off the result
+  return Math.round(diffInHours);
 }
 
 updateOptions();

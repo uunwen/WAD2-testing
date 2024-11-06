@@ -55,6 +55,9 @@
               <button @click="endAttendance" v-if="!isScanning">
                 End Attendance
               </button>
+              <button @click="stopAttendance" v-if="isScanning">
+                Stop Scanning
+              </button>
             </div>
 
             <table>
