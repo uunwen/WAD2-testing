@@ -9,6 +9,7 @@ import {
   ref,
   get,
   update,
+  child,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Import filtered event from sponsor1.js
@@ -176,11 +177,26 @@ const createApp = Vue.createApp({
             eventHours = duration;
           } else if (diffInActualnSessionDuration <= 0) {
             eventHours = duration + diffInActualnSessionDuration;
+            // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
+            let missedHours = duration - eventHours;
+            get(child(ref(database), `events/${eventUid}/signups`))
+              .then((snapshot) => {
+                if (snapshot.exists()) {
+                  const eventInfo = snapshot.val();
+                  eventInfo["missed_hours"] = missedHours;
+                  // to-do: CANNOT IDENTIFY WHERE IS THE CORROSPONDING SIGN-UPS FOR STUDENT,
+                  console.log(eventInfo);
+                } else {
+                  console.log("No data available");
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
           } else {
             alert("Failed to process checkout");
           }
-
-          // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
 
           // Calculate new hours_left
           const userHoursLeft = userData["hours_left"];

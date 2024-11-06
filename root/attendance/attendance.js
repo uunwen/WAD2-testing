@@ -5,6 +5,7 @@
 const userData = JSON.parse(sessionStorage.getItem('user'));
 
 console.log(userData.uid);
+
 // Display welcome message
 document.getElementById(
   "welcomeMessage"
