@@ -1,177 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create New Event</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
-    <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
-    <style>
-      body {
-        background-color: #f0f8ff;
-        font-family: Arial, sans-serif;
-        color: #333;
-      }
 
-      .container {
-        width: 80%;
-        margin: 20px auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create New Event</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
+  <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f0f8ff;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
 
-      h2 {
-        text-align: center;
-        color: #007bff;
-      }
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-      form {
-        display: flex;
-        flex-direction: column;
-      }
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
 
-      label {
-        margin-top: 10px;
-      }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
 
-      input,
-      textarea,
-      select {
-        padding: 10px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
+    label {
+      margin-top: 10px;
+    }
 
-      button {
-        padding: 10px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        margin-top: 20px;
-        cursor: pointer;
-        font-size: 16px;
-      }
+    input,
+    textarea,
+    select {
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-      button:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-      p#formMessage {
-        margin-top: 15px;
-        text-align: center;
-        color: #28a745;
-        font-weight: bold;
-      }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
 
-      .error {
-        color: #d9534f;
-      }
-    </style>
-  </head>
+    p#formMessage {
+      margin-top: 15px;
+      text-align: center;
+      color: #28a745;
+      font-weight: bold;
+    }
 
-  <body>
-    <!-- sidebar -->
-    <div class="container-fluid" class="main" id="app">
-      <div class="row">
-        <div class="sidebar col-md-3" id="sidebar"></div>
+    .error {
+      color: #d9534f;
+    }
 
-        <!-- events content -->
-        <main class="col-md-9 main-content">
-          <div class="container">
-            <h2>Create New Event</h2>
-            <form id="eventForm">
-              <label for="admissionsPeriod"
-                >Admissions Period (e.g., October 2024 - November 2024):</label
-              >
-              <input type="text" id="admissionsPeriod" required />
+    .error-highlight {
+      border-color: #d9534f;
+      /* Red border to indicate an error */
+      background-color: #f8d7da;
+      /* Light red background */
+    }
+  </style>
+</head>
 
-              <label for="capacity">Capacity (e.g., 50 volunteers):</label>
-              <input type="text" id="capacity" required />
+<body>
+  <!-- sidebar -->
+  <div class="container-fluid" class="main" id="app">
+    <div class="row">
+      <div class="sidebar col-md-3" id="sidebar"></div>
 
-              <label for="description"
-                >Description (e.g., Spend a rewarding day at East Coast
-                Beach...):</label
-              >
-              <textarea id="description" required></textarea>
+      <!-- events content -->
+      <main class="col-md-9 main-content">
+        <div class="container">
+          <h2>Create New Event</h2>
+          <form id="eventForm">
+            <label for="admissionsPeriod">Admissions Period (e.g., October 2024 - November 2024):</label>
+            <input type="text" id="capacity" required />
 
-              <label for="location">Location (e.g., East Coast Beach):</label>
-              <input type="text" id="location" required />
 
-              <label for="projectName"
-                >Project Name (e.g., Beach Clean-Up):</label
-              >
-              <input type="text" id="projectName" required />
+            <label for="capacity">Capacity (e.g., 50 volunteers):</label>
+            <input type="number" id="capacity" min="1" required />
 
-              <label for="projectRequirements"
-                >Project Requirements (e.g., Bring gloves and reusable water
-                bottles):</label
-              >
-              <input type="text" id="projectRequirements" required />
 
-              <label for="region">Region:</label>
-              <select id="region" required>
-                <option value="" disabled selected>Select a region</option>
-                <option value="North">North</option>
-                <option value="South">South</option>
-                <option value="East">East</option>
-                <option value="West">West</option>
-                <option value="Central">Central</option>
-              </select>
+            <label for="description">Description (e.g., Spend a rewarding day at East Coast
+              Beach...):</label>
+            <textarea id="description" required></textarea>
 
-              <label for="sessions"
-                >Session(s) (e.g., Monday, 8:00 AM - 1:00 PM):</label
-              >
-              <input type="text" id="sessions" required />
+            <label for="location">Location (e.g., East Coast Beach):</label>
+            <input type="text" id="location" required />
 
-              <label for="totalCSPHours"
-                >Total CSP hours (e.g., 80 hours):</label
-              >
-              <input type="number" id="totalCSPHours" required />
+            <label for="projectName">Project Name (e.g., Beach Clean-Up):</label>
+            <input type="text" id="projectName" required />
 
-              <label for="volunteerPeriodStart">Volunteer Period Start:</label>
-              <input type="date" id="volunteerPeriodStart" required />
+            <label for="projectRequirements">Project Requirements (e.g., Bring gloves and reusable water
+              bottles):</label>
+            <input type="text" id="projectRequirements" required />
 
-              <label for="volunteerPeriodEnd">Volunteer Period End:</label>
-              <input type="date" id="volunteerPeriodEnd" required />
+            <label for="region">Region:</label>
+            <select id="region" required>
+              <option value="" disabled selected>Select a region</option>
+              <option value="North">North</option>
+              <option value="South">South</option>
+              <option value="East">East</option>
+              <option value="West">West</option>
+              <option value="Central">Central</option>
+            </select>
 
-              <button type="button" id="submitEvent">Submit Event</button>
-            </form>
-            <p id="formMessage"></p>
-          </div>
-        </main>
-      </div>
+            <label for="sessions">Session(s) (e.g., Monday, 8:00 AM - 1:00 PM):</label>
+            <input type="text" id="sessions" required />
+
+            <label for="totalCSPHours">Total CSP hours (e.g., 80 hours):</label>
+            <input type="number" id="totalCSPHours" required />
+
+            <label for="volunteerPeriodStart">Volunteer Period Start:</label>
+            <input type="date" id="volunteerPeriodStart" required />
+
+            <label for="volunteerPeriodEnd">Volunteer Period End:</label>
+            <input type="date" id="volunteerPeriodEnd" required />
+
+            <button type="submit" id="submitEvent">Submit Event</button>
+          </form>
+          <p id="formMessage"></p>
+        </div>
+      </main>
     </div>
-    <!-- end of sidebar -->
-    <script type="module" src="./script/upload.js"></script>
-    <script type="module">
-      import { createNavbar, initializeSearch } from "./script/navbar.js";
+  </div>
 
-      document.addEventListener("DOMContentLoaded", async () => {
-        createNavbar();
+  <!-- end of sidebar -->
 
-        try {
-          const searchResult = await initializeSearch();
-          console.log(searchResult);
-        } catch (err) {
-          // Initialize search functionality
-          console.error("Error initializing search:", error);
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
+      authDomain: "wad-proj-2b37f.firebaseapp.com",
+      databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "wad-proj-2b37f",
+      storageBucket: "wad-proj-2b37f.appspot.com",
+      messagingSenderId: "873354832788",
+      appId: "1:873354832788:web:41105e10dd0f7651607d81",
+      measurementId: "G-LFFLPT7G58",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Individual validation handlers
+      const validateField = (element, message) => {
+        element.addEventListener("input", function () {
+          if (this.value.trim() === "" || (isNaN(this.value) && this.type === "number")) {
+            this.setCustomValidity(message);
+            this.reportValidity();
+          } else {
+            this.setCustomValidity(""); // Clear the message when valid
+          }
+        });
+      };
+
+      // Apply validation for individual fields
+      validateField(document.getElementById("capacity"), "Capacity must be a number greater than or equal to 1.");
+      validateField(document.getElementById("description"), "Description cannot be empty.");
+      validateField(document.getElementById("location"), "Location cannot be empty.");
+      validateField(document.getElementById("projectName"), "Project Name cannot be empty.");
+      validateField(document.getElementById("projectRequirements"), "Project Requirements cannot be empty.");
+      validateField(document.getElementById("sessions"), "Session details cannot be empty.");
+      validateField(document.getElementById("totalCSPHours"), "Total CSP hours must be a number greater than or equal to 1.");
+
+      // Validate region selection
+      document.getElementById("region").addEventListener("change", function () {
+        if (this.value === "") {
+          this.setCustomValidity("Please select a region.");
+          this.reportValidity();
+        } else {
+          this.setCustomValidity(""); // Clear the message when valid
         }
       });
-    </script>
-    <script src="./script/sidebar.js"></script>
-  </body>
+
+      // Validate volunteer period (end must be later than start)
+      document.getElementById("volunteerPeriodEnd").addEventListener("input", function () {
+        const startDateInput = document.getElementById("volunteerPeriodStart");
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(this.value);
+
+        if (!startDateInput.value || isNaN(startDate.getTime())) {
+          this.setCustomValidity("Please select a valid start date before choosing an end date.");
+          this.reportValidity();
+        } else if (isNaN(endDate.getTime())) {
+          this.setCustomValidity("Please select a valid end date.");
+          this.reportValidity();
+        } else if (endDate <= startDate) {
+          this.setCustomValidity("Volunteer period end date must be later than the start date.");
+          this.reportValidity();
+        } else {
+          this.setCustomValidity(""); // Clear the message when valid
+        }
+      });
+
+      // Form submission validation and success message handling
+      const eventForm = document.getElementById("eventForm");
+      if (eventForm) {
+        eventForm.addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent default form submission behavior
+          let hasErrors = false;
+
+          // Iterate over form elements and validate each
+          Array.from(eventForm.elements).forEach((element) => {
+            if (!element.checkValidity()) {
+              element.classList.add("error-highlight");
+              hasErrors = true;
+
+              // Add or update error message for the invalid field
+              let errorElement = element.nextElementSibling;
+              if (!errorElement || !errorElement.classList.contains('error-message')) {
+                errorElement = document.createElement('div');
+                errorElement.className = 'error-message';
+                element.after(errorElement);
+              }
+              errorElement.textContent = element.validationMessage;
+            } else {
+              element.classList.remove("error-highlight");
+              const errorElement = element.nextElementSibling;
+              if (errorElement && errorElement.classList.contains('error-message')) {
+                errorElement.remove();
+              }
+            }
+          });
+
+          if (hasErrors) {
+            console.log("Form has errors, preventing submission.");
+            return;
+          }
+
+          // Collect form data
+          const formData = {
+            capacity: document.getElementById("capacity").value,
+            description: document.getElementById("description").value,
+            location: document.getElementById("location").value,
+            projectName: document.getElementById("projectName").value,
+            projectRequirements: document.getElementById("projectRequirements").value,
+            region: document.getElementById("region").value,
+            sessions: document.getElementById("sessions").value,
+            totalCSPHours: document.getElementById("totalCSPHours").value,
+            volunteerPeriodStart: document.getElementById("volunteerPeriodStart").value,
+            volunteerPeriodEnd: document.getElementById("volunteerPeriodEnd").value,
+          };
+
+          try {
+            const eventsRef = ref(database, 'events');
+            const snapshot = await get(eventsRef);
+            const eventNumber = snapshot.exists() ? Object.keys(snapshot.val()).length + 1 : 1;
+
+            await set(ref(database, `events/event${eventNumber}`), formData);
+
+            const formMessage = document.getElementById("formMessage");
+            formMessage.textContent = `${formData.projectName} event created successfully!`;
+            formMessage.style.color = "#28a745"; // Green color for success
+          } catch (error) {
+            console.error("Error submitting the form data:", error);
+            const formMessage = document.getElementById("formMessage");
+            formMessage.textContent = "Failed to create the event. Please try again.";
+            formMessage.style.color = "#d9534f"; // Red color for error
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+
 </html>

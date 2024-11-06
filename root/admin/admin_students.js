@@ -1,6 +1,6 @@
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 
 // Firebase configuration
@@ -27,6 +27,7 @@ const adminApp = Vue.createApp({
       selectedStudents: [],
       minHour: 0,
       maxHour: 0,
+      filterGraduation: "allGraduationYear",
       filterMinHours: this.minHour,
       filterMaxHours: this.maxHour,
       filterStudentName: "",
@@ -79,17 +80,54 @@ const adminApp = Vue.createApp({
       this.filterMaxHours = this.maxHour
     },
     updateRecords() {
-
       this.selectedStudents = this.allStudents.filter(student => {
         // Filter by student name
-        const matchesName = this.filterStudentName === "" || student.name.toLowerCase().includes(this.filterStudentName.toLowerCase());
-        
-        // Filter by hours left
-        const matchesHours = student.hours_left >= this.filterMinHours && student.hours_left <= this.filterMaxHours;
+        const matchesName = this.filterStudentName === "" ||
+          student.name.toLowerCase().includes(this.filterStudentName.toLowerCase());
 
-        // Return true if both conditions match
-        return matchesName && matchesHours;
+        // Filter by hours left
+        const matchesHours = student.hours_left >= this.filterMinHours &&
+          student.hours_left <= this.filterMaxHours;
+
+        const currentYear = new Date().getFullYear();
+        let matchesGraduationYear = true; // Default to true if no filter is applied
+
+        // Graduation year filtering logic
+        if (this.filterGraduation != "allGraduationYear") {
+          const graduationYear = student.graduation_year; // Assuming graduationYear is a property in the student object
+
+          if (this.filterGraduation == "within1Year") {
+            matchesGraduationYear = graduationYear == currentYear + 1; // Graduating next year
+          } else if (this.filterGraduation == "within2Years") {
+            matchesGraduationYear = graduationYear === currentYear + 1 || graduationYear === currentYear + 2; // Graduating in one or two years
+          }
+        }
+
+        
+        // Return true if all conditions match
+        return matchesName && matchesHours && matchesGraduationYear;
       });
+    },
+    async updateTasklist(index) {
+      const student = this.allStudents[index];
+      try {
+        // Reference to the tasklist array in the database
+        const tasklistRef = ref(database, `events/${student.studentKey}/tasklist`);
+    
+        // Get the current tasklist array
+        const snapshot = await get(tasklistRef);
+        let tasklist = snapshot.exists() ? snapshot.val() : [];
+    
+        // Add a new item to the tasklist array
+        tasklist.push("Approved");
+    
+        // Update the array in the database
+        await set(tasklistRef, tasklist);
+        console.log("Tasklist successfully updated!");
+      } 
+      catch (error) {
+        console.error("Error updating tasklist:", error);
+      }
     }
   }
 });
@@ -97,15 +135,29 @@ const adminApp = Vue.createApp({
 
 adminApp.component('studentRecords', {
   props: ['record', 'index'],
-  emits: [],
+  emits: ['updateTasklist'],
   template: `
         <tr>
-            <td class="align-middle">{{ index }}</td>
+            <td :class="checkGraduation(record['graduation_year'])" class="align-middle"><b>{{ index }}</b></td>
             <td class="align-middle">{{ record.name }}</td>
             <td class="align-middle">{{ record.email }}</td>
+            <td class="align-middle">{{ record['graduation_year'] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
+            <td class="align-middle"><button class="btn btn-light" @click="$emit('updateTasklist', index)">Message</button></td>
         </tr>
-  `
+  `,
+  methods: {
+    checkGraduation(graduationYear) {
+      const currentYear = new Date().getFullYear();
+      if (graduationYear == currentYear + 1) {
+        return "red"
+      }
+      else if (graduationYear == currentYear + 2) {
+        return "orange"
+      }
+      return "green"
+    }
+  }
 });
 
 const vm = adminApp.mount('#adminApp');
