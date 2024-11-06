@@ -106,7 +106,7 @@ const createApp = Vue.createApp({
     },
 
     async handleCheckin(userData) {
-      // TO-DO: WTF IS EVENTID,
+      // TO-DO: EVENTID?
       // Create new function to fix eventID --- ????????
       const eventUid = await this.getEventUid(this.selectedEvent);
       if (!eventUid) {
@@ -114,7 +114,7 @@ const createApp = Vue.createApp({
         alert("Event not found in the system");
         return;
       }
-      // TO-DO: WTF IS EVENTID --- ????????
+      // TO-DO: EVENTID --- ????????
 
       const updatedCheckin = {};
 
