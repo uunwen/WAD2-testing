@@ -34,21 +34,24 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // Retrieve user info
-//const urlParams = new URLSearchParams(window.location.search); -- Commented by Jaxsen
-//const uid = urlParams.get("uid"); -- Commented by Jaxsen
-const userData = JSON.parse(sessionStorage.getItem('user')); // Added by Jaxsen
+const urlParams = new URLSearchParams(window.location.search); //-- Commented by Jaxsen
+const uid = urlParams.get("uid"); //-- Commented by Jaxsen
+// const userData = JSON.parse(sessionStorage.getItem("user")); // Added by Jaxsen
+
+// console.log(userData);
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
-  //const sponsorRef = ref(database, `sponsors/${uid}`); -- Commented by Jaxsen
-  const sponsorRef = ref(database, `sponsors/${userData.uid}`);  // Added by Jaxsen
+  const sponsorRef = ref(database, `sponsors/${uid}`); // Commented by Jaxsen
+  // const sponsorRef = ref(database, `sponsors/${userData.uid}`); // Added by Jaxsen
   get(sponsorRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
         const sponsorData = snapshot.val();
         displaySponsorDetails(sponsorData);
       } else {
-        const sponsorDescription = document.getElementById("sponsorDescription");
+        const sponsorDescription =
+          document.getElementById("sponsorDescription");
         if (sponsorDescription) {
           sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
         }
@@ -67,7 +70,8 @@ export function fetchSponsorData() {
 }
 
 function displaySponsorDetails(sponsorData) {
-  console.log("Sponsor data:", sponsorData); // Debug log to check the data structure
+  // // Commented to prevent flooding on console
+  // console.log("Sponsor data:", sponsorData); // Debug log to check the data structure
 
   const sponsorHeader = document.getElementById("sponsorHeader");
   const aboutContent = document.getElementById("aboutContent");
@@ -76,131 +80,123 @@ function displaySponsorDetails(sponsorData) {
     sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
   }
 
-  if (aboutContent) {
-    aboutContent.textContent = sponsorData["org_background"] || "N/A";
-    console.log("Displayed org_background:", sponsorData["org_background"]); // Log to check the content
-  }
+  // // Commented to prevent flooding on console  --------------------------------------------------------
+  // if (aboutContent) {
+  //   aboutContent.textContent = sponsorData["org_background"] || "N/A";
+  //   console.log("Displayed org_background:", sponsorData["org_background"]); // Log to check the content
+  // } --------------------------------------------------------
 
-  const sponsorStats = document.getElementById("sponsorStats");
-  if (sponsorStats) {
-    sponsorStats.innerHTML = "";
+  // // Commented out sponsor stats --------------------------------------------------------
+  // const sponsorStats = document.getElementById("sponsorStats");
+  // if (sponsorStats) {
+  //   sponsorStats.innerHTML = "";
 
-    const stats = [
-      { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
-      { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
-      { label: "Projects", value: sponsorData["project_count"] || "N/A" },
-    ];
+  //   const stats = [
+  //     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
+  //     { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
+  //     { label: "Projects", value: sponsorData["project_count"] || "N/A" },
+  //   ];
 
-    stats.forEach((stat) => {
-      const statItem = document.createElement("div");
-      statItem.className = "stat-item";
-      statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
-      sponsorStats.appendChild(statItem);
-    });
-  }
+  //   stats.forEach((stat) => {
+  //     const statItem = document.createElement("div");
+  //     statItem.className = "stat-item";
+  //     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
+  //     sponsorStats.appendChild(statItem);
+  //   });
+  // } --------------------------------------------------------
 }
 
+// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH WITH TAKEATTENDANCE  --------------------------------------------------------
 
+// // Event listener for the edit button
+// document.getElementById("editAboutBtn").addEventListener("click", () => {
+//   const aboutContent = document.getElementById("aboutContent");
+//   if (aboutContent) {
+//     const currentText =
+//       aboutContent.textContent.trim() ||
+//       "Enter your background information here...";
 
-// Event listener for the edit button
-document.getElementById("editAboutBtn").addEventListener("click", () => {
-  const aboutContent = document.getElementById("aboutContent");
-  if (aboutContent) {
-    const currentText = aboutContent.textContent.trim() || "Enter your background information here...";
+//     const textarea = document.createElement("textarea");
+//     textarea.id = "aboutTextarea";
+//     textarea.value = currentText;
+//     textarea.style.display = "block"; // Ensure it displays when created
+//     textarea.style.width = "100%";
+//     textarea.style.height = "150px";
 
-    const textarea = document.createElement("textarea");
-    textarea.id = "aboutTextarea";
-    textarea.value = currentText;
-    textarea.style.display = "block"; // Ensure it displays when created
-    textarea.style.width = "100%";
-    textarea.style.height = "150px";
+//     aboutContent.parentNode.replaceChild(textarea, aboutContent);
 
-    aboutContent.parentNode.replaceChild(textarea, aboutContent);
+//     document.getElementById("editAboutBtn").style.display = "none";
+//     document.getElementById("saveAboutBtn").style.display = "inline";
+//     document.getElementById("cancelAboutBtn").style.display = "inline";
+//   } else {
+//     console.error("Element #aboutContent not found.");
+//   }
+// });
 
-    document.getElementById("editAboutBtn").style.display = "none";
-    document.getElementById("saveAboutBtn").style.display = "inline";
-    document.getElementById("cancelAboutBtn").style.display = "inline";
-  } else {
-    console.error("Element #aboutContent not found.");
-  }
-});
+// // Event listener for the save button for the About section
+// document.getElementById("saveAboutBtn").addEventListener("click", async () => {
+//   const textarea = document.getElementById("aboutTextarea");
+//   if (textarea) {
+//     const updatedContent = textarea.value.trim();
 
+//     if (updatedContent) {
+//       try {
+//         const sponsorRef = ref(database, `sponsors/${uid}`);
+//         await update(sponsorRef, { org_background: updatedContent });
 
+//         // Display success message for the About section
+//         const successMessage = document.getElementById("successMessage");
+//         successMessage.style.display = "block";
+//         setTimeout(() => {
+//           successMessage.style.display = "none";
+//         }, 3000);
 
-// Event listener for the save button for the About section
-document.getElementById("saveAboutBtn").addEventListener("click", async () => {
-  const textarea = document.getElementById("aboutTextarea");
-  if (textarea) {
-    const updatedContent = textarea.value.trim();
+//         // Replace the textarea with a span
+//         const span = document.createElement("span");
+//         span.id = "aboutContent";
+//         span.innerHTML = updatedContent;
+//         textarea.replaceWith(span);
 
-    if (updatedContent) {
-      try {
-        const sponsorRef = ref(database, `sponsors/${uid}`);
-        await update(sponsorRef, { org_background: updatedContent });
+//         document.getElementById("editAboutBtn").style.display = "inline";
+//         document.getElementById("saveAboutBtn").style.display = "none";
+//         document.getElementById("cancelAboutBtn").style.display = "none";
+//       } catch (error) {
+//         console.error("Error saving changes:", error);
+//         alert("Failed to save changes.");
+//       }
+//     } else {
+//       console.error("Updated content is empty.");
+//     }
+//   } else {
+//     console.error("Element #aboutTextarea not found.");
+//   }
+// });
 
-        // Display success message for the About section
-        const successMessage = document.getElementById("successMessage");
-        successMessage.style.display = "block";
-        setTimeout(() => {
-          successMessage.style.display = "none";
-        }, 3000);
+// // Event listener for the cancel button
+// document.getElementById("cancelAboutBtn").addEventListener("click", () => {
+//   const textarea = document.getElementById("aboutTextarea");
+//   if (textarea) {
+//     // Revert to the original text content before editing
+//     const span = document.createElement("span");
+//     span.id = "aboutContent";
+//     span.textContent = textarea.defaultValue || textarea.value.trim(); // Retain the original value
 
-        // Replace the textarea with a span
-        const span = document.createElement("span");
-        span.id = "aboutContent";
-        span.innerHTML = updatedContent;
-        textarea.replaceWith(span);
+//     textarea.replaceWith(span);
 
-        document.getElementById("editAboutBtn").style.display = "inline";
-        document.getElementById("saveAboutBtn").style.display = "none";
-        document.getElementById("cancelAboutBtn").style.display = "none";
-      } catch (error) {
-        console.error("Error saving changes:", error);
-        alert("Failed to save changes.");
-      }
-    } else {
-      console.error("Updated content is empty.");
-    }
-  } else {
-    console.error("Element #aboutTextarea not found.");
-  }
-});
+//     document.getElementById("editAboutBtn").style.display = "inline";
+//     document.getElementById("saveAboutBtn").style.display = "none";
+//     document.getElementById("cancelAboutBtn").style.display = "none";
+//   } else {
+//     console.error("Element #aboutTextarea not found.");
+//   }
+// });
 
-
-
-
-
-
-
-
-// Event listener for the cancel button
-document.getElementById("cancelAboutBtn").addEventListener("click", () => {
-  const textarea = document.getElementById("aboutTextarea");
-  if (textarea) {
-    // Revert to the original text content before editing
-    const span = document.createElement("span");
-    span.id = "aboutContent";
-    span.textContent = textarea.defaultValue || textarea.value.trim(); // Retain the original value
-
-    textarea.replaceWith(span);
-
-    document.getElementById("editAboutBtn").style.display = "inline";
-    document.getElementById("saveAboutBtn").style.display = "none";
-    document.getElementById("cancelAboutBtn").style.display = "none";
-  } else {
-    console.error("Element #aboutTextarea not found.");
-  }
-});
-
+// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH WITH TAKEATTENDANCE  --------------------------------------------------------
 
 // Call this function after all your imports and initializations
 window.onload = () => {
   fetchSponsorData();
 };
-
-
-
-
 
 // Fetch and display events by organizer
 export async function fetchAndDisplayEvents(organizerName, search) {
@@ -233,10 +229,6 @@ export async function getFilteredEventsByOrganizer(organizerName) {
     throw error;
   }
 }
-
-
-
-
 
 // Display filtered events with edit functionality
 function displayFilteredEvents(events, search) {
@@ -289,7 +281,6 @@ function displayFilteredEvents(events, search) {
     ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
-
 
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
@@ -382,7 +373,6 @@ function enableEditEvent(eventBox, saveBtn, cancelBtn) {
   eventBox.querySelector(".edit-btn").style.display = "none";
 }
 
-
 // Save the edited event data to Firebase
 async function saveEventData(eventKey, eventBox) {
   const updatedData = {};
@@ -424,14 +414,11 @@ async function saveEventData(eventKey, eventBox) {
       fetchAndDisplayEvents(org_name, search);
       console.log("Events refreshed after success message timeout.");
     }, 3100); // Slightly longer than the timeout for the success message
-
   } catch (error) {
     console.error("Error updating event:", error.message);
     alert("Failed to save changes.");
   }
 }
-
-
 
 // Cancel editing and restore original content
 function cancelEditEvent(eventKey, eventBox) {

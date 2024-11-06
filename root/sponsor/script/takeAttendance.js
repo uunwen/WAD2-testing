@@ -53,7 +53,6 @@ const createApp = Vue.createApp({
   async mounted() {
     this.org_name = await getSponsorOrg_name();
     this.filteredEvent = await getFilteredEventsByOrganizer(this.org_name);
-    console.log(this.filteredEvent[0][1]);
   },
 
   methods: {
@@ -150,28 +149,32 @@ const createApp = Vue.createApp({
       if (userData[eventUid] === true) {
         this.isEndAttendance = false;
         try {
-          // Add to checkout list for display
-          this.checkoutList.push({
-            name: userData.name,
-            clockOutTimestamp: new Date().toLocaleString(),
-            hoursDeducted: eventHours,
-          });
+          let name = userData.name;
+          let timestamp = new Date().toLocaleString();
 
           // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
           let actualDuration = getDurationInHours(
             this.attendanceList[this.attendanceList.length - 1]
               .clockInTimestamp,
-            this.checkoutList[this.checkoutList.length - 1].clockOutTimestamp
+            timestamp
           );
+          console.log(timestamp);
           console.log(actualDuration);
           // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
 
           // To-do: GET HOURS BASED ON SESSION
           const event = await getEventfromUid(eventUid);
           const duration = getDurationFromEventSession(event["Session(s)"]);
+          console.log(duration);
           // To-do: GET HOURS BASED ON SESSION
 
-          // test
+          // To-do: FIND DIFFERENCE BETWEEN SESSION AND ACTUAL CLOCKIN HOURS
+          let diffInActualnSessionDuration = actualDuration - duration;
+          if (diffInActualnSessionDuration > 0) {
+            let eventHours = duration
+          }else if()
+
+          // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT
 
           // Calculate new hours_left
           let eventHours = 2; // change me!
@@ -180,6 +183,13 @@ const createApp = Vue.createApp({
           const updatedHours = {};
           const studentRef = ref(database, `students/${this.userUid}`);
           updatedHours["hours_left"] = userHoursLeft - eventHours;
+
+          // Add to checkout list for display
+          this.checkoutList.push({
+            name: name,
+            clockOutTimestamp: timestamp,
+            hoursDeducted: eventHours,
+          });
 
           // Update to firebase
           await update(studentRef, updatedHours);
