@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +10,17 @@
 <body>
   <h1>Event Sign-ups</h1>
 
-  <label for="event-input">Enter Event Name:</label>
-  <input type="text" id="event-input" placeholder="Type event name here...">
-  <button id="search-button">Show Students</button>
+  <label for="event-select">Select Event:</label>
+  <select id="event-select">
+    <!-- Options will be populated dynamically -->
+  </select>
+  
+  <!-- Drop down list to select events --> 
+  <div id="dropDown"> 
+    <!-- Todo: disable user selection after attandance system start scanning --> 
+    <label for="events">Select Event:</label> 
+    <select id="events" v-model="selectedEvent"></select> 
+  </div>
   
   <table id="student-table">
     <thead>
@@ -35,69 +44,5 @@
 
   <!-- Your custom JavaScript -->
   <script src="script.js"></script>
-  
-  <script>
-    // Function to extract URL parameters and set the input value
-    function setEventInputValue() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const eventName = urlParams.get('eventName');
-      
-      if (eventName) {
-        // Set the value of the input to the event name
-        document.getElementById('event-input').value = decodeURIComponent(eventName);
-        // Automatically show students for this event
-        showStudents(eventName);
-      }
-    }
-
-    // Call setEventInputValue on page load
-    window.onload = () => {
-      setEventInputValue(); // Set the input value and show students
-    };
-
-    // Function to show students who signed up for a specific event
-    function showStudents(eventName) {
-      const studentsRef = firebase.database().ref('students');
-      studentsRef.once('value').then((snapshot) => {
-        const students = snapshot.val();
-        const studentTableBody = document.getElementById('student-table-body');
-        studentTableBody.innerHTML = ''; // Clear previous results
-
-        let count = 0; // Counter for total students
-        // Iterate through students and check if they signed up for the event
-        for (const userKey in students) {
-          if (students[userKey].signup_list && students[userKey].signup_list.includes(eventName)) {
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            nameCell.textContent = students[userKey].name; // Assuming each student has a name property
-            row.appendChild(nameCell);
-            studentTableBody.appendChild(row);
-            count++; // Increment the count for each signed up student
-          }
-        }
-
-        // Update the total student count
-        document.getElementById('student-count').textContent = count;
-
-        // If no students found
-        if (count === 0) {
-          const noStudentsRow = document.createElement('tr');
-          const noStudentsCell = document.createElement('td');
-          noStudentsCell.textContent = 'No students signed up for this event.';
-          noStudentsCell.colSpan = 1; // Adjust based on your table structure
-          noStudentsRow.appendChild(noStudentsCell);
-          studentTableBody.appendChild(noStudentsRow);
-        }
-      }).catch((error) => {
-        console.error('Error fetching students:', error);
-      });
-    }
-
-    // Event listener for the search button
-    document.getElementById('search-button').addEventListener('click', () => {
-      const eventName = document.getElementById('event-input').value;
-      showStudents(eventName); // Show students for the input event name
-    });
-  </script>
 </body>
 </html>
