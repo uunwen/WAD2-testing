@@ -48,7 +48,6 @@ const createApp = Vue.createApp({
       org_name: null,
       filteredEvent: [],
       userUid: "",
-      
     };
   },
   async mounted() {
@@ -117,19 +116,9 @@ const createApp = Vue.createApp({
       }
       // TO-DO: WTF IS EVENTID --- ????????
 
-      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
-
-      console.log(eventUid);
-      const event = await getEventfromUid(eventUid); //get event from uid
-      console.log(event["Session(s)"]);
-      const duration = getDurationFromEventSession(event["Session(s)"]); //get duratin from session
-      console.log(duration);
-
-      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
-
-      console.log();
       const updatedCheckin = {};
 
+      // TO-DO:
       if (userData[eventUid] === false) {
         try {
           const studentRef = ref(database, `students/${this.userUid}`);
@@ -157,33 +146,43 @@ const createApp = Vue.createApp({
       const eventUid = await this.getEventUid(this.selectedEvent);
 
       // Verify that the user checked in earlier (event value is true)
+      // To-do: NEED TO PREVENT DOUBLE SCANNINIG ---
       if (userData[eventUid] === true) {
         this.isEndAttendance = false;
         try {
-          // Get event hours
-
-          // To-do: GET HOURS CORROSPONDING TO THE EVENT SESSION ----
-
-          let eventHours = 2;
-          const userHoursLeft = userData["hours_left"];
-
-          // Calculate new hours_left
-
-          // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
-          // To-do: NEED TO PREVENT DOUBLE SCANNINIG ---
-          const updatedHours = {};
-          const studentRef = ref(database, `students/${this.userUid}`);
-          updatedHours["hours_left"] = userHoursLeft - eventHours;
-
-          // Update to firebase
-          await update(studentRef, updatedHours);
-
           // Add to checkout list for display
           this.checkoutList.push({
             name: userData.name,
             clockOutTimestamp: new Date().toLocaleString(),
             hoursDeducted: eventHours,
           });
+
+          // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
+          let actualDuration = getDurationInHours(
+            this.attendanceList[this.attendanceList.length - 1]
+              .clockInTimestamp,
+            this.checkoutList[this.checkoutList.length - 1].clockOutTimestamp
+          );
+          console.log(actualDuration);
+          // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
+
+          // To-do: GET HOURS BASED ON SESSION
+          const event = await getEventfromUid(eventUid);
+          const duration = getDurationFromEventSession(event["Session(s)"]);
+          // To-do: GET HOURS BASED ON SESSION
+
+          // test
+
+          // Calculate new hours_left
+          let eventHours = 2; // change me!
+          const userHoursLeft = userData["hours_left"];
+
+          const updatedHours = {};
+          const studentRef = ref(database, `students/${this.userUid}`);
+          updatedHours["hours_left"] = userHoursLeft - eventHours;
+
+          // Update to firebase
+          await update(studentRef, updatedHours);
         } catch (error) {
           console.error("Failed to update hours:", error);
           alert("Failed to process checkout");
@@ -257,6 +256,22 @@ async function updateOptions() {
     option.text = event;
     eventsSelect.add(option);
   }
+}
+
+// for handleCheckout
+function getDurationInHours(dateString1, dateString2) {
+  // Parse the date strings into Date objects
+  const date1 = new Date(dateString1);
+  const date2 = new Date(dateString2);
+
+  // Calculate the difference in milliseconds
+  const diffInMilliseconds = date2 - date1;
+
+  // Convert milliseconds to hours
+  const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+
+  // Round off the result
+  return Math.round(diffInHours);
 }
 
 updateOptions();
