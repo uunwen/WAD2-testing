@@ -67,7 +67,8 @@ function displayEventDetails() {
 
             // Loop through event data and generate event cards
             for (const key in data) {
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name") {
+                // Ensure key is valid and exclude specific keys, including "Photos"
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "Photos") {
                     const card = document.createElement("div");
                     card.className = "card";
 
@@ -105,14 +106,17 @@ function displayEventDetails() {
                 const buttonContainer = document.querySelector('.button-container');
                 buttonContainer.innerHTML = ""; // Clear previous buttons
 
-            const signupButton = document.createElement("button");
-            signupButton.textContent = "Sign Up";
-            signupButton.className = "signup-button";
-            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
-            signupButton.onclick = () => {
-                window.location.href = signupLink;
-            };
-            buttonContainer.appendChild(signupButton);
+                const signupButton = document.createElement("button");
+                signupButton.textContent = "Sign Up";
+                signupButton.className = "signup-button";
+                const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+                signupButton.onclick = () => {
+                    window.location.href = signupLink;
+                };
+                buttonContainer.appendChild(signupButton);
+            }).catch((error) => {
+                console.error("Error fetching student details:", error);
+            });
         } else {
             document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
         }
@@ -121,6 +125,8 @@ function displayEventDetails() {
         document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
+
+
 
 // Helper function to find sponsor key
 function findSponsorKey(organiserName) {
