@@ -19,11 +19,9 @@
 </head>
 
 <body>
-
-    <div style="text-align: left; margin: 10px;">
-        <button class="btn back-button" onclick="goBack()">
-            ← Back
-        </button>
+    <!-- Back Button -->
+    <div style="margin: 20px;">
+        <button class="custom-back-button" onclick="goBack()">Back</button>
     </div>
 
     <!-- Project Name Title -->
@@ -41,14 +39,11 @@
         <div class="button-container"></div>
     </div>
 
-
     <!-- Photos Section -->
     <div id="photosSection" style="display: none;">
         <h2>Photo Gallery</h2>
         <div id="photo-gallery" class="photo-gallery"></div>
     </div>
-
-
 
     <script>
         // Function to toggle between tabs
@@ -70,8 +65,6 @@
                 displayEventDetails();
             }
         }
-
-
 
         // Back button function
         function goBack() {

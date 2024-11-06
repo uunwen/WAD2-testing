@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
+
   <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
   <style>
     body {
@@ -94,6 +94,7 @@
       <!-- events content -->
       <main class="col-md-9 main-content">
         <div class="container">
+
           <h2>Create New Event</h2>
           <form id="eventForm">
             <label for="admissionsPeriod">Admissions Period (e.g., October 2024 - November 2024):</label>
@@ -132,13 +133,17 @@
             <input type="text" id="sessions" required />
 
             <label for="totalCSPHours">Total CSP hours (e.g., 80 hours):</label>
-            <input type="number" id="totalCSPHours" required />
+            <input type="number" id="totalCSPHours" min="1" required />
 
             <label for="volunteerPeriodStart">Volunteer Period Start:</label>
             <input type="date" id="volunteerPeriodStart" required />
 
             <label for="volunteerPeriodEnd">Volunteer Period End:</label>
             <input type="date" id="volunteerPeriodEnd" required />
+
+            <label for="photoURL">Photo URL:</label>
+            <input type="url" id="photoURL" required />
+
 
             <button type="submit" id="submitEvent">Submit Event</button>
           </form>
@@ -173,7 +178,7 @@
       // Individual validation handlers
       const validateField = (element, message) => {
         element.addEventListener("input", function () {
-          if (this.value.trim() === "" || (isNaN(this.value) && this.type === "number")) {
+          if (this.value.trim() === "" || (this.type === "number" && this.value < 1)) {
             this.setCustomValidity(message);
             this.reportValidity();
           } else {
@@ -202,30 +207,37 @@
       });
 
       // Validate volunteer period (end must be later than start)
-      document.getElementById("volunteerPeriodEnd").addEventListener("input", function () {
-        const startDateInput = document.getElementById("volunteerPeriodStart");
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(this.value);
+      const startDateInput = document.getElementById("volunteerPeriodStart");
+      const endDateInput = document.getElementById("volunteerPeriodEnd");
 
-        if (!startDateInput.value || isNaN(startDate.getTime())) {
-          this.setCustomValidity("Please select a valid start date before choosing an end date.");
-          this.reportValidity();
-        } else if (isNaN(endDate.getTime())) {
-          this.setCustomValidity("Please select a valid end date.");
-          this.reportValidity();
-        } else if (endDate <= startDate) {
-          this.setCustomValidity("Volunteer period end date must be later than the start date.");
-          this.reportValidity();
-        } else {
-          this.setCustomValidity(""); // Clear the message when valid
+      const validateDates = () => {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (startDateInput.value && endDateInput.value) {
+          if (endDate <= startDate) {
+            endDateInput.setCustomValidity("Volunteer period end date must be later than the start date.");
+            endDateInput.reportValidity();
+            endDateInput.classList.add("error-highlight");
+            return false; // Indicate error
+          } else {
+            endDateInput.setCustomValidity("");
+            endDateInput.classList.remove("error-highlight");
+            return true; // Indicate no error
+          }
         }
-      });
+        return true; // If dates are not fully entered, skip this validation
+      };
+
+      startDateInput.addEventListener("input", validateDates);
+      endDateInput.addEventListener("input", validateDates);
 
       // Form submission validation and success message handling
       const eventForm = document.getElementById("eventForm");
       if (eventForm) {
         eventForm.addEventListener("submit", async function (event) {
           event.preventDefault(); // Prevent default form submission behavior
+
           let hasErrors = false;
 
           // Iterate over form elements and validate each
@@ -250,6 +262,11 @@
               }
             }
           });
+
+          // Validate dates before submission
+          if (!validateDates()) {
+            hasErrors = true;
+          }
 
           if (hasErrors) {
             console.log("Form has errors, preventing submission.");
@@ -289,8 +306,26 @@
         });
       }
     });
+
+
+
   </script>
 
+  <script type="module">
+    import { createNavbar, initializeSearch } from "./script/navbar.js";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      createNavbar();
+      try {
+        await initializeSearch();
+      } catch (err) {
+        console.error("Error initializing search:", err);
+      }
+    });
+  </script>
+
+
+  <script src="./script/sidebar.js"></script>
 </body>
 
 </html>
