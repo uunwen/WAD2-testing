@@ -34,12 +34,13 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // Retrieve user info
-const urlParams = new URLSearchParams(window.location.search);
-const uid = urlParams.get("uid");
+//const urlParams = new URLSearchParams(window.location.search);
+//const uid = urlParams.get("uid");
+const userData = JSON.parse(sessionStorage.getItem('user'));
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
-  const sponsorRef = ref(database, `sponsors/${uid}`);
+  const sponsorRef = ref(database, `sponsors/${userData.uid}`);
   get(sponsorRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -54,25 +55,14 @@ export function fetchSponsorData() {
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-<<<<<<< HEAD
-
-      document.getElementById(
-        "sponsorDescription"
-      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    })
-=======
-<<<<<<< HEAD
       const sponsorDescription = document.getElementById("sponsorDescription");
       if (sponsorDescription) {
         sponsorDescription.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
       }
-=======
       document.getElementById(
         "sponsorDescription"
       ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
->>>>>>> 46e3d79e0147e7d4c2f16f51ca18c9cf11292682
     });
->>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea
 }
 
 function displaySponsorDetails(sponsorData) {
@@ -245,13 +235,16 @@ export async function getFilteredEventsByOrganizer(organizerName) {
 
 
 
+
+
 // Display filtered events with edit functionality
 function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML =
+      "<p>No events found for the specified organizer.</p>";
     return;
   }
 
@@ -266,14 +259,12 @@ function displayFilteredEvents(events, search) {
         header.textContent = eventData["Project Name"] || "Unnamed Project";
         eventBox.appendChild(header);
 
-        // Display each detail of the event, excluding "signups"
+        // Display each detail of the event
         for (const [key, value] of Object.entries(eventData)) {
-          if (key !== "signups") {
-            const paragraph = document.createElement("p");
-            paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
-            paragraph.setAttribute("data-key", key);
-            eventBox.appendChild(paragraph);
-          }
+          const paragraph = document.createElement("p");
+          paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
+          paragraph.setAttribute("data-key", key);
+          eventBox.appendChild(paragraph);
         }
 
         // Add edit, save, and cancel buttons
@@ -292,11 +283,13 @@ function displayFilteredEvents(events, search) {
       }
     });
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
 
-// Create buttons for editing, saving, and canceling edits
+
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
   const saveBtn = createButton("Save", "save-btn", "none");
@@ -388,6 +381,7 @@ function enableEditEvent(eventBox, saveBtn, cancelBtn) {
   eventBox.querySelector(".edit-btn").style.display = "none";
 }
 
+
 // Save the edited event data to Firebase
 async function saveEventData(eventKey, eventBox) {
   const updatedData = {};
@@ -400,30 +394,43 @@ async function saveEventData(eventKey, eventBox) {
   try {
     await update(eventRef, updatedData);
 
+    // Log for debugging to confirm function is reached
     console.log("Event data updated successfully.");
 
+    // Create or select the success message div for the specific event container
     let eventSuccessMessage = eventBox.querySelector(".event-success-message");
     if (!eventSuccessMessage) {
       eventSuccessMessage = document.createElement("div");
       eventSuccessMessage.className = "event-success-message";
       eventSuccessMessage.textContent = "Changes saved successfully.";
       eventBox.appendChild(eventSuccessMessage);
+      console.log("Success message div created and appended.");
+    } else {
+      console.log("Success message div found.");
     }
 
+    // Display the success message
     eventSuccessMessage.style.display = "block";
+    console.log("Success message displayed.");
     setTimeout(() => {
       eventSuccessMessage.style.display = "none";
+      console.log("Success message hidden after timeout.");
     }, 15000);
 
+    // Delay refreshing the events to allow the success message to display
     setTimeout(async () => {
       const org_name = await getSponsorOrg_name();
       fetchAndDisplayEvents(org_name, search);
-    }, 3100);
+      console.log("Events refreshed after success message timeout.");
+    }, 3100); // Slightly longer than the timeout for the success message
+
   } catch (error) {
     console.error("Error updating event:", error.message);
     alert("Failed to save changes.");
   }
 }
+
+
 
 // Cancel editing and restore original content
 function cancelEditEvent(eventKey, eventBox) {
@@ -458,7 +465,6 @@ function displayEventData(eventData, eventBox) {
   createEditButtons(eventBox, eventData.eventKey);
 }
 
-// Function to get the organization name
 export async function getSponsorOrg_name() {
   try {
     const sponsorRef = ref(database, `sponsors/${uid}`);
@@ -472,14 +478,9 @@ export async function getSponsorOrg_name() {
   }
 }
 
-<<<<<<< HEAD
-// Function to get event data by UID
-=======
-<<<<<<< HEAD
-=======
->>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea
 export async function getEventfromUid(eventUid) {
   try {
+    // Get event data based of event uid
     const eventRef = ref(database, "events/" + eventUid);
     const snapshot = await get(eventRef);
     if (snapshot.exists()) {
@@ -489,13 +490,19 @@ export async function getEventfromUid(eventUid) {
   } catch (error) {
     console.error("Error fetching events:", error.message);
   }
+
+  onValue(eventRef, (snapshot) => {
+    const data = snapshot.val();
+    updateStarCount(postElement, data);
+  });
 }
 
-// Function to get duration from event session
 export function getDurationFromEventSession(session) {
+  // Extract the time part of the string
   const timeRange = session.split(", ")[1];
   const [startTime, endTime] = timeRange.split(" - ");
 
+  // Helper function to convert time to a Date object
   function parseTime(time) {
     const [timePart, meridian] = time.split(" ");
     let [hours, minutes] = timePart.split(":").map(Number);
@@ -509,6 +516,7 @@ export function getDurationFromEventSession(session) {
     return new Date(1970, 0, 1, hours, minutes);
   }
 
+  // Calculate the duration
   const start = parseTime(startTime);
   const end = parseTime(endTime);
 
@@ -517,7 +525,3 @@ export function getDurationFromEventSession(session) {
 
   return durationInHours;
 }
-<<<<<<< HEAD
-=======
->>>>>>> 46e3d79e0147e7d4c2f16f51ca18c9cf11292682
->>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea
