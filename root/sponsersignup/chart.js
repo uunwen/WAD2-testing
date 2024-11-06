@@ -1,4 +1,4 @@
-// Initialize Firebase (Make sure to replace with your actual config)
+// Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
     authDomain: "wad-proj-2b37f.firebaseapp.com",
@@ -10,67 +10,88 @@ const firebaseConfig = {
     measurementId: "G-LFFLPT7G58"
 };
 
-
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-// Function to fetch event data from Firestore
-async function fetchEventData() {
-    const eventsSnapshot = await db.collection('events').get();
-    const eventData = {};
-    
-    eventsSnapshot.forEach(doc => {
-        const data = doc.data();
-        eventData[doc.id] = {
-            projectName: data.projectName,
-            signups: data.signups || {}
-        };
-    });
+const eventsRef = database.ref('events');
 
-    return eventData;
+// Function to fetch events and their student sign-ups
+async function fetchEventSignUps() {
+    try {
+        const snapshot = await eventsRef.once('value');
+        const events = snapshot.val();
+        const eventNames = [];
+        const signUpCounts = [];
+        const eventKeys = []; // Store the event keys for linking
+
+        // Iterate through each event
+        for (const eventKey in events) {
+            const event = events[eventKey];
+            const signUps = event.signups || {}; // Get the sign-ups for this event (empty object if no signups)
+            
+            const count = Object.keys(signUps).length; // Count the number of students who signed up
+
+            eventNames.push(event["Project Name"]); // Get the project name
+            signUpCounts.push(count); // Add count to the array
+            eventKeys.push(eventKey); // Store the event key
+        }
+
+        createChart(eventNames, signUpCounts, eventKeys);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
 
-// Create the bar chart
-async function createBarChart() {
-    const events = await fetchEventData();
-    
-    // Prepare data for the chart
-    const labels = Object.values(events).map(event => event.projectName); // Project names
-    const dataValues = labels.map(label => Object.keys(events[label]).length); // Count signups
-
+// Function to create the bar chart
+function createChart(eventNames, signUpCounts, eventKeys) {
     const ctx = document.getElementById('signupChart').getContext('2d');
+    const colors = [
+        'rgba(255, 99, 132, 0.6)', // Red
+        'rgba(54, 162, 235, 0.6)', // Blue
+        'rgba(255, 206, 86, 0.6)', // Yellow
+        // Add more colors as needed
+    ];
+
+    // Ensure the number of colors is equal to the number of events
+    const datasetColors = colors.slice(0, eventNames.length);
+
     const signupChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: eventNames,
             datasets: [{
-                label: 'Number of Sign-Ups',
-                data: dataValues,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Number of Students Signed Up',
+                data: signUpCounts,
+                backgroundColor: datasetColors,
+                borderColor: datasetColors.map(color => color.replace('0.6', '1')), // Make border color fully opaque
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Sign-Ups'
-                    }
-                },
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Project Names'
-                    }
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            },
+            onClick: (evt) => {
+                const activePoints = signupChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
+                if (activePoints.length) {
+                    const firstPoint = activePoints[0];
+                    const eventKey = eventKeys[firstPoint.index]; // Get the corresponding event key
+
+                    // Pass the event key into the URL and redirect to indexadmin.html
+                    window.location.href = `indexadmin.html?eventKey=${eventKey}`; // Navigate to indexadmin.html with eventKey
                 }
             }
         }
     });
 }
 
-// Call the function to create the chart
-createBarChart();
+// Call fetchEventSignUps on page load
+window.onload = () => {
+    fetchEventSignUps(); // Fetch event sign-ups when the page loads
+};
