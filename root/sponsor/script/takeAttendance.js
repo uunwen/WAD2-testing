@@ -158,26 +158,31 @@ const createApp = Vue.createApp({
               .clockInTimestamp,
             timestamp
           );
-          console.log(timestamp);
-          console.log(actualDuration);
-          // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
 
-          // To-do: GET HOURS BASED ON SESSION
+          // GET HOURS BASED ON SESSION
           const event = await getEventfromUid(eventUid);
           const duration = getDurationFromEventSession(event["Session(s)"]);
-          console.log(duration);
-          // To-do: GET HOURS BASED ON SESSION
 
-          // To-do: FIND DIFFERENCE BETWEEN SESSION AND ACTUAL CLOCKIN HOURS
+          // FIND DIFFERENCE BETWEEN SESSION AND ACTUAL CLOCKIN HOURS
           let diffInActualnSessionDuration = actualDuration - duration;
-          if (diffInActualnSessionDuration > 0) {
-            let eventHours = duration
-          }else if()
+          console.log(
+            diffInActualnSessionDuration,
+            diffInActualnSessionDuration <= 0
+          );
 
-          // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT
+          let eventHours;
+
+          if (diffInActualnSessionDuration > 0) {
+            eventHours = duration;
+          } else if (diffInActualnSessionDuration <= 0) {
+            eventHours = duration + diffInActualnSessionDuration;
+          } else {
+            alert("Failed to process checkout");
+          }
+
+          // To-do: CREATE VAR TO INDICATE MISSED HOURS DUE TO EARLY CLOCK-OUT ----------
 
           // Calculate new hours_left
-          let eventHours = 2; // change me!
           const userHoursLeft = userData["hours_left"];
 
           const updatedHours = {};
