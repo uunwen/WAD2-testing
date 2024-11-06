@@ -61,8 +61,8 @@ function displayEventDetails() {
             eventContent.innerHTML = "";  // Clear previous content
 
             for (const key in data) {
-                // Ensure key is valid and exclude specific keys
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name") {
+                // Ensure key is valid and exclude specific keys, including Photos
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "Photos") {
                     const card = document.createElement("div");
                     card.className = "card";
 
@@ -90,7 +90,8 @@ function displayEventDetails() {
             const signupButton = document.createElement("button");
             signupButton.textContent = "Sign Up";
             signupButton.className = "signup-button";
-            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+            const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+
             signupButton.onclick = () => {
                 window.location.href = signupLink;
             };
@@ -103,6 +104,7 @@ function displayEventDetails() {
         document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
+
 
 // Helper function to find sponsor key
 function findSponsorKey(organiserName) {
@@ -123,7 +125,8 @@ function findSponsorKey(organiserName) {
     });
 }
 
-// Function to load and display event photos from Firestore
+
+// Function to load and display event photos from Realtime Database
 async function displayEventPhotos() {
     const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
@@ -133,53 +136,44 @@ async function displayEventPhotos() {
     }
 
     try {
-        const projectName = document.getElementById("eventTitle").textContent;
-        if (!projectName) {
-            console.error('Project name not found.');
-            document.getElementById("photo-gallery").innerHTML = "<p>Project name not available.</p>";
-            return;
-        }
+        console.log("Fetching photos for event:", eventKey); // Debug log
+        const photoRef = ref(database, `events/${eventKey}/Photos`);
+        const snapshot = await get(photoRef);
 
-        const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("Project Name", "==", projectName));
-        const querySnapshot = await getDocs(q);
+        if (snapshot.exists()) {
+            const photos = snapshot.val();
+            console.log("Photos fetched:", photos); // Log to inspect photo data structure
 
-        if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const photos = data.Photos;
+            const photoGallery = document.getElementById('photo-gallery');
+            photoGallery.innerHTML = ''; // Clear existing content
 
-                if (photos && Array.isArray(photos)) {
-                    const photoGallery = document.getElementById('photo-gallery');
-                    photoGallery.innerHTML = ''; // Clear existing content
+            // Access each individual photo URL
+            Object.keys(photos).forEach(photoIndex => {
+                const photoUrl = photos[photoIndex]; // Access each photo by its index
+                const imgElement = document.createElement('img');
+                imgElement.src = photoUrl;
+                imgElement.alt = `Event Photo ${photoIndex}`;
 
-                    // Append each photo directly into the grid container
-                    photos.forEach(photoUrl => {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = photoUrl;
-                        imgElement.alt = 'Event Photo';
+                // Style the image element
+                imgElement.style.width = '100%';
+                imgElement.style.height = '300px';
+                imgElement.style.objectFit = 'cover';
+                imgElement.style.borderRadius = '8px';
+                imgElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
 
-                        // Apply CSS directly to the image element
-                        imgElement.style.width = '100%';  // Ensures the image fits the card width
-                        imgElement.style.height = '300px'; // Sets a fixed height for all images
-                        imgElement.style.objectFit = 'cover'; // Ensures the image covers the space without distortion
-                        imgElement.style.borderRadius = '8px'; // Optional rounded corners
-                        imgElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'; // Optional shadow for styling
-
-                        photoGallery.appendChild(imgElement);
-                    });
-                } else {
-                    document.getElementById('photo-gallery').innerHTML = '<p>No photos available for this event.</p>';
-                }
+                photoGallery.appendChild(imgElement);
             });
         } else {
-            document.getElementById('photo-gallery').innerHTML = '<p>No matching event found.</p>';
+            document.getElementById('photo-gallery').innerHTML = '<p>No photos available for this event.</p>';
         }
     } catch (error) {
         console.error('Error fetching photos:', error);
         document.getElementById('photo-gallery').innerHTML = `<p>Error fetching photos: ${error.message}</p>`;
     }
 }
+
+
+
 
 // Load the photos tab when the Photos section is activated
 document.getElementById('photosTab').addEventListener('click', () => {

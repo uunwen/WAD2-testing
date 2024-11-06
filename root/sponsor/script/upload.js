@@ -151,19 +151,17 @@ document.getElementById("submitEvent").addEventListener("click", async function 
     console.log("Writing to Firestore with eventId:", eventId, "Data:", eventSummary);
 
     // Write the data to Firestore under the "events" collection using the same eventId
-    try {
-      await setDoc(doc(firestore, "events", eventId), eventSummary);
-      console.log("Data written to Firestore successfully");
+    await setDoc(doc(firestore, "events", eventId), eventSummary);
+    console.log("Data written to Firestore successfully");
 
-      document.getElementById("formMessage").textContent = `${eventId} created successfully!`;
-      document.getElementById("formMessage").classList.remove("error");
-      document.getElementById("formMessage").style.color = "#28a745"; // Green color for success
-      document.getElementById("eventForm").reset(); // Reset form after successful submission
-    } catch (error) {
-      console.error("Error creating event:", error);
-      document.getElementById("formMessage").textContent = `Error creating event: ${error.message}`;
-      document.getElementById("formMessage").classList.add("error");
-      document.getElementById("formMessage").style.color = "#d9534f"; // Red color for error
-    }
-
-  });
+    document.getElementById("formMessage").textContent = `${eventId} created successfully!`;
+    document.getElementById("formMessage").classList.remove("error");
+    document.getElementById("formMessage").style.color = "#28a745"; // Green color for success
+    document.getElementById("eventForm").reset(); // Reset form after successful submission
+  } catch (error) {
+    console.error("Error creating event:", error);
+    document.getElementById("formMessage").textContent = `Error creating event: ${error.message}`;
+    document.getElementById("formMessage").classList.add("error");
+    document.getElementById("formMessage").style.color = "#d9534f"; // Red color for error
+  }
+});

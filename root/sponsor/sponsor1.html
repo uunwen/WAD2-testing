@@ -29,17 +29,21 @@
           <!-- Updated About section with success message -->
           <div id="sponsorDescription" class="description-box">
             <p id="aboutText">
-              <strong>About:</strong> <span id="aboutContent"></span>
+              <strong>About:</strong> <span id="aboutContent">This is the about content.</span>
             </p>
-            <div id="aboutActions" style="margin-top: 10px">
+
+            <!-- Success message div, hidden by default -->
+            <div id="successMessage" style="display: none; color: green; margin-top: 10px;">
+              Changes saved successfully!
+            </div>
+
+            <div id="aboutActions" style="margin-top: 10px;">
               <button id="editAboutBtn" class="edit-btn">Edit</button>
               <button id="saveAboutBtn" class="save-btn" style="display: none;">Save</button>
               <button id="cancelAboutBtn" class="cancel-btn" style="display: none;">Cancel</button>
             </div>
-            <!-- Success message for the About section -->
-            <div id="successMessage" style="display: none; color: green; margin-top: 10px;">Changes saved successfully.
-            </div>
           </div>
+
 
           <div id="eventContainer"></div>
           <div id="eventSuccessMessage" style="display: none; color: green; margin-top: 10px;">Changes saved
