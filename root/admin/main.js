@@ -1,3 +1,4 @@
+
 // Function to toggle 'selected' class on filter options when clicked
 function toggleSelect(element) {
     // Toggle the 'selected' class

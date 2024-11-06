@@ -135,7 +135,7 @@ document.getElementById("saveAboutBtn").addEventListener("click", async () => {
 
     if (updatedContent) {
       try {
-        const sponsorRef = ref(database, `sponsors/${uid}`);
+        const sponsorRef = ref(database, `sponsors/${userData.uid}`);
         await update(sponsorRef, { org_background: updatedContent });
 
         // Display success message for the About section

@@ -19,6 +19,8 @@ import {
   getDurationFromEventSession,
 } from "./sponsor1.js";
 
+const userData = JSON.parse(sessionStorage.getItem('user')); // Added by Jaxsen
+
 // Firebase settings
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
@@ -47,7 +49,7 @@ const createApp = Vue.createApp({
       selectedEvent: "", // Track selected event
       org_name: null,
       filteredEvent: [],
-      userUid: "",
+      userUid: userData.uid,
       
     };
   },
