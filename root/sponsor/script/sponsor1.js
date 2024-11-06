@@ -34,13 +34,14 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // Retrieve user info
-//const urlParams = new URLSearchParams(window.location.search);
-//const uid = urlParams.get("uid");
-const userData = JSON.parse(sessionStorage.getItem('user'));
+//const urlParams = new URLSearchParams(window.location.search); -- Commented by Jaxsen
+//const uid = urlParams.get("uid"); -- Commented by Jaxsen
+const userData = JSON.parse(sessionStorage.getItem('user')); // Added by Jaxsen
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
-  const sponsorRef = ref(database, `sponsors/${userData.uid}`);
+  //const sponsorRef = ref(database, `sponsors/${uid}`); -- Commented by Jaxsen
+  const sponsorRef = ref(database, `sponsors/${userData.uid}`);  // Added by Jaxsen
   get(sponsorRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
