@@ -15,6 +15,8 @@ import {
 import {
   getSponsorOrg_name,
   getFilteredEventsByOrganizer,
+  getEventfromUid,
+  getDurationFromEventSession,
 } from "./sponsor1.js";
 
 // Firebase settings
@@ -46,6 +48,7 @@ const createApp = Vue.createApp({
       org_name: null,
       filteredEvent: [],
       userUid: "",
+      
     };
   },
   async mounted() {
@@ -104,12 +107,25 @@ const createApp = Vue.createApp({
     },
 
     async handleCheckin(userData) {
+      // TO-DO: WTF IS EVENTID,
+      // Create new function to fix eventID --- ????????
       const eventUid = await this.getEventUid(this.selectedEvent);
       if (!eventUid) {
         console.error("Event UID not found");
         alert("Event not found in the system");
         return;
       }
+      // TO-DO: WTF IS EVENTID --- ????????
+
+      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
+
+      console.log(eventUid);
+      const event = await getEventfromUid(eventUid); //get event from uid
+      console.log(event["Session(s)"]);
+      const duration = getDurationFromEventSession(event["Session(s)"]); //get duratin from session
+      console.log(duration);
+
+      // TESTING PORTION! NEED TO SHIFT THIS DOWN TO SCANEND!!!!
 
       console.log();
       const updatedCheckin = {};
@@ -123,7 +139,7 @@ const createApp = Vue.createApp({
           // Add to attendance list for display
           this.attendanceList.push({
             name: userData.name,
-            timestamp: new Date().toLocaleString(),
+            clockInTimestamp: new Date().toLocaleString(),
             status: "Checked In",
           });
         } catch (error) {
@@ -145,10 +161,16 @@ const createApp = Vue.createApp({
         this.isEndAttendance = false;
         try {
           // Get event hours
+
+          // To-do: GET HOURS CORROSPONDING TO THE EVENT SESSION ----
+
           let eventHours = 2;
           const userHoursLeft = userData["hours_left"];
 
           // Calculate new hours_left
+
+          // To-do: ADJUST THE HOURS BASED ON ROUND UP/ROUND DOWN ---
+          // To-do: NEED TO PREVENT DOUBLE SCANNINIG ---
           const updatedHours = {};
           const studentRef = ref(database, `students/${this.userUid}`);
           updatedHours["hours_left"] = userHoursLeft - eventHours;
@@ -159,7 +181,7 @@ const createApp = Vue.createApp({
           // Add to checkout list for display
           this.checkoutList.push({
             name: userData.name,
-            timestamp: new Date().toLocaleString(),
+            clockOutTimestamp: new Date().toLocaleString(),
             hoursDeducted: eventHours,
           });
         } catch (error) {

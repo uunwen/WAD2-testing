@@ -20,7 +20,8 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
@@ -53,11 +54,11 @@ export function fetchSponsorData() {
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-      const sponsorDescription = document.getElementById("sponsorDescription");
-      if (sponsorDescription) {
-        sponsorDescription.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-      }
-    });
+
+      document.getElementById(
+        "sponsorDescription"
+      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+    })
 }
 
 function displaySponsorDetails(sponsorData) {
@@ -202,8 +203,9 @@ export async function fetchAndDisplayEvents(organizerName, search) {
     const filteredEvents = await getFilteredEventsByOrganizer(organizerName);
     displayFilteredEvents(filteredEvents, search);
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML =
-      `<p>Error fetching events: ${error.message}</p>`;
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error fetching events: ${error.message}</p>`;
   }
 }
 
@@ -252,7 +254,7 @@ function displayFilteredEvents(events, search) {
 
         // Display each detail of the event, excluding "signups"
         for (const [key, value] of Object.entries(eventData)) {
-          if (key !== "signups") { // Skip "signups" key
+          if (key !== "signups") {
             const paragraph = document.createElement("p");
             paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
             paragraph.setAttribute("data-key", key);
@@ -280,7 +282,7 @@ function displayFilteredEvents(events, search) {
   }
 }
 
-
+// Create buttons for editing, saving, and canceling edits
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
   const saveBtn = createButton("Save", "save-btn", "none");
@@ -312,7 +314,9 @@ async function createEditButtons(eventBox, eventKey) {
   });
 
   deleteBtn.addEventListener("click", async () => {
-    const confirmDelete = confirm("Are you sure you want to delete this event? This action cannot be undone.");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
     if (confirmDelete) {
       await deleteEvent(eventKey, eventBox);
     }
@@ -370,7 +374,6 @@ function enableEditEvent(eventBox, saveBtn, cancelBtn) {
   eventBox.querySelector(".edit-btn").style.display = "none";
 }
 
-
 // Save the edited event data to Firebase
 async function saveEventData(eventKey, eventBox) {
   const updatedData = {};
@@ -383,43 +386,30 @@ async function saveEventData(eventKey, eventBox) {
   try {
     await update(eventRef, updatedData);
 
-    // Log for debugging to confirm function is reached
     console.log("Event data updated successfully.");
 
-    // Create or select the success message div for the specific event container
     let eventSuccessMessage = eventBox.querySelector(".event-success-message");
     if (!eventSuccessMessage) {
       eventSuccessMessage = document.createElement("div");
       eventSuccessMessage.className = "event-success-message";
       eventSuccessMessage.textContent = "Changes saved successfully.";
       eventBox.appendChild(eventSuccessMessage);
-      console.log("Success message div created and appended.");
-    } else {
-      console.log("Success message div found.");
     }
 
-    // Display the success message
     eventSuccessMessage.style.display = "block";
-    console.log("Success message displayed.");
     setTimeout(() => {
       eventSuccessMessage.style.display = "none";
-      console.log("Success message hidden after timeout.");
     }, 15000);
 
-    // Delay refreshing the events to allow the success message to display
     setTimeout(async () => {
       const org_name = await getSponsorOrg_name();
       fetchAndDisplayEvents(org_name, search);
-      console.log("Events refreshed after success message timeout.");
-    }, 3100); // Slightly longer than the timeout for the success message
-
+    }, 3100);
   } catch (error) {
     console.error("Error updating event:", error.message);
     alert("Failed to save changes.");
   }
 }
-
-
 
 // Cancel editing and restore original content
 function cancelEditEvent(eventKey, eventBox) {
@@ -454,6 +444,7 @@ function displayEventData(eventData, eventBox) {
   createEditButtons(eventBox, eventData.eventKey);
 }
 
+// Function to get the organization name
 export async function getSponsorOrg_name() {
   try {
     const sponsorRef = ref(database, `sponsors/${uid}`);
@@ -467,3 +458,43 @@ export async function getSponsorOrg_name() {
   }
 }
 
+// Function to get event data by UID
+export async function getEventfromUid(eventUid) {
+  try {
+    const eventRef = ref(database, "events/" + eventUid);
+    const snapshot = await get(eventRef);
+    if (snapshot.exists()) {
+      const event = snapshot.val();
+      return event;
+    }
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
+  }
+}
+
+// Function to get duration from event session
+export function getDurationFromEventSession(session) {
+  const timeRange = session.split(", ")[1];
+  const [startTime, endTime] = timeRange.split(" - ");
+
+  function parseTime(time) {
+    const [timePart, meridian] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (meridian === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (meridian === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return new Date(1970, 0, 1, hours, minutes);
+  }
+
+  const start = parseTime(startTime);
+  const end = parseTime(endTime);
+
+  const durationInMilliseconds = end - start;
+  const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
+
+  return durationInHours;
+}

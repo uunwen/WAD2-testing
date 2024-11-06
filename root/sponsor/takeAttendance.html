@@ -28,7 +28,6 @@
     <link href="../css/sponsor/takeAttendance.css" rel="stylesheet" />
 
     <title>Attendance System</title>
-
   </head>
   <body>
     <!-- sidebar -->
@@ -53,14 +52,11 @@
               <button @click="startAttendance" v-if="!isScanning">
                 Start Attendance
               </button>
-              <button @click="endAttendance" :disabled="isScanning">
+              <button @click="endAttendance" v-if="!isScanning">
                 End Attendance
               </button>
-              <button @click="stopAttendance" v-if="isScanning">
-                Stop Scanning
-              </button>
             </div>
-            
+
             <table>
               <div v-if="!isEndAttendance" class="attendance-list">
                 <h2>Check-in List</h2>
@@ -75,8 +71,8 @@
                   <tbody>
                     <tr v-for="student in attendanceList" :key="student.uid">
                       <td>{{ student.name }}</td>
-                      <td>{{ student.timestamp }}</td>
-                      <!-- <td>{{ student.status }}</td> -->
+                      <td>{{ student.clockInTimestamp }}</td>
+                      <td>{{ student.status }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -95,7 +91,7 @@
                   <tbody>
                     <tr v-for="student in checkoutList">
                       <td>{{ student.name }}</td>
-                      <td>{{ student.timestamp }}</td>
+                      <td>{{ student.clockOutTimestamp }}</td>
                       <td>{{ student.hoursDeducted }}</td>
                     </tr>
                   </tbody>
