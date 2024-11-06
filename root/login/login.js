@@ -92,6 +92,11 @@ window.googleSignIn = async function googleSignIn(userType) {
     } else {
       console.log("User already registered.");
     }
+    sessionStorage.setItem('user', JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      userType: userType,
+    }));
 
     // Redirect based on user type
     if (userType == "student") {

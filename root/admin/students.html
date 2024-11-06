@@ -43,6 +43,21 @@
             height: auto;
         }
 
+        table td.green{
+            color: green;
+        }
+
+        table td.red {
+            color: red;
+        }
+
+        table td.orange {
+            color: orange;
+        }
+
+        table td.black {
+            color: black;
+        }
     </style>
 </head>
 
@@ -150,11 +165,12 @@
                     <th>Email</th>
                     <th>Graduation Year</th>
                     <th>Hours Left</th>
+                    <th>Message</th>
                 </tr>
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedStudents" :key="record.eventKey">
-                    <student-records :record="record" :index="idx + 1" />
+                    <student-records :record="record" :index="idx + 1" @update-tasklist="updateTasklist(idx)"/>
                 </template>
             </tbody>
         </table>

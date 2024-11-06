@@ -54,11 +54,25 @@ export function fetchSponsorData() {
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
+<<<<<<< HEAD
 
       document.getElementById(
         "sponsorDescription"
       ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     })
+=======
+<<<<<<< HEAD
+      const sponsorDescription = document.getElementById("sponsorDescription");
+      if (sponsorDescription) {
+        sponsorDescription.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+      }
+=======
+      document.getElementById(
+        "sponsorDescription"
+      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+>>>>>>> 46e3d79e0147e7d4c2f16f51ca18c9cf11292682
+    });
+>>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea
 }
 
 function displaySponsorDetails(sponsorData) {
@@ -458,7 +472,12 @@ export async function getSponsorOrg_name() {
   }
 }
 
+<<<<<<< HEAD
 // Function to get event data by UID
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea
 export async function getEventfromUid(eventUid) {
   try {
     const eventRef = ref(database, "events/" + eventUid);
@@ -498,3 +517,7 @@ export function getDurationFromEventSession(session) {
 
   return durationInHours;
 }
+<<<<<<< HEAD
+=======
+>>>>>>> 46e3d79e0147e7d4c2f16f51ca18c9cf11292682
+>>>>>>> ef066bcf2dc5412eb44624ec234e7f98b36baeea

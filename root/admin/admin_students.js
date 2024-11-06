@@ -1,6 +1,6 @@
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 
 // Firebase configuration
@@ -101,13 +101,33 @@ const adminApp = Vue.createApp({
           } else if (this.filterGraduation == "within2Years") {
             matchesGraduationYear = graduationYear === currentYear + 1 || graduationYear === currentYear + 2; // Graduating in one or two years
           }
-          console.log(graduationYear);
         }
 
         
         // Return true if all conditions match
         return matchesName && matchesHours && matchesGraduationYear;
       });
+    },
+    async updateTasklist(index) {
+      const student = this.allStudents[index];
+      try {
+        // Reference to the tasklist array in the database
+        const tasklistRef = ref(database, `events/${student.studentKey}/tasklist`);
+    
+        // Get the current tasklist array
+        const snapshot = await get(tasklistRef);
+        let tasklist = snapshot.exists() ? snapshot.val() : [];
+    
+        // Add a new item to the tasklist array
+        tasklist.push("Approved");
+    
+        // Update the array in the database
+        await set(tasklistRef, tasklist);
+        console.log("Tasklist successfully updated!");
+      } 
+      catch (error) {
+        console.error("Error updating tasklist:", error);
+      }
     }
   }
 });
@@ -115,16 +135,29 @@ const adminApp = Vue.createApp({
 
 adminApp.component('studentRecords', {
   props: ['record', 'index'],
-  emits: [],
+  emits: ['updateTasklist'],
   template: `
         <tr>
-            <td class="align-middle">{{ index }}</td>
+            <td :class="checkGraduation(record['graduation_year'])" class="align-middle"><b>{{ index }}</b></td>
             <td class="align-middle">{{ record.name }}</td>
             <td class="align-middle">{{ record.email }}</td>
             <td class="align-middle">{{ record['graduation_year'] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
+            <td class="align-middle"><button class="btn btn-light" @click="$emit('updateTasklist', index)">Message</button></td>
         </tr>
-  `
+  `,
+  methods: {
+    checkGraduation(graduationYear) {
+      const currentYear = new Date().getFullYear();
+      if (graduationYear == currentYear + 1) {
+        return "red"
+      }
+      else if (graduationYear == currentYear + 2) {
+        return "orange"
+      }
+      return "green"
+    }
+  }
 });
 
 const vm = adminApp.mount('#adminApp');
