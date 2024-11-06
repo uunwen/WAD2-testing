@@ -41,7 +41,6 @@ function displaySuccessMessage(eventName) {
   messageElement.style.textAlign = "center";
   messageElement.style.marginTop = "20px";
   messageElement.id = "successMessage";
-
   // Append the message element to the signup form container or body
   const formContainer = document.getElementById("signupFormContainer");
   formContainer.appendChild(messageElement);
@@ -107,7 +106,6 @@ document.getElementById("age").addEventListener("input", function () {
     ageInput.setCustomValidity(""); // Clear the message when valid
   }
 });
-
 // Validate School (ensure a selection is made)
 document.getElementById("school").addEventListener("change", function () {
   const schoolInput = document.getElementById("school");
@@ -191,13 +189,14 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
   // Get event uid --- added by yun wen
   const eventid = getQueryParam("eventKey");
 
+
   // Save event id to Firebase --- added by yun wen
   // to allow profile and attendance to access historical events
   get(child(ref(database), `students/${userData.uid}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         const studentInfo = snapshot.val();
-        studentInfo[eventid] = false;
+        studentInfo[eventid] = true;
         set(ref(database, `students/${userData.uid}`), studentInfo).catch(
           (error) => {
             console.error("Failed to save in studentdb:", error);

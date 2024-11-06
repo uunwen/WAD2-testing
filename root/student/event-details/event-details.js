@@ -22,6 +22,8 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const db = getFirestore(app);
 
+const userData = JSON.parse(sessionStorage.getItem('user'));
+
 // Helper to get URL parameter
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -42,27 +44,30 @@ window.onload = () => {
 };
 
 // Function to load event details into the details tab
+const eventKey = getQueryParam("eventKey");
+let eventData = {}; // Initialize eventData as an empty object
+
+// Function to load event details into the details tab
 function displayEventDetails() {
-    const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
         document.getElementById("eventDetailsContainer").innerHTML = "<p>Event not found.</p>";
         return;
     }
 
-    const dbRef = ref(database, `events/${eventKey}`);
-    get(dbRef).then((snapshot) => {
+    // Fetch event data from Firebase
+    const dbRefEvent = ref(database, `events/${eventKey}`);
+    get(dbRefEvent).then((snapshot) => {
         if (snapshot.exists()) {
-            const data = snapshot.val();
+            const data = snapshot.val(); // Fetch event data
 
-            // Set Project Name above the navbar
+            // Set Project Name above the navbar using the 'data' object
             document.getElementById("eventTitle").textContent = data["Project Name"];
-
             const eventContent = document.getElementById("eventContent");
             eventContent.innerHTML = "";  // Clear previous content
 
+            // Loop through event data and generate event cards
             for (const key in data) {
-                // Ensure key is valid and exclude specific keys, including Photos
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "Photos") {
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name") {
                     const card = document.createElement("div");
                     card.className = "card";
 
@@ -83,15 +88,27 @@ function displayEventDetails() {
                 }
             }
 
-            // Add buttons to switch tabs
-            const buttonContainer = document.querySelector('.button-container');
-            buttonContainer.innerHTML = "";
+            // Fetch student data to determine if already signed up
+            const dbRefStudent = ref(database, `students/${userData.uid}`);
+            get(dbRefStudent).then((studentSnapshot) => {
+                let status = false; // Default status is false (not signed up)
+
+                if (studentSnapshot.exists()) {
+                    const studentData = studentSnapshot.val();
+                    // Check if the student is signed up for the event
+                    if (studentData[eventKey]) {
+                        status = true; // Already signed up for the event
+                    }
+                }
+
+                // Add buttons to switch tabs
+                const buttonContainer = document.querySelector('.button-container');
+                buttonContainer.innerHTML = ""; // Clear previous buttons
 
             const signupButton = document.createElement("button");
             signupButton.textContent = "Sign Up";
             signupButton.className = "signup-button";
-            const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
-
+            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
             signupButton.onclick = () => {
                 window.location.href = signupLink;
             };
@@ -104,7 +121,6 @@ function displayEventDetails() {
         document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
-
 
 // Helper function to find sponsor key
 function findSponsorKey(organiserName) {
