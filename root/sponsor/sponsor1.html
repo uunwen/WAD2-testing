@@ -1,95 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- FontAwesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="../css/sponsor/sponsor.css" rel="stylesheet" />
+    <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
+    <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
+    <title>Sponsor Details</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- FontAwesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Custom CSS -->
-  <link href="../css/sponsor/sponsor.css" rel="stylesheet" />
-  <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
-  <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
-  <title>Sponsor Details</title>
-</head>
+  <body>
+    <div class="container-fluid main" id="app">
+      <div class="row">
+        <div class="sidebar col-md-3" id="sidebar"></div>
+        <main class="col-md-9 main-content">
+          <div class="container">
+            <h1 id="sponsorHeader">Sponsor Details</h1>
+            <hr />
+            <div id="sponsorStats"></div>
+            <div id="socialLinks"></div>
 
-<body>
-  <div class="container-fluid main" id="app">
-    <div class="row">
-      <div class="sidebar col-md-3" id="sidebar"></div>
-      <main class="col-md-9 main-content">
-        <div class="container">
-          <h1 id="sponsorHeader">Sponsor Details</h1>
-          <hr />
-          <div id="sponsorStats"></div>
-          <hr />
+            <!-- Updated About section with success message -->
+            <div id="sponsorDescription" class="description-box">
+              <p id="aboutText">
+                <strong>About:</strong> <span id="aboutContent"></span>
+              </p>
 
-          <!-- Updated About section with success message -->
-          <div id="sponsorDescription" class="description-box">
-            <p id="aboutText">
-              <strong>About:</strong> <span id="aboutContent"></span>
-            </p>
-            <div id="aboutActions" style="margin-top: 10px">
-              <button id="editAboutBtn" class="edit-btn">Edit</button>
-              <button id="saveAboutBtn" class="save-btn" style="display: none;">Save</button>
-              <button id="cancelAboutBtn" class="cancel-btn" style="display: none;">Cancel</button>
+              <div id="aboutActions" style="margin-top: 10px">
+                <button id="editAboutBtn" class="edit-btn">Edit</button>
+                <button
+                  id="saveAboutBtn"
+                  class="save-btn"
+                  style="display: none"
+                >
+                  Save
+                </button>
+                <button
+                  id="cancelAboutBtn"
+                  class="cancel-btn"
+                  style="display: none"
+                >
+                  Cancel
+                </button>
+              </div>
+              <!-- Success message for the About section -->
+              <div
+                id="successMessage"
+                style="display: none; color: green; margin-top: 10px"
+              >
+                Changes saved successfully.
+              </div>
             </div>
-            <!-- Success message for the About section -->
-            <div id="successMessage" style="display: none; color: green; margin-top: 10px;">Changes saved successfully.
+
+            <div id="eventContainer"></div>
+            <div
+              id="eventSuccessMessage"
+              style="display: none; color: green; margin-top: 10px"
+            >
+              Changes saved successfully.
             </div>
           </div>
-
-          <div id="eventContainer"></div>
-          <div id="eventSuccessMessage" style="display: none; color: green; margin-top: 10px;">Changes saved
-            successfully.</div>
-
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
-  </div>
-  <button class="floating-btn" id="redirectBtn">+</button>
+    <button class="floating-btn" id="redirectBtn">+</button>
 
-  <!-- Scripts -->
-  <script type="module" src="./script/addEventButton.js"></script>
-  <script type="module">
-    import {
-      getSponsorOrg_name,
-      fetchSponsorData,
-      fetchAndDisplayEvents,
-      isEditing,
-    } from "./script/sponsor1.js";
+    <!-- Scripts -->
+    <script type="module" src="./script/addEventButton.js"></script>
+    <script type="module">
+      import {
+        getSponsorOrg_name,
+        fetchSponsorData,
+        fetchAndDisplayEvents,
+        isEditing,
+      } from "./script/sponsor1.js";
 
-    import { search } from "./script/navbar.js";
+      import { search } from "./script/navbar.js";
 
-    // Fetch sponsor data and events on window load
-    window.onload = () => {
-      setInterval(() => {
-        if (isEditing) {
-          getSponsorOrg_name().then((org_name) => {
-            fetchSponsorData();
-            fetchAndDisplayEvents(org_name, search);
-          });
+      // Fetch sponsor data and events on window load
+      window.onload = () => {
+        setInterval(() => {
+          if (isEditing) {
+            getSponsorOrg_name().then((org_name) => {
+              fetchSponsorData();
+              fetchAndDisplayEvents(org_name, search);
+            });
+          }
+        }, 1000);
+      };
+    </script>
+    <script type="module">
+      import { createNavbar, initializeSearch } from "./script/navbar.js";
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        createNavbar();
+        try {
+          await initializeSearch();
+        } catch (err) {
+          console.error("Error initializing search:", err);
         }
-      }, 1000);
-    };
-  </script>
-  <script type="module">
-    import { createNavbar, initializeSearch } from "./script/navbar.js";
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      createNavbar();
-      try {
-        await initializeSearch();
-      } catch (err) {
-        console.error("Error initializing search:", err);
-      }
-    });
-  </script>
-  <script src="./script/sidebar.js"></script>
-</body>
-
-
-
+      });
+    </script>
+    <script src="./script/sidebar.js"></script>
+  </body>
 </html>

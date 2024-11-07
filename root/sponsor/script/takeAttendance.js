@@ -49,6 +49,7 @@ const createApp = Vue.createApp({
       org_name: null,
       filteredEvent: [],
       userUid: "",
+      // isScan: true,
     };
   },
   async mounted() {
@@ -92,6 +93,7 @@ const createApp = Vue.createApp({
         qrbox: { width: 250, height: 250 },
         fps: 10,
       });
+      // while (isScan) {
       this.scanner.render(this.onScanSuccess, this.onScanError);
     },
 
@@ -120,6 +122,7 @@ const createApp = Vue.createApp({
 
       // TO-DO:
       if (userData[eventUid] === false) {
+        console.log(userData[eventUid]);
         try {
           const studentRef = ref(database, `students/${this.userUid}`);
           updatedCheckin[eventUid] = true;
@@ -128,7 +131,8 @@ const createApp = Vue.createApp({
           // Add to attendance list for display
           this.attendanceList.push({
             name: userData.name,
-            clockInTimestamp: new Date().toLocaleString(),
+            // clockInTimestamp: new Date().toLocaleString(),
+            clockInTimestamp: "07/11/2024, 19:40:55",
             status: "Checked In",
           });
         } catch (error) {
@@ -140,6 +144,8 @@ const createApp = Vue.createApp({
       } else {
         alert("User is not registered for this event!");
       }
+
+      // this.isScan = true;
     },
 
     async handleCheckout(userData) {
@@ -167,6 +173,7 @@ const createApp = Vue.createApp({
           // FIND DIFFERENCE BETWEEN SESSION AND ACTUAL CLOCKIN HOURS
           let diffInActualnSessionDuration = actualDuration - duration;
           console.log(
+            "Difference in actual and session duration: ",
             diffInActualnSessionDuration,
             diffInActualnSessionDuration <= 0
           );
@@ -183,7 +190,7 @@ const createApp = Vue.createApp({
               .then((snapshot) => {
                 if (snapshot.exists()) {
                   const eventInfo = snapshot.val();
-                  eventInfo["missed_hours"] = missedHours;
+                  // eventInfo["missed_hours"] = missedHours;
                   // to-do: CANNOT IDENTIFY WHERE IS THE CORROSPONDING SIGN-UPS FOR STUDENT,
                   console.log(eventInfo);
                 } else {
@@ -205,6 +212,10 @@ const createApp = Vue.createApp({
           const studentRef = ref(database, `students/${this.userUid}`);
           updatedHours["hours_left"] = userHoursLeft - eventHours;
 
+          console.log("Supposed hours: ", duration);
+          console.log("Student info: ", studentRef);
+          console.log("Deducted hours: ", eventHours);
+
           // Add to checkout list for display
           this.checkoutList.push({
             name: name,
@@ -225,14 +236,18 @@ const createApp = Vue.createApp({
 
     async onScanSuccess(result) {
       try {
+        console.log(result);
         const userData = await this.getUserDataByUid(result);
         this.userUid = result;
         if (!userData) return;
+        // this.isScan = false;
 
+        console.log(this.isEndAttendance);
         if (this.isEndAttendance) {
           console.log(userData);
           await this.handleCheckout(userData);
         } else {
+          console.log(userData);
           await this.handleCheckin(userData);
         }
       } catch (error) {

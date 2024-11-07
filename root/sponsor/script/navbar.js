@@ -109,16 +109,16 @@ export function createNavbar() {
         <div class="menu">
           <span class="icon" id="profileMenuBtn"><img src="../img/user.png" alt="Profile"></span>
           <div class="menu-content" id="profileMenu">
-            <div id="socialLinks"></div>
-            <a href="#"><img src="../img/user.png" alt="Profile Icon">Profile</a>
-            <a href="#"><img src="../img/settings.png" alt="Settings Icon">Settings</a>
-            <div class="separator"></div>
-            <a href="#"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
+            <a href="../login/login.html"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
           </div>
         </div>
       </div>
     </nav>
   `;
+
+  // <a href="#"><img src="../img/user.png" alt="Profile Icon">Profile</a>
+  // <a href="#"><img src="../img/settings.png" alt="Settings Icon">Settings</a>
+  // <div class="separator"></div>
 
   // Updated styles with responsive design
   const styles = `

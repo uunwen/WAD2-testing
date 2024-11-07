@@ -61,7 +61,7 @@
             </div>
 
             <table>
-              <div v-if="!isEndAttendance" class="attendance-list">
+              <div class="attendance-list">
                 <h2>Check-in List</h2>
                 <table class="table">
                   <thead>
@@ -81,7 +81,7 @@
                 </table>
               </div>
 
-              <div v-if="!isEndAttendance" class="checkout-list">
+              <div v-if="isEndAttendance" class="checkout-list">
                 <h2>Check-out List</h2>
                 <table class="table">
                   <thead>

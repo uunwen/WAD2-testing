@@ -1,3 +1,29 @@
+// Import required Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  get,
+  child,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+// Firebase settings
+const firebaseConfig = {
+  apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
+  authDomain: "wad-proj-2b37f.firebaseapp.com",
+  databaseURL:
+    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "wad-proj-2b37f",
+  storageBucket: "wad-proj-2b37f.appspot.com",
+  messagingSenderId: "873354832788",
+  appId: "1:873354832788:web:41105e10dd0f7651607d81",
+  measurementId: "G-LFFLPT7G58",
+};
+
+// Initialize Realtime Database and get a reference to the service
+const dbapp = initializeApp(firebaseConfig);
+const database = getDatabase(dbapp);
+
 // Function to toggle 'selected' class on filter options when clicked
 function toggleSelect(element) {
   // Toggle the 'selected' class
@@ -41,8 +67,7 @@ function sidebarIconSelect() {
   }
 }
 
-// To pass uid into filepath for attendance QR quote
-// (pls dont delete me ;- ;)
+// To pass uid into filepath for attendance QR quote -- yunwen
 function getUserUid() {
   // Retrieve user info
   const urlParams = new URLSearchParams(window.location.search);
@@ -74,11 +99,29 @@ const app = Vue.createApp({
   // }, // computed
   // created() {
   // },
-  // mounted() {
-  // },
+  mounted() {
+    this.getHours();
+  },
   methods: {
     getUser() {
       return this.account;
+    },
+    getHours() {
+      // To pass hours left --- yunwen
+      const userData = JSON.parse(sessionStorage.getItem("user"));
+      get(child(ref(database), `students/${userData.uid}`))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const studentInfo = snapshot.val();
+            this.hoursLeft = studentInfo["hours_left"];
+            console.log(this.hoursLeft);
+          } else {
+            console.log("No data available");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   }, // methods
 });
