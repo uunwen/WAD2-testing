@@ -1,22 +1,75 @@
+<!-- studentDetails.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Details</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js"></script>
 </head>
 <body>
-  <h1>Student Details</h1>
-  <div id="student-info">
-    <!-- Student information will be displayed here -->
-  </div>
+    <h1>Student Details</h1>
+    <div id="student-details">
+        <!-- Student details will be dynamically loaded here -->
+    </div>
 
-  <!-- Firebase Libraries -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase config (replace with your Firebase config)
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
+        };
 
-  <!-- Your custom JavaScript -->
-  <script src="studentDetails.js"></script>
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        // Function to get query params from URL dynamically
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Function to fetch and display student details from Firestore dynamically
+        function loadStudentDetails(eventId, userId) {
+            const studentDetailsDiv = document.getElementById('student-details');
+
+            // Fetch student details from the Firestore database (from 'events' collection and 'signups' subcollection)
+            const docRef = db.collection('events').doc(eventId)
+                .collection('signups').doc(userId); // Signups is a subcollection under events
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    const studentData = doc.data();
+                    // Display student info dynamically
+                    studentDetailsDiv.innerHTML = `
+                        <p><strong>Name:</strong> ${studentData.name}</p>
+                        <p><strong>Email:</strong> ${studentData.email}</p>
+                        <p><strong>Telegram:</strong> ${studentData.telegram}</p>
+                        <p><strong>Contact:</strong> ${studentData.contact}</p>
+                    `;
+                } else {
+                    studentDetailsDiv.innerHTML = "<p>No student found.</p>";
+                }
+            }).catch((error) => {
+                console.error("Error getting document:", error);
+                studentDetailsDiv.innerHTML = "<p>Error fetching student data.</p>";
+            });
+        }
+
+        // Get eventId and userId from URL and load student details
+        const eventId = getQueryParam('event');
+        const userId = getQueryParam('userId');
+
+        if (eventId && userId) {
+            loadStudentDetails(eventId, userId);
+        } else {
+            document.getElementById('student-details').innerHTML = "<p>Missing event or user ID in URL.</p>";
+        }
+    </script>
 </body>
 </html>
