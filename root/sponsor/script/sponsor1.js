@@ -40,163 +40,211 @@ const uid = urlParams.get("uid"); //-- Commented by Jaxsen
 
 // console.log(userData);
 
+
 // Fetch and display sponsor data
 export function fetchSponsorData() {
-  const sponsorRef = ref(database, `sponsors/${uid}`); // Commented by Jaxsen
-  // const sponsorRef = ref(database, `sponsors/${userData.uid}`); // Added by Jaxsen
+  const sponsorRef = ref(database, `sponsors/${uid}`);
   get(sponsorRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
         const sponsorData = snapshot.val();
         displaySponsorDetails(sponsorData);
       } else {
-        const sponsorDescription =
-          document.getElementById("sponsorDescription");
-        if (sponsorDescription) {
-          sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
-        }
+        displayNoSponsorData();
       }
     })
     .catch((error) => {
       console.error("Error fetching sponsor data:", error.message);
-      const sponsorDescription = document.getElementById("sponsorDescription");
-      if (sponsorDescription) {
-        sponsorDescription.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-      }
-      document.getElementById(
-        "sponsorDescription"
-      ).innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+      displayErrorFetchingData(error.message);
     });
 }
 
 function displaySponsorDetails(sponsorData) {
-  // // Commented to prevent flooding on console
-  // console.log("Sponsor data:", sponsorData); // Debug log to check the data structure
+  console.log("Sponsor Data:", sponsorData);
 
   const sponsorHeader = document.getElementById("sponsorHeader");
   const aboutContent = document.getElementById("aboutContent");
+  const sponsorStats = document.getElementById("sponsorStats");
 
-  if (sponsorHeader) {
-    sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
+  if (sponsorHeader) sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
+  if (aboutContent) aboutContent.textContent = sponsorData["org_background"] || "N/A";
+  if (sponsorStats) {
+    sponsorStats.innerHTML = "";
+    const stats = [
+      { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
+      { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
+      { label: "Projects", value: sponsorData["project_count"] || "N/A" },
+    ];
+    stats.forEach((stat) => {
+      const statItem = document.createElement("div");
+      statItem.className = "stat-item";
+      statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
+      sponsorStats.appendChild(statItem);
+    });
   }
-
-  // // Commented to prevent flooding on console  --------------------------------------------------------
-  // if (aboutContent) {
-  //   aboutContent.textContent = sponsorData["org_background"] || "N/A";
-  //   console.log("Displayed org_background:", sponsorData["org_background"]); // Log to check the content
-  // } --------------------------------------------------------
-
-  // // Commented out sponsor stats --------------------------------------------------------
-  // const sponsorStats = document.getElementById("sponsorStats");
-  // if (sponsorStats) {
-  //   sponsorStats.innerHTML = "";
-
-  //   const stats = [
-  //     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
-  //     { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
-  //     { label: "Projects", value: sponsorData["project_count"] || "N/A" },
-  //   ];
-
-  //   stats.forEach((stat) => {
-  //     const statItem = document.createElement("div");
-  //     statItem.className = "stat-item";
-  //     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
-  //     sponsorStats.appendChild(statItem);
-  //   });
-  // } --------------------------------------------------------
 }
 
-// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH --------------------------------------------------------
+function displayNoSponsorData() {
+  const sponsorDescription = document.getElementById("sponsorDescription");
+  if (sponsorDescription) sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
+}
 
-// // Event listener for the edit button
-// document.getElementById("editAboutBtn").addEventListener("click", () => {
-//   const aboutContent = document.getElementById("aboutContent");
-//   if (aboutContent) {
-//     const currentText =
-//       aboutContent.textContent.trim() ||
-//       "Enter your background information here...";
+function displayErrorFetchingData(message) {
+  const sponsorDescription = document.getElementById("sponsorDescription");
+  if (sponsorDescription) sponsorDescription.innerHTML = `<p>Error fetching data: ${message}</p>`;
+}
 
-//     const textarea = document.createElement("textarea");
-//     textarea.id = "aboutTextarea";
-//     textarea.value = currentText;
-//     textarea.style.display = "block"; // Ensure it displays when created
-//     textarea.style.width = "100%";
-//     textarea.style.height = "150px";
+// Define `initializeAboutSection`
+function initializeAboutSection() {
+  const editAboutBtn = document.getElementById("editAboutBtn");
+  const saveAboutBtn = document.getElementById("saveAboutBtn");
+  const cancelAboutBtn = document.getElementById("cancelAboutBtn");
 
-//     aboutContent.parentNode.replaceChild(textarea, aboutContent);
+  console.log("Edit button:", editAboutBtn); // Logs the edit button element
 
-//     document.getElementById("editAboutBtn").style.display = "none";
-//     document.getElementById("saveAboutBtn").style.display = "inline";
-//     document.getElementById("cancelAboutBtn").style.display = "inline";
-//   } else {
-//     console.error("Element #aboutContent not found.");
-//   }
-// });
+  if (editAboutBtn && saveAboutBtn && cancelAboutBtn) {
+    editAboutBtn.addEventListener("click", () => {
+      console.log("Edit button clicked"); // Add this log
+      enterEditMode();
+    });
+    saveAboutBtn.addEventListener("click", saveAboutContent);
+    cancelAboutBtn.addEventListener("click", cancelEditMode);
+  } else {
+    console.warn("One or more About section buttons not found.");
+  }
+}
 
-// // Event listener for the save button for the About section
-// document.getElementById("saveAboutBtn").addEventListener("click", async () => {
-//   const textarea = document.getElementById("aboutTextarea");
-//   if (textarea) {
-//     const updatedContent = textarea.value.trim();
 
-//     if (updatedContent) {
-//       try {
-//         const sponsorRef = ref(database, `sponsors/${uid}`);
-//         await update(sponsorRef, { org_background: updatedContent });
 
-//         // Display success message for the About section
-//         const successMessage = document.getElementById("successMessage");
-//         successMessage.style.display = "block";
-//         setTimeout(() => {
-//           successMessage.style.display = "none";
-//         }, 3000);
+// Enter edit mode for the About section
+function enterEditMode() {
+  console.log("Enter Edit Mode triggered"); // Check if this logs on click
+  const aboutContent = document.getElementById("aboutContent");
+  if (aboutContent) {
+    const currentText = aboutContent.textContent.trim() || "Enter your background information here...";
+    const textarea = document.createElement("textarea");
+    textarea.id = "aboutTextarea";
+    textarea.value = currentText;
+    textarea.style.display = "block";
+    textarea.style.width = "100%";
+    textarea.style.height = "150px";
+    aboutContent.parentNode.replaceChild(textarea, aboutContent);
+    toggleAboutButtons("edit");
+  } else {
+    console.error("Element #aboutContent not found.");
+  }
+}
 
-//         // Replace the textarea with a span
-//         const span = document.createElement("span");
-//         span.id = "aboutContent";
-//         span.innerHTML = updatedContent;
-//         textarea.replaceWith(span);
 
-//         document.getElementById("editAboutBtn").style.display = "inline";
-//         document.getElementById("saveAboutBtn").style.display = "none";
-//         document.getElementById("cancelAboutBtn").style.display = "none";
-//       } catch (error) {
-//         console.error("Error saving changes:", error);
-//         alert("Failed to save changes.");
-//       }
-//     } else {
-//       console.error("Updated content is empty.");
-//     }
-//   } else {
-//     console.error("Element #aboutTextarea not found.");
-//   }
-// });
+// Save About section content to Firebase
+async function saveAboutContent() {
+  const textarea = document.getElementById("aboutTextarea");
+  if (textarea) {
+    const updatedContent = textarea.value.trim();
+    if (updatedContent) {
+      try {
+        const sponsorRef = ref(database, `sponsors/${uid}`);
+        await update(sponsorRef, { org_background: updatedContent });
+        displaySuccessMessage();
+        const span = document.createElement("span");
+        span.id = "aboutContent";
+        span.innerHTML = updatedContent;
+        textarea.replaceWith(span);
+        toggleAboutButtons("save");
+      } catch (error) {
+        console.error("Error saving changes:", error);
+        alert("Failed to save changes.");
+      }
+    } else {
+      console.error("Updated content is empty.");
+    }
+  } else {
+    console.error("Element #aboutTextarea not found.");
+  }
+}
 
-// // Event listener for the cancel button
-// document.getElementById("cancelAboutBtn").addEventListener("click", () => {
-//   const textarea = document.getElementById("aboutTextarea");
-//   if (textarea) {
-//     // Revert to the original text content before editing
-//     const span = document.createElement("span");
-//     span.id = "aboutContent";
-//     span.textContent = textarea.defaultValue || textarea.value.trim(); // Retain the original value
+// Cancel edit mode and restore original About content
+function cancelEditMode() {
+  const textarea = document.getElementById("aboutTextarea");
+  if (textarea) {
+    const span = document.createElement("span");
+    span.id = "aboutContent";
+    span.textContent = textarea.defaultValue || textarea.value.trim();
+    textarea.replaceWith(span);
+    toggleAboutButtons("cancel");
+  } else {
+    console.error("Element #aboutTextarea not found.");
+  }
+}
 
-//     textarea.replaceWith(span);
+// Toggle visibility of About buttons based on action
+function toggleAboutButtons(action) {
+  console.log("Toggle buttons action:", action); // Log the action
+  const editBtn = document.getElementById("editAboutBtn");
+  const saveBtn = document.getElementById("saveAboutBtn");
+  const cancelBtn = document.getElementById("cancelAboutBtn");
 
-//     document.getElementById("editAboutBtn").style.display = "inline";
-//     document.getElementById("saveAboutBtn").style.display = "none";
-//     document.getElementById("cancelAboutBtn").style.display = "none";
-//   } else {
-//     console.error("Element #aboutTextarea not found.");
-//   }
-// });
+  if (action === "edit") {
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline";
+    cancelBtn.style.display = "inline";
+  } else {
+    editBtn.style.display = "inline";
+    saveBtn.style.display = "none";
+    cancelBtn.style.display = "none";
+  }
+}
 
-// // TO-DO PUT THIS INTO A FUNCTION TO PREVENT CRASH --------------------------------------------------------
 
-// Call this function after all your imports and initializations
+// Display success message for About section update
+function displaySuccessMessage() {
+  const successMessage = document.getElementById("successMessage");
+  if (successMessage) {
+    successMessage.style.display = "block";
+    setTimeout(() => {
+      successMessage.style.display = "none";
+    }, 3000);
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  fetchSponsorData();
+  initializeAboutSection();
+});
+
+
+// Initialize the application on load
 window.onload = () => {
   fetchSponsorData();
+  initializeAboutSection();
 };
+
+// // Commented to prevent flooding on console  --------------------------------------------------------
+// if (aboutContent) {
+//   aboutContent.textContent = sponsorData["org_background"] || "N/A";
+//   console.log("Displayed org_background:", sponsorData["org_background"]); // Log to check the content
+// } --------------------------------------------------------
+
+// // Commented out sponsor stats --------------------------------------------------------
+// const sponsorStats = document.getElementById("sponsorStats");
+// if (sponsorStats) {
+//   sponsorStats.innerHTML = "";
+
+//   const stats = [
+//     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
+//     { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
+//     { label: "Projects", value: sponsorData["project_count"] || "N/A" },
+//   ];
+
+//   stats.forEach((stat) => {
+//     const statItem = document.createElement("div");
+//     statItem.className = "stat-item";
+//     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
+//     sponsorStats.appendChild(statItem);
+//   });
+// } --------------------------------------------------------
+
 
 // Fetch and display events by organizer
 export async function fetchAndDisplayEvents(organizerName, search) {

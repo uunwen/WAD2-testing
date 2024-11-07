@@ -1,154 +1,81 @@
+<!-- indexadmin.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Sign-ups</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Event Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js"></script>
 </head>
 <body>
-  <h1>Event Sign-ups</h1>
+    <h1>Admin Dashboard</h1>
+    
+    <!-- Dropdown for selecting event -->
+    <label for="event-dropdown">Select Event:</label>
+    <select id="event-dropdown">
+        <!-- Events will be populated dynamically -->
+    </select>
 
-  <label for="event-select">Select Event:</label>
-  <select id="event-select">
-    <!-- Options will be populated dynamically -->
-  </select>
-  
-  <table id="student-table">
-    <thead>
-      <tr>
-        <th>Name</th> <!-- Header for Name -->
-      </tr>
-    </thead>
-    <tbody id="student-table-body">
-      <!-- Rows will be added dynamically by JavaScript -->
-    </tbody>
-  </table>
-  
-  <!-- Counter for total students signed up -->
-  <div id="total-count">
-    Total Students Signed Up: <span id="student-count">0</span> | 
-    Event Capacity: <span id="event-capacity">0</span> <!-- New span for event capacity -->
-  </div>
+    <!-- List of students for the selected event -->
+    <div id="student-list"></div>
 
-  <!-- Firebase Libraries -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase config (replace with your Firebase config)
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
+        };
 
-  <!-- Your custom JavaScript -->
-  <script>
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
-      authDomain: "wad-proj-2b37f.firebaseapp.com",
-      databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "wad-proj-2b37f",
-      storageBucket: "wad-proj-2b37f.appspot.com",
-      messagingSenderId: "873354832788",
-      appId: "1:873354832788:web:41105e10dd0f7651607d81",
-      measurementId: "G-LFFLPT7G58"
-    };
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+        document.addEventListener('DOMContentLoaded', function () {
+            const eventDropdown = document.getElementById('event-dropdown');
+            const studentListDiv = document.getElementById('student-list');
 
-    // Get references to HTML elements
-    const eventSelect = document.getElementById('event-select');
-    const studentTableBody = document.getElementById('student-table-body');
-    const studentCountDisplay = document.getElementById('student-count');
-    const eventCapacityDisplay = document.getElementById('event-capacity'); // New span for capacity
+            // Fetch event data from Firestore (example data structure)
+            db.collection('events').get().then(snapshot => {
+                snapshot.forEach(doc => {
+                    const event = doc.data();
+                    const eventId = doc.id;
+                    const option = document.createElement('option');
+                    option.value = eventId;
+                    option.textContent = event.name;
+                    eventDropdown.appendChild(option);
+                });
+            });
 
-    // Function to fetch events and populate dropdown
-    async function fetchEvents() {
-      try {
-        const snapshot = await database.ref('events').once('value');
-        const events = snapshot.val();
+            // When an event is selected, load students for that event
+            eventDropdown.addEventListener('change', function () {
+                const selectedEvent = eventDropdown.value;
+                if (selectedEvent) {
+                    db.collection('events').doc(selectedEvent).collection('signups').get().then(snapshot => {
+                        studentListDiv.innerHTML = ''; // Clear the current list
+                        snapshot.forEach(doc => {
+                            const student = doc.data();
+                            const studentLink = document.createElement('a');
+                            // Pass both eventId and userId to the studentDetails.html
+                            studentLink.href = `studentDetails.html?event=${selectedEvent}&userId=${doc.id}`;
+                            studentLink.textContent = student.name;
+                            const studentItem = document.createElement('div');
+                            studentItem.appendChild(studentLink);
+                            studentListDiv.appendChild(studentItem);
+                        });
+                    });
+                }
+            });
 
-        // Clear previous options
-        eventSelect.innerHTML = '';
-
-        for (const eventKey in events) {
-          const eventName = events[eventKey]["Project Name"];
-          const option = document.createElement('option');
-          option.value = eventKey; // Value will be used to identify the event
-          option.textContent = eventName; // Display the project name
-          eventSelect.appendChild(option);
-        }
-
-        // Check if there's a specific event to select from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedEvent = urlParams.get('event'); // Get the event from the URL parameters
-        if (selectedEvent) {
-          eventSelect.value = selectedEvent; // Set the dropdown to the specific event
-          fetchAndDisplayStudents(selectedEvent); // Fetch students for the selected event
-        }
-
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    }
-
-    async function fetchAndDisplayStudents(eventField) {
-      studentTableBody.innerHTML = '';
-      studentCountDisplay.textContent = '0';
-      eventCapacityDisplay.textContent = '0'; // Reset event capacity display
-
-      try {
-        const snapshot = await database.ref('events').child(eventField).child('signups').once('value');
-        const signups = snapshot.val();
-        let studentCount = 0;
-
-        // Fetch the event capacity and print it to the console
-        const eventSnapshot = await database.ref('events').child(eventField).once('value');
-        const eventData = eventSnapshot.val();
-        if (eventData) {
-          const capacity = eventData.Capacity; // Get event capacity
-          console.log(`Capacity for Event: ${eventData["Project Name"]} is ${capacity}`);
-          eventCapacityDisplay.textContent = capacity; // Update event capacity display
-        }
-
-        for (const userKey in signups) {
-          const user = signups[userKey];
-          addStudentRow(userKey, user);
-          studentCount++;
-        }
-
-        studentCountDisplay.textContent = studentCount;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    function addStudentRow(userKey, user) {
-      const row = document.createElement('tr');
-      const cell = document.createElement('td');
-      const link = document.createElement('a');
-
-      link.textContent = user.name;
-      link.href = `studentDetails.html?userId=${userKey}`;
-      link.style.color = 'inherit';
-      link.style.textDecoration = 'none';
-
-      cell.appendChild(link);
-      row.appendChild(cell);
-      studentTableBody.appendChild(row);
-    }
-
-    // Event listener for when the dropdown value changes
-    eventSelect.addEventListener('change', (event) => {
-      const selectedEvent = event.target.value;
-      fetchAndDisplayStudents(selectedEvent);
-      
-      // Update the URL without refreshing the page
-      const newUrl = `${window.location.pathname}?event=${selectedEvent}`;
-      history.pushState(null, '', newUrl);
-    });
-
-    // Call fetchEvents on page load
-    window.onload = () => {
-      fetchEvents();
-    };
-  </script>
+            // Trigger event change on load to populate students for the selected event
+            if (eventDropdown.options.length > 0) {
+                eventDropdown.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
 </body>
 </html>

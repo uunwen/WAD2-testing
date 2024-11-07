@@ -167,3 +167,10 @@ h1 {
   margin-top: 10px;
   /* Ensure that 'display' is controlled by JavaScript */
 }
+
+
+#editAboutBtn {
+  position: relative;
+  z-index: 10;
+  /* Ensures it's above any overlapping elements */
+}

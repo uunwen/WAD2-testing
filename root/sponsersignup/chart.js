@@ -13,7 +13,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-
 const eventsRef = database.ref('events');
 
 // Function to fetch events and their student sign-ups
@@ -31,12 +30,11 @@ async function fetchEventSignUps() {
             const signUps = event.signups || {}; // Get the sign-ups for this event (empty object if no signups)
             
             const count = Object.keys(signUps).length; // Count the number of students who signed up
-
             eventNames.push(event["Project Name"]); // Get the project name
             signUpCounts.push(count); // Add count to the array
             eventKeys.push(eventKey); // Store the event key
         }
-
+        
         createChart(eventNames, signUpCounts, eventKeys);
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -52,7 +50,7 @@ function createChart(eventNames, signUpCounts, eventKeys) {
         'rgba(255, 206, 86, 0.6)', // Yellow
         // Add more colors as needed
     ];
-
+    
     // Ensure the number of colors is equal to the number of events
     const datasetColors = colors.slice(0, eventNames.length);
 
@@ -70,19 +68,14 @@ function createChart(eventNames, signUpCounts, eventKeys) {
         },
         options: {
             scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
-                }
+                x: { beginAtZero: true },
+                y: { beginAtZero: true }
             },
             onClick: (evt) => {
                 const activePoints = signupChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
                 if (activePoints.length) {
                     const firstPoint = activePoints[0];
                     const eventKey = eventKeys[firstPoint.index]; // Get the corresponding event key
-
                     // Pass the event key into the URL and redirect to indexadmin.html
                     window.location.href = `indexadmin.html?eventKey=${eventKey}`; // Navigate to indexadmin.html with eventKey
                 }

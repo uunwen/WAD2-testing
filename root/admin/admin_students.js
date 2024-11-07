@@ -1,3 +1,13 @@
+const userData = JSON.parse(sessionStorage.getItem('user'));
+
+if (userData.userType != "admin") {
+    window.location.href = `../login/login.html`;
+}
+else {
+    console.log(true);
+}
+
+
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
