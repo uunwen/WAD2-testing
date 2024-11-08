@@ -34,7 +34,9 @@ const adminApp = Vue.createApp({
       filterProjectName: "",
       filterAdmission: "allAdmission",
       filterOrganiser: "allOrganisers",
-      showPopup: false,
+      modalDetails: {},
+      showModal: false,
+      currentIndex: -1,
     };
   },
   mounted() {
@@ -44,11 +46,14 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
-    closePopup() {
-      this.showPopup = false;
+    openModal(record, index) {
+      this.modalDetails = { ...record };  // Store the record data in modalDetails
+      this.showModal = true;  // Show the modal
+      this.currentIndex = index
+      console.log(this.currentIndex)
     },
-    showPopup() {
-      this.showPopup = true;
+    closeModal() {
+      this.showModal = false;  // Close the modal
     },
     async loadCommunityServices() {
       get(dbRef)
@@ -83,6 +88,7 @@ const adminApp = Vue.createApp({
           console.error("Error updating status:", error);
         }
       }
+      this.showModal =  false;
     },
     findFilterParameters() {
       if (this.allEvents.length > 0) {
@@ -189,7 +195,7 @@ adminApp.component('organisersList', {
 
 adminApp.component('communityServiceRecords', {
   props: ['record', 'index'],
-  emits: ["updateStatus"],
+  emits: ['open-modal', 'update-status'], // Declare the 'update-status' event here
   template: `
         <tr>
             <td :class="checkStatus(record.Status, record['Admissions Period'])" class="align-middle"><b>{{ index }}</b></td>
@@ -202,8 +208,10 @@ adminApp.component('communityServiceRecords', {
             <td class="align-middle">{{ record['Session(s)'] }}</td>
             <td class="align-middle">{{ record['Total CSP hours'] }}</td>
             <td class="align-middle">{{ record['Volunteer Period'] }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
-            <td class="align-middle"><button class="btn btn-light">View</button></td>
+            <td class="align-middle">
+              <button class="btn btn-light" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
+            </td>
+            <td class="align-middle"><button class="btn btn-light" @click="$emit('open-modal', record, index - 1)">View</button></td>
         </tr>
   `,
   methods: {
@@ -218,7 +226,6 @@ adminApp.component('communityServiceRecords', {
 
           // Check if the admissions period has two parts before proceeding
           if (admission.length == 2) {
-
             const date = new Date();
             // Parse the start and end dates
             const startDate = new Date(admission[0]);
@@ -236,7 +243,7 @@ adminApp.component('communityServiceRecords', {
           }
         }
         catch {
-
+          console.error("Error parsing admission period.");
         }
       }
       return "black"
@@ -246,3 +253,4 @@ adminApp.component('communityServiceRecords', {
 
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
+

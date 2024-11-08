@@ -68,8 +68,8 @@
             display: none;
         }
 
-        
-        table td.green{
+
+        table td.green {
             color: green;
         }
 
@@ -83,6 +83,30 @@
 
         table td.black {
             color: black;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 800px;
+            text-align: center;
+        }
+
+        .modal.show {
+            display: flex;
         }
     </style>
 </head>
@@ -222,21 +246,48 @@
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedEvents" :key="record.eventKey">
-                    <community-service-records :record="record" :index="idx + 1" @update-tasklist="updateTasklist(idx)" />
+                    <community-service-records :record="record" :index="idx + 1" @open-modal="openModal"
+                        @update-status="updateStatus" />
                 </template>
             </tbody>
 
-
+            
         </table>
-    </div>
-    <button @click="showPopup = true">Open Popup</button>
-    <div v-if="showPopup" class="popup-overlay popup-display" @click="closePopup">
-        <div class="popup-content popup-display">
-            <h2>Popup Title</h2>
-            <p>This is a mini popup page.</p>
-            <button @click="closePopup">Close Popup</button>
+        
+        <!-- Modal Structure -->
+        <div v-if="showModal" class="modal fade show" id="projectModal" tabindex="-1"
+            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="projectModalLabel">Project Details</h5>
+                        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Admission Period:</strong> {{ modalDetails['Admissions Period'] }}</p>
+                        <p><strong>Capacity:</strong> {{ modalDetails['Capacity'] }}</p>
+                        <p><strong>Location:</strong> {{ modalDetails['Location'] }}</p>
+                        <p><strong>Organiser:</strong> {{ modalDetails['Organiser'] }}</p>
+                        <p><strong>Project Name:</strong> {{ modalDetails['Project Name'] }}</p>
+                        <p><strong>Region:</strong> {{ modalDetails['Region'] }}</p>
+                        <p><strong>Sessions:</strong> {{ modalDetails['Session(s)'] }}</p>
+                        <p><strong>Total CSP Hours:</strong> {{ modalDetails['Total CSP hours'] }}</p>
+                        <p><strong>Volunteer Period:</strong> {{ modalDetails['Volunteer Period'] }}</p>
+                        <p><strong>Status:</strong> {{ modalDetails['Status'] }}</p>
+                    </div>
+                    <div v-if="modalDetails['Status'] == 'Approved'" class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="closeModal">Change To Not Approved</button>
+                    </div>
+                    <div v-if="modalDetails['Status'] == 'Not Approved'" class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="updateStatus(this.currentIndex)">Change To Approved</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <!-- script for event cards -->
     <script type="module" src="admin_csp.js"></script>
