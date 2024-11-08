@@ -68,14 +68,15 @@ function sidebarIconSelect() {
 }
 
 // To pass uid into filepath for attendance QR quote -- yunwen
-function getUserUid() {
+window.getUserUid = function () {
   // Retrieve user info
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("uid");
   // File path to attendance.html
   const filePath = "../attendance/attendance.html?uid=" + uid;
   window.location.href = filePath; // Navigate to the file path
-}
+};
+
 window.addEventListener("resize", function () {
   if (window.innerWidth > 768) {
     this.document.querySelector(".sidebar").style.display = "block";

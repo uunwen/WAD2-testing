@@ -290,8 +290,6 @@ export async function getFilteredEventsByOrganizer(organizerName) {
 }
 
 
-
-
 // Display filtered events with edit functionality
 async function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
