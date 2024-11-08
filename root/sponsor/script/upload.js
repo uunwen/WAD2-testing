@@ -161,7 +161,7 @@ document
       const volunteerPeriod = `${formattedStart} - ${formattedEnd}`;
 
       // Create the event object without photo URL for Realtime Database
-      // TODO: auto populate the organiser...  ---- yunwen
+      // TODO: auto populate the organiser...  ---- yunwen 
       const newEvent = {
         "Admissions Period": admissionsPeriod,
         Capacity: capacity,
