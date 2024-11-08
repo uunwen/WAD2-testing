@@ -7,6 +7,7 @@
     <title>Projects</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="admin_csp.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -15,99 +16,8 @@
 
 
     <style>
-        .menu-content {
-            top: 4rem;
-        }
-
-        .main-content {
-            width: 95%;
-            margin-top: 25px;
-            position: relative;
-            margin-top: 4.5%;
-        }
-
-        .filter-wrapper {
-            position: absolute;
-            /* Position it absolutely */
-            top: -10px;
-            /* Distance from the top of the container */
-            right: 30px;
-            /* Distance from the right of the container */
-        }
-
-        .filters {
-            width: 600px;
-            position: fixed;
-            right: 25px;
-            top: 125px;
-            height: 100%;
-        }
-
-        /* Basic styling for the popup */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .popup-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            text-align: center;
-        }
-
-        .popup-display {
-            display: none;
-        }
-
-
-        table td.green {
-            color: green;
-        }
-
-        table td.red {
-            color: red;
-        }
-
-        table td.orange {
-            color: orange;
-        }
-
-        table td.black {
-            color: black;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 800px;
-            text-align: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
+        
+        
     </style>
 </head>
 
@@ -151,7 +61,7 @@
         </div>
 
     </nav>
-
+    
     <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
         <div class="filter-wrapper position-absolute">
             <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
@@ -251,39 +161,64 @@
                 </template>
             </tbody>
 
-            
+
         </table>
-        
+
         <!-- Modal Structure -->
         <div v-if="showModal" class="modal fade show" id="projectModal" tabindex="-1"
-            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="projectModalLabel">Project Details</h5>
+            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'" style="display: block;">
+
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content shadow-lg rounded-3">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title me-2" id="projectModalLabel"> {{ modalDetails['Project Name'] }}</h5>
+                        <div :class="checkStatus(modalDetails.Status, modalDetails['Admissions Period'])"></div>
                         <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
-                        <p><strong>Admission Period:</strong> {{ modalDetails['Admissions Period'] }}</p>
-                        <p><strong>Capacity:</strong> {{ modalDetails['Capacity'] }}</p>
-                        <p><strong>Location:</strong> {{ modalDetails['Location'] }}</p>
-                        <p><strong>Organiser:</strong> {{ modalDetails['Organiser'] }}</p>
-                        <p><strong>Project Name:</strong> {{ modalDetails['Project Name'] }}</p>
-                        <p><strong>Region:</strong> {{ modalDetails['Region'] }}</p>
-                        <p><strong>Sessions:</strong> {{ modalDetails['Session(s)'] }}</p>
-                        <p><strong>Total CSP Hours:</strong> {{ modalDetails['Total CSP hours'] }}</p>
-                        <p><strong>Volunteer Period:</strong> {{ modalDetails['Volunteer Period'] }}</p>
-                        <p><strong>Status:</strong> {{ modalDetails['Status'] }}</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Organiser:</strong> {{ modalDetails['Organiser'] }}</p>
+                                <p><strong>Location:</strong> {{ modalDetails['Location'] }}</p>
+                                <p><strong>Region:</strong> {{ modalDetails['Region'] }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Sessions:</strong> {{ modalDetails['Session(s)'] }}</p>
+                                <p><strong>Total CSP Hours:</strong> {{ modalDetails['Total CSP hours'] }}</p>
+                                <p><strong>Capacity:</strong> {{ modalDetails['Capacity'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><strong>Admission Period:</strong> {{ modalDetails['Admissions Period'] }}</p>
+                                <p><strong>Volunteer Period:</strong> {{ modalDetails['Volunteer Period'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row border rounded">
+                            <div class="col-lg-12">
+                                <p><strong>Description:</strong></p>
+                                <p>{{ modalDetails['Description'] }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div v-if="modalDetails['Status'] == 'Approved'" class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeModal">Change To Not Approved</button>
+
+                    <div v-if="modalDetails['Status'] == 'Approved'" class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" @click="updateStatus(this.currentIndex)">Reject
+                            Project</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
                     </div>
-                    <div v-if="modalDetails['Status'] == 'Not Approved'" class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="updateStatus(this.currentIndex)">Change To Approved</button>
+
+                    <div v-if="modalDetails['Status'] == 'Not Approved'" class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-success" @click="updateStatus(this.currentIndex)">Approve
+                            Project</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+        
+
     </div>
 
     <!-- Bootstrap and jQuery JS -->
