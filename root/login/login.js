@@ -11,6 +11,7 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
+  signOut
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 // Firebase settings
@@ -73,6 +74,7 @@ window.googleSignIn = async function googleSignIn(userType) {
       const userData = {
         name: user.displayName,
         email: user.email,
+        photoURL: user.photoURL,  // Store the profile picture URL
       };
       
       if (userType == "student") {
@@ -96,6 +98,7 @@ window.googleSignIn = async function googleSignIn(userType) {
       uid: user.uid,
       email: user.email,
       userType: userType,
+      photoURL: user.photoURL
     }));
 
     // Redirect based on user type
@@ -111,7 +114,7 @@ window.googleSignIn = async function googleSignIn(userType) {
   }
 };
 
-// no validation just for show login for sponsor
+// validation for sponsor login
 window.sponsorLogin = async function sponsorLogin() {
   let sponsorId = document.getElementById("sponsorId").value;
   let sponsorPwd = document.getElementById("sponsorPwd").value;
@@ -156,3 +159,19 @@ window.hideModal = function (formId) {
       modal.style.display = "none"; // Hide the modal
   }
 };
+
+// Log out function
+window.logOutUser = function logOutUser() {
+  signOut(auth)
+    .then(() => {
+      console.log("Sign-out successful.");
+      window.location.href = "../login/login.html";
+    })
+    .catch((error) => {
+      console.error("An error occurred during sign-out:", error);
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("logout").addEventListener("click", logOutUser);
+});
