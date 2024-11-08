@@ -34,6 +34,19 @@ const database = getDatabase(app);
 // Firebase authentication state change listener
 auth.onAuthStateChanged((user) => {
   if (user) {
+
+    // Check if the profile picture is already stored in sessionStorage
+    const cachedProfilePicture = sessionStorage.getItem("profilePicture");
+    if (cachedProfilePicture) {
+      // Use cached picture if available
+      document.getElementById("profile-picture").src = cachedProfilePicture;
+    } else {
+      // Otherwise, use the photo URL from Firebase and store it in sessionStorage
+      const photoURL = user.photoURL || "../img/user.png"; // Default profile image if no photoURL
+      sessionStorage.setItem("profilePicture", photoURL);
+      document.getElementById("profile-picture").src = photoURL;
+    }
+
     document.getElementById("user-email").innerText = `Email: ${user.email}`;
     const userId = user.uid;
 
@@ -54,8 +67,6 @@ auth.onAuthStateChanged((user) => {
           document.getElementById(
             "graduation-year"
           ).innerText = `Expected Graduation Year: ${studentData.graduation_year}`;
-          document.getElementById("profile-picture").src =
-            "default-profile.jpg"; // Adjust for profile picture if you have one
 
           // You can also display hours left if needed
           const hoursLeft = document.createElement("p");
@@ -80,7 +91,7 @@ auth.onAuthStateChanged((user) => {
         console.error("Error fetching student data:", error);
       });
   } else {
-    window.location = "../login/login2.html"; // Redirect to login page
+    window.location = "../login/login.html"; // Redirect to login page
   }
 });
 

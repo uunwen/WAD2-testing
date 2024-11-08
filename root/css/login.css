@@ -1,179 +1,215 @@
-/* Background */
-.background {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #fffff4;
-  position: relative;
-  padding: 20px;
-  flex-direction: column;
-}
-
-/* Center the image within the background */
-.image {
-  height: 80%; /* Full height of the viewport */
-  width: 80%; /* Full width of the viewport */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border-radius: 10px; /* No border radius to fit the screen */
-  box-shadow: none; /* No shadow for full screen */
-  position: relative; /* Make it absolute to fit the whole background */
-  top: 0; /* Align to the top */
-  left: 0; /* Align to the left */
-}
-
-/* Ensure the image fills the container without distortion */
-.image img {
-  width: 100%;
+/* Ensure the html and body elements cover the full viewport */
+html, body {
   height: 100%;
-  object-fit: cover; /* Cover the entire area */
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Remove default padding */
+  overflow: hidden; /* Prevent scrollbars */
+}
+/* Navigation Bar */
+nav.navbar {
+  background-color: rgb(209, 207, 207);
+  color: black;
+  position: sticky;
+  top: 0; /* This ensures it stays at the top when scrolled */
+  z-index: 1000; /* Keeps it on top of other elements */
+  padding: 0.5rem 1rem; /* Adjust padding to reduce height */
 }
 
-/* Position the login container at the center */
-.container {
-  position: absolute; /* Change to absolute */
-  background: #f0f1e6;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  transform: translate(-50%, -50%); /* Center it */
-  top: 50%; /* Vertically center */
-  left: 50%; /* Horizontally center */
+/* Flex alignment for icons and labels */
+.navbar-nav .nav-item {
+  display: flex;
+  align-items: center; /* Vertically center-aligns icon and text */
 }
 
-/* Headings inside the container */
-.container h1 {
-  font-family: "Arial", sans-serif;
-  color: #797a75;
-  margin-bottom: 20px;
+.navbar-nav .nav-item .icon {
+  margin-right: 0.5rem; /* Space between icon and text */
 }
 
-/* Styling the <h2> to align the image and text horizontally */
-.login-form h2 {
+.navbar-nav .nav-link {
+  padding: 0; /* Remove default padding for tighter layout */
+  font-size: 0.9rem;
+  color: black;
+  text-decoration: none;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0056b3;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  background: url('../img/smu.jpg') no-repeat center center/cover;
+  height: 100vh;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: Arial, sans-serif;
-  font-size: 24px;
-  color: #797a75;
-  margin-bottom: 20px;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
 }
 
-/* Adjust the size of the image inside the <h2> */
-.login-form h2 img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain; /* Maintain aspect ratio */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
 }
 
-/* Style the login buttons */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+/* Login Buttons */
 .login-options button {
-  margin: 10px 0;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #797a75;
+  margin: 1rem 0.5rem;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  background-color: #007bff;
   color: white;
-  border: #797a75 solid 2px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  border: none;
+  border-radius: 5px;
 }
 
 .login-options button:hover {
-  background-color: #f0f1e6;
-  border-radius: 8px;
-  border: solid 2px #797a75;
-  color: #797a75;
+  background-color: #0056b3;
 }
 
-/* Login form styling */
-.login-form {
-  margin-top: 20px;
-}
-
-.login-form input {
-  width: 100%;
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-/* Form buttons */
-.login-form button {
-  width: 48%;
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 16px;
+/* Style the Google Sign-In button */
+#googleSignIn {
+  background-color: white;
+  color: black;
   border: none;
+  padding: 10px 20px;
   border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  width: 100%; /* Make it responsive */
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
 }
 
-.login-form button:hover:first-of-type {
-  background-color: #797a75;
-  border-radius: 8px;
-  border: solid 2px #f0f1e6;
-  color: #f0f1e6;
+#googleSignIn img {
+  margin-right: 8px; /* Space between the icon and text */
+  width: 20px;
 }
 
-.login-form button:first-of-type {
-  border-radius: 8px;
-  background-color: #f0f1e6;
-  border: solid 2px #797a75;
-  color: #797a75;
+/* Hover effect for Google Sign-In button */
+#googleSignIn:hover {
+  background-color: #c0c0c0;
 }
 
-.login-form button:last-of-type:hover {
-  background-color: #f0f1e6;
-  border-radius: 8px;
-  border: solid 2px #797a75;
-  color: #797a75;
-}
-
-.login-form button:last-of-type {
-  background-color: #797a75;
+/* Style for the Login button */
+#loginButton {
+  background-color: #4CAF50; /* Green color */
   color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
 }
 
-.info-block {
-  background-color: #f0f1e6; /* Light background color for contrast */
-  color: #797a75; /* Text color */
-  padding: 20px; /* Padding around the text */
-  margin: 20px auto; /* Center it with margin */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  max-width: 800px; /* Maximum width to keep it contained */
-  text-align: center; /* Center align the text */
+/* Hover effect for Login button */
+#loginButton:hover {
+  background-color: #45a049; /* Darker green for hover effect */
 }
 
-.info-block p {
-  margin: 0; /* Remove default margin */
-  line-height: 1.5; /* Increase line height for readability */
+/* Style for the Back button */
+#back {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .background {
-    flex-direction: column; /* Stack image and content vertically */
-    padding: 10px; /* Add padding to prevent elements from touching edges */
+/* Hover effect for Back button */
+#back:hover {
+  background-color: #e53935; /* Darker red for hover effect */
+}
+
+/* Style the error message */
+#errorMessage {
+  font-size: 14px;
+  font-weight: bold;
+  color: #e53935; /* Red color */
+  margin-top: 10px;
+}
+
+
+/* Overlay background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+  display: none; /* Initially hidden */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal-content {
+  background: rgb(209, 207, 207);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.close-modal {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* Adjust navbar for mobile responsiveness */
+@media (max-width: 767px) {
+  .navbar-nav {
+      flex-direction: column; /* Stack the navbar items vertically on smaller screens */
+      align-items: center;
   }
 
-  .image {
-    width: 100%; /* Full width on smaller screens */
-    height: 100%; /* Full height on smaller screens */
+  .icon {
+      width: 20px; /* Adjust icon size on smaller screens */
   }
 
-  .container {
-    transform: translate(-50%, -50%); /* Center it */
-    top: 50%; /* Vertically center */
-    left: 50%; /* Horizontally center */
-    width: 60%; /* Full width on smaller screens */
-    height: auto;
-    margin-top: 10px; /* Add spacing when stacked */
+  .navbar-brand {
+      font-size: 1.2rem; /* Adjust title font size on smaller screens */
   }
 }
