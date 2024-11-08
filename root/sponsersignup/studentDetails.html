@@ -1,33 +1,44 @@
-<!-- studentDetails.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Details</title>
-    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js"></script>
+    <style>
+        .student-details {
+            margin-top: 20px;
+        }
+        .student-details p {
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <h1>Student Details</h1>
-    <div id="student-details">
-        <!-- Student details will be dynamically loaded here -->
+    <div id="student-details" class="student-details">
+        <!-- Student details will be displayed here -->
     </div>
 
-    <script>
-        // Firebase config (replace with your Firebase config)
+    <script type="module">
+        // Firebase configuration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
+
+        // Firebase initialization
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
-            storageBucket: "your-storage-bucket",
-            messagingSenderId: "your-sender-id",
-            appId: "your-app-id"
+            apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
+            authDomain: "wad-proj-2b37f.firebaseapp.com",
+            databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "wad-proj-2b37f",
+            storageBucket: "wad-proj-2b37f.appspot.com",
+            messagingSenderId: "873354832788",
+            appId: "1:873354832788:web:41105e10dd0f7651607d81",
+            measurementId: "G-LFFLPT7G58"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
         // Function to get query params from URL dynamically
         function getQueryParam(name) {
@@ -35,16 +46,15 @@
             return urlParams.get(name);
         }
 
-        // Function to fetch and display student details from Firestore dynamically
+        // Function to fetch and display student details from Firebase Realtime Database dynamically
         function loadStudentDetails(eventId, userId) {
             const studentDetailsDiv = document.getElementById('student-details');
 
-            // Fetch student details from the Firestore database (from 'events' collection and 'signups' subcollection)
-            const docRef = db.collection('events').doc(eventId)
-                .collection('signups').doc(userId); // Signups is a subcollection under events
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                    const studentData = doc.data();
+            // Fetch student details from Realtime Database
+            const studentRef = ref(database, 'events/' + eventId + '/signups/' + userId);
+            get(studentRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const studentData = snapshot.val();
                     // Display student info dynamically
                     studentDetailsDiv.innerHTML = `
                         <p><strong>Name:</strong> ${studentData.name}</p>
@@ -56,15 +66,16 @@
                     studentDetailsDiv.innerHTML = "<p>No student found.</p>";
                 }
             }).catch((error) => {
-                console.error("Error getting document:", error);
+                console.error("Error getting student details:", error);
                 studentDetailsDiv.innerHTML = "<p>Error fetching student data.</p>";
             });
         }
 
         // Get eventId and userId from URL and load student details
-        const eventId = getQueryParam('event');
+        const eventId = getQueryParam('eventId');
         const userId = getQueryParam('userId');
 
+        // Only call loadStudentDetails if both eventId and userId exist
         if (eventId && userId) {
             loadStudentDetails(eventId, userId);
         } else {
