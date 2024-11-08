@@ -16,6 +16,15 @@ import {
   set,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+import {
+  getFirestore,
+  doc,
+  deleteDoc,
+  getDoc, // Ensure this line is included
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+
+
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
@@ -32,6 +41,34 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+
+
+// Initialize Firestore
+const firestore = getFirestore(app);
+
+
+
+// Function to fetch only the Photos array for an event from Firestore
+async function getEventPhotos(eventKey) {
+  try {
+    const eventDocRef = doc(firestore, "events", eventKey);
+    const eventDoc = await getDoc(eventDocRef);
+
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      return eventData.Photos || []; // Return the Photos array or an empty array if not found
+    } else {
+      console.log(`No event found with ID ${eventKey} in Firestore.`);
+      return [];
+    }
+  } catch (error) {
+    console.error(`Error fetching event photos for ${eventKey}:`, error.message);
+    return [];
+  }
+}
+
+
+
 
 // Retrieve user info
 const urlParams = new URLSearchParams(window.location.search); //-- Commented by Jaxsen
@@ -220,32 +257,6 @@ window.onload = () => {
   initializeAboutSection();
 };
 
-// // Commented to prevent flooding on console  --------------------------------------------------------
-// if (aboutContent) {
-//   aboutContent.textContent = sponsorData["org_background"] || "N/A";
-//   console.log("Displayed org_background:", sponsorData["org_background"]); // Log to check the content
-// } --------------------------------------------------------
-
-// // Commented out sponsor stats --------------------------------------------------------
-// const sponsorStats = document.getElementById("sponsorStats");
-// if (sponsorStats) {
-//   sponsorStats.innerHTML = "";
-
-//   const stats = [
-//     { label: "Followers", value: sponsorData["followers_count"] || "N/A" },
-//     { label: "Likes", value: sponsorData["likes_count"] || "N/A" },
-//     { label: "Projects", value: sponsorData["project_count"] || "N/A" },
-//   ];
-
-//   stats.forEach((stat) => {
-//     const statItem = document.createElement("div");
-//     statItem.className = "stat-item";
-//     statItem.innerHTML = `<p class="number">${stat.value}</p><p>${stat.label}</p>`;
-//     sponsorStats.appendChild(statItem);
-//   });
-// } --------------------------------------------------------
-
-
 // Fetch and display events by organizer
 export async function fetchAndDisplayEvents(organizerName, search) {
   try {
@@ -278,19 +289,21 @@ export async function getFilteredEventsByOrganizer(organizerName) {
   }
 }
 
+
+
+
 // Display filtered events with edit functionality
-function displayFilteredEvents(events, search) {
+async function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML =
-      "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
     return;
   }
 
   try {
-    events.forEach(([eventKey, eventData]) => {
+    for (const [eventKey, eventData] of events) {
       if (eventData["Project Name"].toLowerCase().includes(search)) {
         const eventBox = document.createElement("div");
         eventBox.className = "event-box";
@@ -308,6 +321,38 @@ function displayFilteredEvents(events, search) {
           eventBox.appendChild(paragraph);
         }
 
+
+        // Fetch and display event photos with optimized loading
+        const photoUrls = await getEventPhotos(eventKey);
+        if (photoUrls.length > 0) {
+          const photoContainer = document.createElement("div");
+          photoContainer.className = "photo-container";
+
+          photoUrls.forEach((url) => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = `Photo for event ${eventKey}`;
+            img.style.width = "100px"; // Adjust size as needed
+            img.style.margin = "5px";
+            img.loading = "lazy"; // Add lazy loading attribute for optimization
+
+            img.onload = () => {
+              console.log(`Image for event ${eventKey} loaded successfully`);
+            };
+            img.onerror = () => {
+              console.log(`Error loading image for event ${eventKey}`);
+              img.src = "path/to/placeholder-image.jpg"; // Optional: replace with a placeholder image on error
+            };
+
+            photoContainer.appendChild(img);
+          });
+          eventBox.appendChild(photoContainer);
+        } else {
+          console.log(`No photos available for event ${eventKey}`);
+        }
+
+
+
         // Add edit, save, and cancel buttons
         createEditButtons(eventBox, eventKey);
 
@@ -322,13 +367,12 @@ function displayFilteredEvents(events, search) {
 
         eventContainer.appendChild(eventBox);
       }
-    });
+    }
   } catch (error) {
-    document.getElementById(
-      "eventContainer"
-    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById("eventContainer").innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
+
 
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
@@ -370,14 +414,25 @@ async function createEditButtons(eventBox, eventKey) {
   });
 }
 
-// Delete event function
+// Update the deleteEvent function to delete from Firestore as well
 async function deleteEvent(eventKey, eventBox) {
+  // Reference to the event in the Realtime Database
   const eventRef = ref(database, `events/${eventKey}`);
+
   try {
+    // Delete event from the Realtime Database
     await set(eventRef, null);
-    console.log("Event deleted successfully.");
+    console.log("Event deleted successfully from Realtime Database.");
+
+    // Delete event from Cloud Firestore
+    const firestoreEventRef = doc(firestore, "events", eventKey);
+    await deleteDoc(firestoreEventRef);
+    console.log("Event deleted successfully from Cloud Firestore.");
+
+    // Remove the event box from the DOM
     eventBox.remove();
 
+    // Refresh the events list
     const org_name = await getSponsorOrg_name();
     fetchAndDisplayEvents(org_name, search);
   } catch (error) {
@@ -385,6 +440,7 @@ async function deleteEvent(eventKey, eventBox) {
     alert("Failed to delete event: " + error.message);
   }
 }
+
 
 // Reset button visibility after save/cancel actions
 function resetButtons(editBtn, saveBtn, cancelBtn) {

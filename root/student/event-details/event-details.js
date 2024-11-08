@@ -22,8 +22,6 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const db = getFirestore(app);
 
-const userData = JSON.parse(sessionStorage.getItem('user'));
-
 // Helper to get URL parameter
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -44,31 +42,27 @@ window.onload = () => {
 };
 
 // Function to load event details into the details tab
-const eventKey = getQueryParam("eventKey");
-let eventData = {}; // Initialize eventData as an empty object
-
-// Function to load event details into the details tab
 function displayEventDetails() {
+    const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
         document.getElementById("eventDetailsContainer").innerHTML = "<p>Event not found.</p>";
         return;
     }
 
-    // Fetch event data from Firebase
-    const dbRefEvent = ref(database, `events/${eventKey}`);
-    get(dbRefEvent).then((snapshot) => {
+    const dbRef = ref(database, `events/${eventKey}`);
+    get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
-            const data = snapshot.val(); // Fetch event data
+            const data = snapshot.val();
 
-            // Set Project Name above the navbar using the 'data' object
+            // Set Project Name above the navbar
             document.getElementById("eventTitle").textContent = data["Project Name"];
+
             const eventContent = document.getElementById("eventContent");
             eventContent.innerHTML = "";  // Clear previous content
 
-            // Loop through event data and generate event cards
             for (const key in data) {
-                // Ensure key is valid and exclude specific keys, including "Photos"
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "Photos") {
+                // Exclude photo-related keys and other specific keys
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos") {
                     const card = document.createElement("div");
                     card.className = "card";
 
@@ -89,34 +83,18 @@ function displayEventDetails() {
                 }
             }
 
-            // Fetch student data to determine if already signed up
-            const dbRefStudent = ref(database, `students/${userData.uid}`);
-            get(dbRefStudent).then((studentSnapshot) => {
-                let status = false; // Default status is false (not signed up)
+            // Add buttons to switch tabs
+            const buttonContainer = document.querySelector('.button-container');
+            buttonContainer.innerHTML = "";
 
-                if (studentSnapshot.exists()) {
-                    const studentData = studentSnapshot.val();
-                    // Check if the student is signed up for the event
-                    if (studentData[eventKey]) {
-                        status = true; // Already signed up for the event
-                    }
-                }
-
-                // Add buttons to switch tabs
-                const buttonContainer = document.querySelector('.button-container');
-                buttonContainer.innerHTML = ""; // Clear previous buttons
-
-                const signupButton = document.createElement("button");
-                signupButton.textContent = "Sign Up";
-                signupButton.className = "signup-button";
-                const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
-                signupButton.onclick = () => {
-                    window.location.href = signupLink;
-                };
-                buttonContainer.appendChild(signupButton);
-            }).catch((error) => {
-                console.error("Error fetching student details:", error);
-            });
+            const signupButton = document.createElement("button");
+            signupButton.textContent = "Sign Up";
+            signupButton.className = "signup-button";
+            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+            signupButton.onclick = () => {
+                window.location.href = signupLink;
+            };
+            buttonContainer.appendChild(signupButton);
         } else {
             document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
         }
@@ -125,7 +103,6 @@ function displayEventDetails() {
         document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
-
 
 
 // Helper function to find sponsor key
@@ -147,8 +124,7 @@ function findSponsorKey(organiserName) {
     });
 }
 
-
-// Function to load and display event photos from Realtime Database
+// Function to load and display event photos from Firestore
 async function displayEventPhotos() {
     const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
@@ -158,44 +134,53 @@ async function displayEventPhotos() {
     }
 
     try {
-        console.log("Fetching photos for event:", eventKey); // Debug log
-        const photoRef = ref(database, `events/${eventKey}/Photos`);
-        const snapshot = await get(photoRef);
+        const projectName = document.getElementById("eventTitle").textContent;
+        if (!projectName) {
+            console.error('Project name not found.');
+            document.getElementById("photo-gallery").innerHTML = "<p>Project name not available.</p>";
+            return;
+        }
 
-        if (snapshot.exists()) {
-            const photos = snapshot.val();
-            console.log("Photos fetched:", photos); // Log to inspect photo data structure
+        const eventsRef = collection(db, "events");
+        const q = query(eventsRef, where("Project Name", "==", projectName));
+        const querySnapshot = await getDocs(q);
 
-            const photoGallery = document.getElementById('photo-gallery');
-            photoGallery.innerHTML = ''; // Clear existing content
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const photos = data.Photos;
 
-            // Access each individual photo URL
-            Object.keys(photos).forEach(photoIndex => {
-                const photoUrl = photos[photoIndex]; // Access each photo by its index
-                const imgElement = document.createElement('img');
-                imgElement.src = photoUrl;
-                imgElement.alt = `Event Photo ${photoIndex}`;
+                if (photos && Array.isArray(photos)) {
+                    const photoGallery = document.getElementById('photo-gallery');
+                    photoGallery.innerHTML = ''; // Clear existing content
 
-                // Style the image element
-                imgElement.style.width = '100%';
-                imgElement.style.height = '300px';
-                imgElement.style.objectFit = 'cover';
-                imgElement.style.borderRadius = '8px';
-                imgElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                    // Append each photo directly into the grid container
+                    photos.forEach(photoUrl => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = photoUrl;
+                        imgElement.alt = 'Event Photo';
 
-                photoGallery.appendChild(imgElement);
+                        // Apply CSS directly to the image element
+                        imgElement.style.width = '100%';  // Ensures the image fits the card width
+                        imgElement.style.height = '300px'; // Sets a fixed height for all images
+                        imgElement.style.objectFit = 'cover'; // Ensures the image covers the space without distortion
+                        imgElement.style.borderRadius = '8px'; // Optional rounded corners
+                        imgElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'; // Optional shadow for styling
+
+                        photoGallery.appendChild(imgElement);
+                    });
+                } else {
+                    document.getElementById('photo-gallery').innerHTML = '<p>No photos available for this event.</p>';
+                }
             });
         } else {
-            document.getElementById('photo-gallery').innerHTML = '<p>No photos available for this event.</p>';
+            document.getElementById('photo-gallery').innerHTML = '<p>No matching event found.</p>';
         }
     } catch (error) {
         console.error('Error fetching photos:', error);
         document.getElementById('photo-gallery').innerHTML = `<p>Error fetching photos: ${error.message}</p>`;
     }
 }
-
-
-
 
 // Load the photos tab when the Photos section is activated
 document.getElementById('photosTab').addEventListener('click', () => {
