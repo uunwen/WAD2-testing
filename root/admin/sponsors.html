@@ -122,22 +122,61 @@
                 <button id="submit-btn" @click="updateRecords">Submit</button>
             </div>
         </div>
-        <h1>Sponsors</h1>
+        <h1>Organizations</h1>
         <table class="table overflow-auto table-responsive">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Organisation Name</th>
-                    <th>Organisation Website</th>
+                    <th class="hide-lg">Organisation Website</th>
                     <th>Project Count</th>
+                    <th>View More</th>
                 </tr>
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedSponsors" :key="record.eventKey">
-                    <sponsor-records :record="record" :index="idx + 1" />
+                    <sponsor-records :record="record" :index="idx + 1" @open-modal="openModal" />
                 </template>
             </tbody>
         </table>
+
+        <!-- Modal -->
+        <div v-if="showModal" class="modal fade show overflow-hidden" id="projectModal" tabindex="-1"
+            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'" style="display: block;">
+
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content shadow-lg rounded-3">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title me-2" id="projectModalLabel"> {{ modalDetails['org_name'] }}</h5>
+                        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><strong>Email:</strong> {{ modalDetails['email_add'] }}</p>
+                                <p><strong>Facebook:</strong> {{ modalDetails['facebook_link'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row border rounded">
+                            <div class="col-lg-12">
+                                <p><strong>Description:</strong></p>
+                                <p>{{ modalDetails['org_background'] }}</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">View Projects</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
     <!-- script for event cards -->

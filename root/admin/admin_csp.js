@@ -280,14 +280,14 @@ adminApp.component('communityServiceRecords', {
             <td class="align-middle"><div :class="checkStatus(record.Status, record['Admissions Period'])"></div></td>
             <td class="align-middle">{{ record['Admissions Period'] }}</td>
             <td class="align-middle">{{ record.Capacity }}</td>
-            <td class="align-middle">{{ record.Location }}</td>
+            <td class="hide-xl align-middle">{{ record.Location }}</td>
             <td class="align-middle">{{ record.Organiser }}</td>
             <td class="align-middle">{{ record['Project Name'] }}</td>
-            <td class="align-middle">{{ record.Region }}</td>
-            <td class="align-middle">{{ record['Session(s)'] }}</td>
-            <td class="align-middle">{{ record['Total CSP hours'] }}</td>
-            <td class="align-middle">{{ record['Volunteer Period'] }}</td>
-            <td class="align-middle">
+            <td class="hide-xxl align-middle">{{ record.Region }}</td>
+            <td class="hide-xxl align-middle">{{ record['Session(s)'] }}</td>
+            <td class="hide-lg align-middle">{{ record['Total CSP hours'] }}</td>
+            <td class="hide-xl align-middle">{{ record['Volunteer Period'] }}</td>
+            <td class="align-middle hide-xl">
               <button v-if="record.Status == 'Approved'" class="btn btn-success" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
               <button v-else class="btn btn-danger" @click="$emit('update-status', index)">{{ record.Status }}</button>
             </td>
