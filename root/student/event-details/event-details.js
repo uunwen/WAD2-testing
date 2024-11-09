@@ -22,11 +22,24 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const db = getFirestore(app);
 
+
+
+// Ensure `initMap` is globally accessible
+window.initMap = function () {
+    // Example initialization logic for the map
+    const map = new google.maps.Map(document.getElementById("eventMap"), {
+        center: { lat: 1.3521, lng: 103.8198 }, // Replace with your desired coordinates
+        zoom: 12,
+    });
+};
+
+
 // Helper to get URL parameter
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
+
 
 // Function to create the "View on Map" button for each event
 function createViewOnMapButton(coordinates) {
@@ -36,12 +49,37 @@ function createViewOnMapButton(coordinates) {
     viewMapBtn.style.marginTop = "10px";
     viewMapBtn.style.marginBottom = "20px"; // Add margin-bottom for vertical space
 
-    // Add event listener to open Google Maps when clicked
+    // Add event listener to display map when clicked
     viewMapBtn.onclick = () => {
         if (coordinates) {
             const [lat, lng] = coordinates.split(", ").map(Number);
-            const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-            window.open(googleMapsUrl, "_blank");
+
+            // Show the map container
+            const mapContainer = document.getElementById("mapContainer");
+            mapContainer.style.display = "block";
+
+            // Initialize the map
+            const map = new google.maps.Map(document.getElementById("eventMap"), {
+                center: { lat, lng },
+                zoom: 15,
+            });
+
+            // Add a marker to the map
+            new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+            });
+
+            // Check for and create the "Close Map" button if not already present
+            if (!mapContainer.querySelector('.close-map-button')) {
+                const closeMapBtn = document.createElement("button");
+                closeMapBtn.textContent = "Close Map";
+                closeMapBtn.className = "btn btn-secondary btn-sm close-map-button";
+                closeMapBtn.onclick = () => {
+                    mapContainer.style.display = "none";
+                };
+                mapContainer.appendChild(closeMapBtn);
+            }
         } else {
             alert("Coordinates are not available.");
         }
@@ -49,6 +87,7 @@ function createViewOnMapButton(coordinates) {
 
     return viewMapBtn;
 }
+
 
 
 // Call this function to load event details and other data when needed
@@ -65,6 +104,7 @@ window.onload = () => {
 };
 
 // Function to load event details into the details tab
+// Function to load event details into the details tab
 function displayEventDetails() {
     const eventKey = getQueryParam("eventKey");
     if (!eventKey) {
@@ -76,32 +116,16 @@ function displayEventDetails() {
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-
-            // Set Project Name above the navbar
             document.getElementById("eventTitle").textContent = data["Project Name"];
-
             const eventContent = document.getElementById("eventContent");
-            eventContent.innerHTML = "";  // Clear previous content
+            eventContent.innerHTML = ""; // Clear previous content
 
+            // Add data to the event details section
             for (const key in data) {
-                // Exclude photo-related keys and the "Status" key
                 if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos" && key !== "Status" && key !== "Coordinates") {
                     const card = document.createElement("div");
                     card.className = "card";
-
-                    // Set dynamic link for the 'Organiser' section
-                    if (key === 'Organiser') {
-                        const organiserName = data[key];
-                        card.innerHTML = `<strong>Organiser:</strong> <a href="#">${organiserName}</a>`;
-                        const organiserLink = card.querySelector('a');
-
-                        // Get the sponsorKey for dynamic linking
-                        findSponsorKey(organiserName).then(sponsorKey => {
-                            organiserLink.href = sponsorKey ? `../sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}` : "#";
-                        });
-                    } else {
-                        card.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
-                    }
+                    card.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
                     eventContent.appendChild(card);
                 }
             }
@@ -112,10 +136,9 @@ function displayEventDetails() {
                 eventContent.appendChild(viewMapBtn);
             }
 
-            // Add buttons to switch tabs
+            // Add the "Sign Up" button
             const buttonContainer = document.querySelector('.button-container');
-            buttonContainer.innerHTML = "";
-
+            buttonContainer.innerHTML = ""; // Clear previous content
             const signupButton = document.createElement("button");
             signupButton.textContent = "Sign Up";
             signupButton.className = "signup-button button-with-margin";
@@ -124,6 +147,7 @@ function displayEventDetails() {
                 window.location.href = signupLink;
             };
             buttonContainer.appendChild(signupButton);
+
         } else {
             document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
         }
@@ -132,7 +156,6 @@ function displayEventDetails() {
         document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     });
 }
-
 
 // Helper function to find sponsor key
 function findSponsorKey(organiserName) {
@@ -240,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showTab("details");
     detailsTab.classList.add("active"); // Make detailsTab active by default
 });
+
 // Function to toggle between tabs
 function showTab(tabName) {
     const detailsContainer = document.getElementById("eventDetailsContainer");
@@ -254,9 +278,6 @@ function showTab(tabName) {
         displayEventPhotos();  // Load photos when "photos" tab is active
     }
 }
-
-
-
 
 // Load default tab
 window.onload = () => {
