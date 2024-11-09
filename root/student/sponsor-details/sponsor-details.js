@@ -40,11 +40,6 @@ function displaySponsorDetails() {
             // Set sponsor title as org_name
             document.getElementById("sponsorTitle").textContent = data["org_name"];
 
-            // Display stats using likes_count, followers_count, and project_count
-            document.getElementById("followers").textContent = `${data["followers_count"] || 0}`;
-            document.getElementById("likes").textContent = `${data["likes_count"] || 0}`;
-            document.getElementById("projects").textContent = `${data["project_count"] || 0}`;
-
             // Update icon links if data exists
             if (data["email_add"]) {
                 document.getElementById("emailIcon").href = `mailto:${data["email_add"]}`;
@@ -64,30 +59,38 @@ function displaySponsorDetails() {
             sponsorDetailsContainer.innerHTML = "";
 
             for (const key in data) {
-                if (data.hasOwnProperty(key) && !["org_name", "followers_count", "likes_count", "project_count", "email_add", "facebook_link", "website"].includes(key)) {
+                if (data.hasOwnProperty(key) && !["org_name", "email_add", "facebook_link", "website"].includes(key)) {
                     const paragraph = document.createElement("p");
 
                     if (key === "org_background") {
                         // Display About section
                         paragraph.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">About</span><br>&emsp;&emsp;<span>${data[key]}</span>`;
                     } else if (key === "project_list") {
-                        // Display Project List section with bullet points
+                        // Display Project List section with event names
                         paragraph.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">Project List</span><br>`;
 
                         // Check if project_list is an array
                         const projectArray = Array.isArray(data[key]) ? data[key] : data[key].split(",");
 
-                        // Create an unordered list for projects
-                        const ul = document.createElement("ul");
-                        ul.style.paddingLeft = "20px"; // Add some indentation for bullet points
+                        // Create an ordered list for projects
+                        const ol = document.createElement("ol");
+                        ol.style.paddingLeft = "20px"; // Add some indentation for numbering
 
-                        projectArray.forEach(project => {
-                            const li = document.createElement("li");
-                            li.textContent = project.trim(); // Trim to remove any extra spaces
-                            ul.appendChild(li);
+                        // Fetch event names based on project IDs
+                        projectArray.forEach(async (projectId) => {
+                            const eventRef = ref(database, `events/${projectId.trim()}`);
+                            const snapshot = await get(eventRef);
+                            if (snapshot.exists()) {
+                                const eventData = snapshot.val();
+                                const li = document.createElement("li");
+                                li.textContent = eventData["Project Name"] || "Unnamed Project"; // Use "Project Name" or fallback to a default
+                                ol.appendChild(li);
+                            } else {
+                                console.error(`No event found for ID ${projectId}`);
+                            }
                         });
 
-                        paragraph.appendChild(ul);
+                        paragraph.appendChild(ol);
                     } else {
                         paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
                     }

@@ -47,22 +47,17 @@
             padding-bottom: 10px;
         }
 
-        /* Stats Bar Styling */
-        #sponsorStats {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            background-color: #e0f1f4;
-            font-weight: 600;
-            font-size: 1em;
-        }
-
-        #sponsorStats div {
-            margin: 0 20px;
-            color: #333;
-        }
-
         /* Icon Row Styling with Hover Effect */
+        #iconRow {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e0f1f4;
+            border-radius: 5px;
+        }
+
         #iconRow a {
             font-size: 2.2em;
             color: black;
@@ -93,7 +88,6 @@
             font-weight: 500;
         }
 
-
         .back-button {
             background-color: #e0f1f4;
             color: black;
@@ -115,7 +109,6 @@
         }
     </style>
 
-
     <script type="module" src="sponsor-details.js"></script>
 </head>
 
@@ -128,14 +121,12 @@
         </button>
     </div>
 
-
-
-
     <div id="sponsorDetailsContainer">
         <!-- Sponsor name as header -->
         <h1 id="sponsorTitle"></h1>
 
-        <div id="iconRow" style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+        <!-- Icon Row (Moved to the colored section) -->
+        <div id="iconRow">
             <a id="emailIcon" href="mailto:example@example.com" target="_blank">
                 <i class="bi bi-envelope-fill"></i>
             </a>
@@ -145,23 +136,6 @@
             <a id="websiteIcon" href="https://example.com" target="_blank">
                 <i class="bi bi-globe"></i>
             </a>
-        </div>
-
-
-        <div id="sponsorStats"
-            style="display: flex; justify-content: space-around; background-color: #e0f1f4; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-            <div style="text-align: center;">
-                <div id="followers" style="font-size: 1.5em; font-weight: bold;"></div>
-                <div>Followers</div>
-            </div>
-            <div style="text-align: center;">
-                <div id="likes" style="font-size: 1.5em; font-weight: bold;"></div>
-                <div>Likes</div>
-            </div>
-            <div style="text-align: center;">
-                <div id="projects" style="font-size: 1.5em; font-weight: bold;"></div>
-                <div>Projects</div>
-            </div>
         </div>
 
         <div id="sponsorDetails">
@@ -174,6 +148,8 @@
                 window.history.back();
             }
         </script>
+    </div>
+
 </body>
 
 </html>

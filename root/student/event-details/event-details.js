@@ -28,6 +28,29 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+// Function to create the "View on Map" button for each event
+function createViewOnMapButton(coordinates) {
+    const viewMapBtn = document.createElement("button");
+    viewMapBtn.textContent = "View on Map";
+    viewMapBtn.className = "btn btn-primary btn-sm button-with-margin";
+    viewMapBtn.style.marginTop = "10px";
+    viewMapBtn.style.marginBottom = "20px"; // Add margin-bottom for vertical space
+
+    // Add event listener to open Google Maps when clicked
+    viewMapBtn.onclick = () => {
+        if (coordinates) {
+            const [lat, lng] = coordinates.split(", ").map(Number);
+            const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+            window.open(googleMapsUrl, "_blank");
+        } else {
+            alert("Coordinates are not available.");
+        }
+    };
+
+    return viewMapBtn;
+}
+
+
 // Call this function to load event details and other data when needed
 window.onload = () => {
     const eventKey = getQueryParam("eventKey"); // Dynamically get the eventKey from the URL
@@ -61,8 +84,8 @@ function displayEventDetails() {
             eventContent.innerHTML = "";  // Clear previous content
 
             for (const key in data) {
-                // Exclude photo-related keys and other specific keys
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos") {
+                // Exclude photo-related keys and the "Status" key
+                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos" && key !== "Status" && key !== "Coordinates") {
                     const card = document.createElement("div");
                     card.className = "card";
 
@@ -83,14 +106,20 @@ function displayEventDetails() {
                 }
             }
 
+            // Add the "View on Map" button if coordinates are available
+            if (data["Coordinates"]) {
+                const viewMapBtn = createViewOnMapButton(data["Coordinates"]);
+                eventContent.appendChild(viewMapBtn);
+            }
+
             // Add buttons to switch tabs
             const buttonContainer = document.querySelector('.button-container');
             buttonContainer.innerHTML = "";
 
             const signupButton = document.createElement("button");
             signupButton.textContent = "Sign Up";
-            signupButton.className = "signup-button";
-            const signupLink = `http://localhost/WAD2-testing/root/student/event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
+            signupButton.className = "signup-button button-with-margin";
+            const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
             signupButton.onclick = () => {
                 window.location.href = signupLink;
             };

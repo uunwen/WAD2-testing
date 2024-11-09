@@ -95,6 +95,11 @@
     }
   </style>
   <script type="module" src="../sponsor/script/upload.js"></script>
+
+  <!-- Google Maps API -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGmHvzKBllTQ5BS83DBKfdRhCGBgoxzlw&callback=initMap&libraries=marker"></script>
+
 </head>
 
 <body>
@@ -149,6 +154,14 @@
 
             <label for="volunteerPeriodEnd">Volunteer Period End:</label>
             <input type="date" id="volunteerPeriodEnd" required />
+
+
+            <label for="map">Select Location on Map:</label>
+            <div id="map" style="height: 400px; width: 100%; margin-top: 10px;"></div>
+
+            <label for="coordinates">Coordinates:</label>
+            <input type="text" id="coordinates" readonly placeholder="Latitude, Longitude" required />
+
 
             <label for="photoURL">Photo URLs (add multiple URLs by pressing "Add Photo"):</label>
             <div id="photoURLsContainer">
