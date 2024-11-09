@@ -3,8 +3,8 @@ import { search, initializeSearch } from "./navbar.js";
 export let isEditing = true; // Flag to pause update from searchbar during editing
 export let filteredEventsArr;
 
-// // Initialize the search bar
-// initializeSearch();
+// Initialize the search bar
+initializeSearch();
 
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -21,7 +21,10 @@ import {
   doc,
   deleteDoc,
   getDoc, // Ensure this line is included
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+
 
 // Firebase configuration
 const firebaseConfig = {
@@ -40,8 +43,95 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
+
 // Initialize Firestore
 const firestore = getFirestore(app);
+
+export async function initMap(coordinates = "-34.397, 150.644") {
+  const mapContainer = document.getElementById("mapContainer");
+  if (mapContainer) {
+    mapContainer.style.display = "block"; // Ensure the map container is visible
+
+    // Adding passive listeners to prevent warnings
+    mapContainer.addEventListener('touchmove', (e) => {
+      // Custom code if needed
+    }, { passive: true });
+
+    mapContainer.addEventListener('touchstart', (e) => {
+      // Custom code if needed
+    }, { passive: true });
+
+    const [lat, lng] = coordinates.split(", ").map(Number);
+    const initialPosition = { lat, lng };
+
+    const map = new google.maps.Map(mapContainer, {
+      zoom: 14,
+      center: initialPosition,
+    });
+
+    const marker = new google.maps.Marker({
+      position: initialPosition,
+      map: map,
+      draggable: true,
+    });
+
+    // Update coordinates input field when marker is dragged
+    google.maps.event.addListener(marker, 'dragend', function (event) {
+      const newLat = event.latLng.lat().toFixed(6);
+      const newLng = event.latLng.lng().toFixed(6);
+      document.getElementById("coordinatesInput").value = `${newLat}, ${newLng}`;
+    });
+
+    return marker;
+  }
+}
+
+
+// Function to create the "View on Map" button for each event
+export function createViewOnMapButton(coordinates) {
+  const viewMapBtn = document.createElement("button");
+  viewMapBtn.textContent = "View on Map";
+  viewMapBtn.className = "btn btn-primary btn-sm";
+  viewMapBtn.style.marginTop = "10px";
+
+  // Add event listener to open Google Maps when clicked
+  viewMapBtn.onclick = () => {
+    if (coordinates) {
+      const [lat, lng] = coordinates.split(", ").map(Number);
+      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(googleMapsUrl, "_blank");
+    } else {
+      alert("Coordinates are not available.");
+    }
+  };
+
+  return viewMapBtn;
+}
+
+
+// Function to create and return the "Edit Map Location" button
+function createEditMapLocationButton(coordinates) {
+  const editMapBtn = document.createElement("button");
+  editMapBtn.textContent = "Edit Map Location";
+  editMapBtn.className = "btn btn-secondary btn-sm";
+  editMapBtn.style.marginLeft = "10px"; // Add some spacing between buttons
+
+  // Add event listener to display and initialize the map when clicked
+  editMapBtn.onclick = () => {
+    const mapContainer = document.getElementById("mapContainer");
+    if (mapContainer) {
+      mapContainer.style.display = "block";
+      initMap(coordinates);
+    }
+  };
+
+  return editMapBtn;
+}
+
+
+
+
+
 
 // Function to fetch only the Photos array for an event from Firestore
 async function getEventPhotos(eventKey) {
@@ -57,13 +147,11 @@ async function getEventPhotos(eventKey) {
       return [];
     }
   } catch (error) {
-    console.error(
-      `Error fetching event photos for ${eventKey}:`,
-      error.message
-    );
+    console.error(`Error fetching event photos for ${eventKey}:`, error.message);
     return [];
   }
 }
+
 
 // Retrieve user info
 const urlParams = new URLSearchParams(window.location.search); //-- Commented by Jaxsen
@@ -71,6 +159,7 @@ const uid = urlParams.get("uid"); //-- Commented by Jaxsen
 // const userData = JSON.parse(sessionStorage.getItem("user")); // Added by Jaxsen
 
 // console.log(userData);
+
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
@@ -97,10 +186,8 @@ function displaySponsorDetails(sponsorData) {
   const aboutContent = document.getElementById("aboutContent");
   const sponsorStats = document.getElementById("sponsorStats");
 
-  if (sponsorHeader)
-    sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
-  if (aboutContent)
-    aboutContent.textContent = sponsorData["org_background"] || "N/A";
+  if (sponsorHeader) sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
+  if (aboutContent) aboutContent.textContent = sponsorData["org_background"] || "N/A";
   if (sponsorStats) {
     sponsorStats.innerHTML = "";
     const stats = [
@@ -119,14 +206,12 @@ function displaySponsorDetails(sponsorData) {
 
 function displayNoSponsorData() {
   const sponsorDescription = document.getElementById("sponsorDescription");
-  if (sponsorDescription)
-    sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
+  if (sponsorDescription) sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
 }
 
 function displayErrorFetchingData(message) {
   const sponsorDescription = document.getElementById("sponsorDescription");
-  if (sponsorDescription)
-    sponsorDescription.innerHTML = `<p>Error fetching data: ${message}</p>`;
+  if (sponsorDescription) sponsorDescription.innerHTML = `<p>Error fetching data: ${message}</p>`;
 }
 
 // Define `initializeAboutSection`
@@ -149,14 +234,14 @@ function initializeAboutSection() {
   }
 }
 
+
+
 // Enter edit mode for the About section
 function enterEditMode() {
   console.log("Enter Edit Mode triggered"); // Check if this logs on click
   const aboutContent = document.getElementById("aboutContent");
   if (aboutContent) {
-    const currentText =
-      aboutContent.textContent.trim() ||
-      "Enter your background information here...";
+    const currentText = aboutContent.textContent.trim() || "Enter your background information here...";
     const textarea = document.createElement("textarea");
     textarea.id = "aboutTextarea";
     textarea.value = currentText;
@@ -169,6 +254,7 @@ function enterEditMode() {
     console.error("Element #aboutContent not found.");
   }
 }
+
 
 // Save About section content to Firebase
 async function saveAboutContent() {
@@ -229,6 +315,7 @@ function toggleAboutButtons(action) {
   }
 }
 
+
 // Display success message for About section update
 function displaySuccessMessage() {
   const successMessage = document.getElementById("successMessage");
@@ -240,10 +327,12 @@ function displaySuccessMessage() {
   }
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
   fetchSponsorData();
   initializeAboutSection();
 });
+
 
 // Initialize the application on load
 window.onload = () => {
@@ -283,20 +372,148 @@ export async function getFilteredEventsByOrganizer(organizerName) {
   }
 }
 
-// Display filtered events with edit functionality
+
+// Function to display event photos with delete buttons
+async function displayEventPhotosWithDeleteButtons(eventKey, photoContainer, isEditable) {
+  try {
+    const photoUrls = await getEventPhotos(eventKey);
+    photoContainer.innerHTML = ""; // Clear existing photos before displaying new ones
+
+    if (photoUrls.length > 0) {
+      photoUrls.forEach((url, index) => {
+        const photoWrapper = document.createElement("div");
+        photoWrapper.className = "photo-wrapper";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = `Photo ${index + 1} for event ${eventKey}`;
+        img.className = "event-photo";
+        img.loading = "lazy";
+
+        if (isEditable) {
+          const deleteBtn = document.createElement("button");
+          deleteBtn.innerHTML = '<i class="fas fa-times"></i>'; // FontAwesome "X" icon
+          deleteBtn.className = "delete-btn";
+
+          deleteBtn.onclick = async () => {
+            const confirmDelete = confirm(`Are you sure you want to delete this photo?`);
+            if (confirmDelete) {
+              await deleteSinglePhoto(eventKey, url);
+              photoWrapper.remove();
+            }
+          };
+
+          photoWrapper.appendChild(deleteBtn);
+        }
+
+        photoWrapper.appendChild(img);
+        photoContainer.appendChild(photoWrapper);
+      });
+    } else {
+      console.log(`No photos available for event ${eventKey}`);
+    }
+  } catch (error) {
+    console.error(`Error displaying photos for event ${eventKey}:`, error.message);
+  }
+}
+
+
+// Function to add the photo feature and return the button
+function addPhotoFeature(eventBox, eventKey, photoContainer) {
+  const addPhotoBtn = document.createElement("button");
+  addPhotoBtn.textContent = "Add Photo";
+  addPhotoBtn.className = "btn btn-success btn-sm";
+  addPhotoBtn.style.display = "none"; // Initially hidden
+
+  const photoInputContainer = document.createElement("div");
+  photoInputContainer.style.display = "none";
+  photoInputContainer.style.marginTop = "10px";
+
+  const photoInput = document.createElement("input");
+  photoInput.type = "text";
+  photoInput.placeholder = "Enter photo URL";
+  photoInput.className = "form-control mb-2";
+
+  const photoPreview = document.createElement("img");
+  photoPreview.style.display = "none";
+  photoPreview.style.maxWidth = "150px";
+  photoPreview.style.marginTop = "5px";
+
+  const uploadBtn = document.createElement("button");
+  uploadBtn.textContent = "Upload Photo";
+  uploadBtn.className = "btn btn-success";
+  uploadBtn.style.display = "none";
+
+  // Add event handlers for photo input and upload
+  addPhotoBtn.onclick = () => {
+    photoInputContainer.style.display = "block";
+    photoInput.focus();
+  };
+
+
+  photoInput.oninput = () => {
+    if (photoInput.value) {
+      photoPreview.src = photoInput.value;
+      photoPreview.style.display = "block";
+      uploadBtn.style.display = "inline-block";
+    } else {
+      photoPreview.style.display = "none";
+      uploadBtn.style.display = "none";
+    }
+  };
+
+  uploadBtn.onclick = async () => {
+    if (photoInput.value) {
+      try {
+        const eventDocRef = doc(firestore, "events", eventKey);
+        const eventDoc = await getDoc(eventDocRef);
+        if (eventDoc.exists()) {
+          const eventData = eventDoc.data();
+          const updatedPhotos = eventData.Photos ? [...eventData.Photos, photoInput.value] : [photoInput.value];
+
+          // Update Firestore with the new photo URL
+          await updateDoc(eventDocRef, { Photos: updatedPhotos });
+          alert("Photo added successfully!");
+
+          // Refresh the photo display and clear input
+          await displayEventPhotosWithDeleteButtons(eventKey, photoContainer, true);
+          photoInput.value = "";
+          photoPreview.style.display = "none";
+          uploadBtn.style.display = "none";
+        } else {
+          console.error(`No event found with ID ${eventKey}`);
+        }
+      } catch (error) {
+        console.error(`Error uploading photo for event ${eventKey}:`, error.message);
+        alert("Failed to upload photo.");
+      }
+    }
+  };
+
+  // Append input, preview, and upload button
+  photoInputContainer.appendChild(photoInput);
+  photoInputContainer.appendChild(photoPreview);
+  photoInputContainer.appendChild(uploadBtn);
+  eventBox.appendChild(addPhotoBtn);
+  eventBox.appendChild(photoInputContainer);
+
+  return addPhotoBtn; // Ensure the button is returned for use elsewhere
+}
+
+// Function to display filtered events with edit functionality
+// Function to display filtered events with edit functionality
 async function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML =
-      "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
     return;
   }
 
   try {
     for (const [eventKey, eventData] of events) {
-      if (eventData["Project Name"].toLowerCase().includes(search)) {
+      if (eventData["Project Name"] && eventData["Project Name"].toLowerCase().includes(search)) {
         const eventBox = document.createElement("div");
         eventBox.className = "event-box";
 
@@ -305,104 +522,105 @@ async function displayFilteredEvents(events, search) {
         header.textContent = eventData["Project Name"] || "Unnamed Project";
         eventBox.appendChild(header);
 
-        // Display each detail of the event
+        // Display event details
         for (const [key, value] of Object.entries(eventData)) {
-          const paragraph = document.createElement("p");
-          paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
-          paragraph.setAttribute("data-key", key);
-          eventBox.appendChild(paragraph);
+          if (key !== "signups" && key !== "Status") {
+            const paragraph = document.createElement("p");
+            paragraph.innerHTML = `<strong>${key}:</strong> ${value}`;
+            paragraph.setAttribute("data-key", key);
+            eventBox.appendChild(paragraph);
+          }
         }
 
-        // Fetch and display event photos with optimized loading
-        const photoUrls = await getEventPhotos(eventKey);
-        if (photoUrls.length > 0) {
-          const photoContainer = document.createElement("div");
-          photoContainer.className = "photo-container";
+        // Add the "View on Map" and "Edit Map Location" buttons if coordinates are available
+        if (eventData["Coordinates"]) {
+          const viewMapBtn = createViewOnMapButton(eventData["Coordinates"]);
+          const editMapBtn = createEditMapLocationButton(eventData["Coordinates"]);
 
-          photoUrls.forEach((url) => {
-            const img = document.createElement("img");
-            img.src = url;
-            img.alt = `Photo for event ${eventKey}`;
-            img.style.width = "100px"; // Adjust size as needed
-            img.style.margin = "5px";
-            img.loading = "lazy"; // Add lazy loading attribute for optimization
-
-            img.onload = () => {
-              console.log(`Image for event ${eventKey} loaded successfully`);
-            };
-            img.onerror = () => {
-              console.log(`Error loading image for event ${eventKey}`);
-              img.src = "path/to/placeholder-image.jpg"; // Optional: replace with a placeholder image on error
-            };
-
-            photoContainer.appendChild(img);
-          });
-          eventBox.appendChild(photoContainer);
-        } else {
-          console.log(`No photos available for event ${eventKey}`);
+          const buttonContainer = document.createElement("div");
+          buttonContainer.appendChild(viewMapBtn);
+          buttonContainer.appendChild(editMapBtn);
+          eventBox.appendChild(buttonContainer);
         }
+
+        // Display event photos
+        const photoContainer = document.createElement("div");
+        photoContainer.className = "photo-container";
+        await displayEventPhotosWithDeleteButtons(eventKey, photoContainer, false);
+        eventBox.appendChild(photoContainer);
+
+        // Add "Add Photo" feature and get addPhotoBtn
+        const addPhotoBtn = addPhotoFeature(eventBox, eventKey, photoContainer);
 
         // Add edit, save, and cancel buttons
-        createEditButtons(eventBox, eventKey);
+        createEditButtons(eventBox, eventKey, photoContainer, addPhotoBtn);
 
-        // Add a success message div after the buttons
-        const eventSuccessMessage = document.createElement("div");
-        eventSuccessMessage.id = `eventSuccessMessage-${eventKey}`; // Unique ID for each event
-        eventSuccessMessage.style.display = "none";
-        eventSuccessMessage.style.color = "green";
-        eventSuccessMessage.style.marginTop = "10px";
-        eventSuccessMessage.textContent = "Changes saved successfully.";
-        eventBox.appendChild(eventSuccessMessage);
-
+        // Append the event box to the event container
         eventContainer.appendChild(eventBox);
       }
     }
   } catch (error) {
-    document.getElementById(
-      "eventContainer"
-    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+    eventContainer.innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
 
-async function createEditButtons(eventBox, eventKey) {
+// Function to create edit buttons and ensure addPhotoBtn is defined
+async function createEditButtons(eventBox, eventKey, photoContainer, addPhotoBtn) {
   const editBtn = createButton("Edit", "edit-btn");
   const saveBtn = createButton("Save", "save-btn", "none");
   const cancelBtn = createButton("Cancel", "cancel-btn", "none");
   const deleteBtn = createButton("Delete", "delete-btn");
+
+  // Check if addPhotoBtn is defined before accessing its properties
+  if (addPhotoBtn) {
+    addPhotoBtn.style.display = "none"; // Initially hidden
+  } else {
+    console.warn("addPhotoBtn is undefined, proceeding without it.");
+  }
+
+  // Apply margin for spacing
+  saveBtn.style.marginRight = "10px";
+  cancelBtn.style.marginRight = "10px";
+  if (addPhotoBtn) addPhotoBtn.style.marginRight = "10px";
 
   // Append buttons to the event box
   eventBox.appendChild(editBtn);
   eventBox.appendChild(saveBtn);
   eventBox.appendChild(cancelBtn);
   eventBox.appendChild(deleteBtn);
+  if (addPhotoBtn) eventBox.appendChild(addPhotoBtn);
 
-  // Event listeners for buttons
-  editBtn.addEventListener("click", () => {
+  // Add event listeners
+  editBtn.addEventListener("click", async () => {
     enableEditEvent(eventBox, saveBtn, cancelBtn);
+    await displayEventPhotosWithDeleteButtons(eventKey, photoContainer, true);
+    if (addPhotoBtn) addPhotoBtn.style.display = "inline-block"; // Show add photo button in edit mode
     isEditing = false; // Pause search updates during editing
   });
 
   cancelBtn.addEventListener("click", () => {
     cancelEditEvent(eventKey, eventBox);
     resetButtons(editBtn, saveBtn, cancelBtn);
+    if (addPhotoBtn) addPhotoBtn.style.display = "none"; // Hide add photo button in view mode
     isEditing = true; // Enable search updates
   });
 
   saveBtn.addEventListener("click", async () => {
     await saveEventData(eventKey, eventBox);
     resetButtons(editBtn, saveBtn, cancelBtn);
+    if (addPhotoBtn) addPhotoBtn.style.display = "none"; // Hide add photo button in view mode
+    await displayEventPhotosWithDeleteButtons(eventKey, photoContainer, false);
     isEditing = true; // Enable search updates
   });
 
   deleteBtn.addEventListener("click", async () => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this event? This action cannot be undone."
-    );
+    const confirmDelete = confirm("Are you sure you want to delete this event? This action cannot be undone.");
     if (confirmDelete) {
       await deleteEvent(eventKey, eventBox);
     }
   });
 }
+
 
 // Update the deleteEvent function to delete from Firestore as well
 async function deleteEvent(eventKey, eventBox) {
@@ -431,6 +649,7 @@ async function deleteEvent(eventKey, eventBox) {
   }
 }
 
+
 // Reset button visibility after save/cancel actions
 function resetButtons(editBtn, saveBtn, cancelBtn) {
   editBtn.style.display = "inline-block";
@@ -441,12 +660,13 @@ function resetButtons(editBtn, saveBtn, cancelBtn) {
 function createButton(text, className, display = "inline-block") {
   const button = document.createElement("button");
   button.textContent = text;
-  button.className = className;
+  button.className = className; // Check if button is created successfully
   button.style.display = display;
   return button;
 }
 
-// Enable editing for an event
+
+// Enable editing for an event and display Google Maps only when required
 function enableEditEvent(eventBox, saveBtn, cancelBtn) {
   eventBox.querySelectorAll("p").forEach((paragraph) => {
     const key = paragraph.getAttribute("data-key");
@@ -457,61 +677,91 @@ function enableEditEvent(eventBox, saveBtn, cancelBtn) {
     input.value = value;
     input.setAttribute("data-key", key);
 
+    // Only initialize the map when editing coordinates
+    if (key === "Coordinates") {
+      input.id = "coordinatesInput"; // ID to access input for updated coordinates
+      const mapContainer = document.getElementById("mapContainer");
+      mapContainer.style.display = "none"; // Ensure map is initially hidden
+
+      // Add a button to show and initialize the map
+      const showMapButton = document.createElement("button");
+      showMapButton.textContent = "Edit Map Location";
+      showMapButton.onclick = () => {
+        mapContainer.style.display = "block";
+        initMap(value); // Call `initMap` only when the button is clicked
+      };
+      paragraph.appendChild(showMapButton); // Append the button to the paragraph
+    }
+
+    // Replace the paragraph content with the input element
     paragraph.innerHTML = `<strong>${key}:</strong> `;
     paragraph.appendChild(input);
   });
 
+  // Show save and cancel buttons, hide the edit button
   saveBtn.style.display = "inline-block";
   cancelBtn.style.display = "inline-block";
   eventBox.querySelector(".edit-btn").style.display = "none";
 }
 
-// Save the edited event data to Firebase
+
+
+
+// Save the edited event data to Firebase, including updated coordinates
 async function saveEventData(eventKey, eventBox) {
   const updatedData = {};
   eventBox.querySelectorAll("input").forEach((input) => {
     const key = input.getAttribute("data-key");
-    updatedData[key] = input.value;
+    const value = input.value.trim(); // Trim to avoid spaces being stored as valid data
+
+    // Only include non-empty values in the update
+    if (value !== "") {
+      updatedData[key] = value;
+    }
   });
 
   const eventRef = ref(database, `events/${eventKey}`);
   try {
-    await update(eventRef, updatedData);
+    if (Object.keys(updatedData).length > 0) {
+      await update(eventRef, updatedData);
 
-    // Log for debugging to confirm function is reached
-    console.log("Event data updated successfully.");
+      // Hide map after saving, if applicable
+      const mapContainer = document.getElementById("mapContainer");
+      if (mapContainer) {
+        mapContainer.style.display = "none";
+      }
 
-    // Create or select the success message div for the specific event container
-    let eventSuccessMessage = eventBox.querySelector(".event-success-message");
-    if (!eventSuccessMessage) {
-      eventSuccessMessage = document.createElement("div");
-      eventSuccessMessage.className = "event-success-message";
-      eventSuccessMessage.textContent = "Changes saved successfully.";
-      eventBox.appendChild(eventSuccessMessage);
-      console.log("Success message div created and appended.");
+      console.log("Event data updated successfully:", updatedData);
+
+      // Create or select the success message div for the specific event container
+      let eventSuccessMessage = eventBox.querySelector(".event-success-message");
+      if (!eventSuccessMessage) {
+        eventSuccessMessage = document.createElement("div");
+        eventSuccessMessage.className = "event-success-message";
+        eventSuccessMessage.textContent = "Changes saved successfully.";
+        eventBox.appendChild(eventSuccessMessage);
+      }
+
+      eventSuccessMessage.style.display = "block";
+      setTimeout(() => {
+        eventSuccessMessage.style.display = "none";
+      }, 3000);
+
+      // Optionally refresh the event list after saving
+      setTimeout(async () => {
+        const org_name = await getSponsorOrg_name();
+        fetchAndDisplayEvents(org_name, search);
+      }, 3100); // Adjust delay as needed
     } else {
-      console.log("Success message div found.");
+      console.warn("No valid data to update.");
     }
-
-    // Display the success message
-    eventSuccessMessage.style.display = "block";
-    console.log("Success message displayed.");
-    setTimeout(() => {
-      eventSuccessMessage.style.display = "none";
-      console.log("Success message hidden after timeout.");
-    }, 15000);
-
-    // Delay refreshing the events to allow the success message to display
-    setTimeout(async () => {
-      const org_name = await getSponsorOrg_name();
-      fetchAndDisplayEvents(org_name, search);
-      console.log("Events refreshed after success message timeout.");
-    }, 3100); // Slightly longer than the timeout for the success message
   } catch (error) {
     console.error("Error updating event:", error.message);
     alert("Failed to save changes.");
   }
 }
+
+
 
 // Cancel editing and restore original content
 function cancelEditEvent(eventKey, eventBox) {
