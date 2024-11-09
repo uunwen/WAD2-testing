@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-// Import required Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  get,
-  child,
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-// Firebase settings
-const firebaseConfig = {
-  apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
-  authDomain: "wad-proj-2b37f.firebaseapp.com",
-  databaseURL:
-    "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
-=======
 
 
 // Firebase configuration
@@ -22,7 +5,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
   authDomain: "wad-proj-2b37f.firebaseapp.com",
   databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
->>>>>>> c1babbf (hi)
   projectId: "wad-proj-2b37f",
   storageBucket: "wad-proj-2b37f.appspot.com",
   messagingSenderId: "873354832788",
@@ -30,16 +12,6 @@ const firebaseConfig = {
   measurementId: "G-LFFLPT7G58",
 };
 
-<<<<<<< HEAD
-// Initialize Realtime Database and get a reference to the service
-const dbapp = initializeApp(firebaseConfig);
-const database = getDatabase(dbapp);
-
-// Function to toggle 'selected' class on filter options when clicked
-function toggleSelect(element) {
-  // Toggle the 'selected' class
-  element.classList.toggle("selected");
-=======
 
 // Get a reference to the database
 firebase.initializeApp(firebaseConfig);
@@ -106,7 +78,6 @@ function displayEvents(events) {
 
     dataDisplayDiv.appendChild(cardElement);
   });
->>>>>>> c1babbf (hi)
 }
 
 
@@ -231,71 +202,8 @@ function filterBySearch() {
   displayEvents(filteredEvents);
 }
 
-<<<<<<< HEAD
-// To pass uid into filepath for attendance QR quote -- yunwen
-window.getUserUid = function () {
-  // Retrieve user info
-  const urlParams = new URLSearchParams(window.location.search);
-  const uid = urlParams.get("uid");
-  // File path to attendance.html
-  const filePath = "../attendance/attendance.html?uid=" + uid;
-  window.location.href = filePath; // Navigate to the file path
-};
-
-window.addEventListener("resize", function () {
-  if (window.innerWidth > 768) {
-    this.document.querySelector(".sidebar").style.display = "block";
-  }
-});
-
-// <div id='app'></div>
-const app = Vue.createApp({
-  data() {
-    return {
-      sidebar: "False",
-      account: "student",
-      hoursLeft: 80,
-      toDoList: ["Task 1", "Task 2", "Task 3", "Task 4"],
-    };
-  }, // data
-  // computed: {
-  //     derivedProperty() {
-  //         return false;
-  //     }
-  // }, // computed
-  // created() {
-  // },
-  mounted() {
-    this.getHours();
-  },
-  methods: {
-    getUser() {
-      return this.account;
-    },
-    getHours() {
-      // To pass hours left --- yunwen
-      const userData = JSON.parse(sessionStorage.getItem("user"));
-      get(child(ref(database), `students/${userData.uid}`))
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            const studentInfo = snapshot.val();
-            this.hoursLeft = studentInfo["hours_left"];
-            console.log(this.hoursLeft);
-          } else {
-            console.log("No data available");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  }, // methods
-});
-const vm = app.mount("#app");
-=======
 // Event listener for the search icon click
 document.querySelector(".search-icon").addEventListener("click", filterBySearch);
-
 
 
 
@@ -303,4 +211,4 @@ document.querySelector(".search-icon").addEventListener("click", filterBySearch)
 document.addEventListener("DOMContentLoaded", fetchData);
 
 
->>>>>>> c1babbf (hi)
+
