@@ -91,6 +91,10 @@
     overflow-y: auto;
 }
 
+.modal-header a img {
+    height: 30px;
+}
+
 .carousel-inner {
     height: 400px;
     /* Set a fixed height for the carousel */
