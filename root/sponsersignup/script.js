@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to fetch and display students for a specific event
     function fetchStudentsForEvent(eventKey) {
+        studentTableBody.innerHTML = ''; // Clear previous data immediately
+        studentCounter.textContent = '0'; // Reset the student counter
+        eventCapacity.textContent = '';
         let studentCount = 0;
         let capacity = 0;
 
