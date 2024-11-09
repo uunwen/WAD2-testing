@@ -133,6 +133,7 @@ const adminApp = Vue.createApp({
         // Return true if all conditions match
         return matchesName && matchesHours && matchesGraduationYear;
       });
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },
     async updateTasklist(index) {
       const student = this.allStudents[index];
@@ -175,10 +176,10 @@ adminApp.component('studentRecords', {
   emits: ['open-modal'],
   template: `
         <tr>
-            <td class="align-middle"><div :class="checkGraduation(record['graduation_year'])"></div></td>
+            <td class="align-middle"><div style="display: inline-block;" :class="checkGraduation(record['graduation_year'])"></div></td>
             <td class="align-middle">{{ record.name }}</td>
             <td class="hide-md align-middle">{{ record.email }}</td>
-            <td class="align-middle">{{ record[''] }}</td>
+            <td class="align-middle">{{ record['graduation_year'] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
             <td class="align-middle"><button class="btn btn-light" @click="$emit('open-modal', record, index)">Message</button></td>
         </tr>

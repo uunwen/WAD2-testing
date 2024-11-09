@@ -30,7 +30,9 @@ const adminApp = Vue.createApp({
       filterMinCount: this.minCount,
       filterMaxCount: this.maxCount,
       filterSponsorName: "",
-      isFilterMenuOpen: false
+      isFilterMenuOpen: false,
+      currentIndex: -1,
+      showModal: false
     };
   },
   mounted() {
@@ -42,6 +44,14 @@ const adminApp = Vue.createApp({
   methods: {
     toggleFilterMenu() {
       this.isFilterMenuOpen = !this.isFilterMenuOpen;
+    },
+    openModal(record, index) {
+      this.modalDetails = { ...record };  // Store the record data in modalDetails
+      this.showModal = true;  // Show the modal
+      this.currentIndex = index;
+    },
+    closeModal() {
+      this.showModal = false;  // Close the modal
     },
     async loadSponsors() {
       get(dbRef)
@@ -65,29 +75,18 @@ const adminApp = Vue.createApp({
     },
     findFilterParameters() {
       if (this.allSponsors.length > 0) {
-        const count = this.allSponsors[0]["project_count"];
-        this.minCount = count;
-        this.maxCount = count;
+        this.minCount = Math.min(...this.allSponsors.map(sponsor => sponsor.project_list.length));
+        this.maxCount = Math.max(...this.allSponsors.map(sponsor => sponsor.project_list.length));
       }
-      for (const sponsor of this.allSponsors) {
-        const count = sponsor["project_count"];
-        if (count < this.minCount) {
-          this.minCount = count;
-        }
-        if (count > this.maxCount) {
-          this.maxCount = count;
-        }
-      }
-
-      this.filterMinCount = this.minCount
-      this.filterMaxCount = this.maxCount
+      this.filterMinCount = this.minCount;
+      this.filterMaxCount = this.maxCount;
     },
     updateRecords() {
 
       this.selectedSponsors = this.allSponsors.filter(sponsor => {
         // Filter by sponsor name
-        const matchesName = this.filterSponsorName === "" || sponsor.org_name.toLowerCase().includes(this.filterSponsorName.toLowerCase());
-        const matchesCount = sponsor.project_count >= this.filterMinCount && sponsor.project_count <= this.filterMaxCount;
+        const matchesName = this.filterSponsorName == "" || sponsor.org_name.toLowerCase().includes(this.filterSponsorName.toLowerCase());
+        const matchesCount = sponsor.project_list.length >= this.filterMinCount && sponsor.project_list.length <= this.filterMaxCount;
         // Return true if both conditions match
         return matchesName && matchesCount;
       });
@@ -98,13 +97,16 @@ const adminApp = Vue.createApp({
 
 adminApp.component('sponsorRecords', {
   props: ['record', 'index'],
-  emits: [],
+  emits: ['open-modal'],
   template: `
         <tr>
             <td class="align-middle">{{ index }}</td>
             <td class="align-middle">{{ record.org_name }}</td>
-            <td class="align-middle"><a :href="record.website" target="_blank">{{ record.website }}</a></td>
-            <td class="align-middle">{{ record.project_count }}</td>
+            <td class="hide-lg align-middle"><a :href="record.website" target="_blank">{{ record.website }}</a></td>
+            <td class="align-middle">{{ record.project_list.length }}</td>
+            <td class="align-middle">
+              <button class="btn btn-light" @click="$emit('open-modal', record, index - 1)">View</button>
+            </td>
         </tr>
   `
 });

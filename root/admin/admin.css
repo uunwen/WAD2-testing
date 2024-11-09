@@ -91,6 +91,10 @@
     overflow-y: auto;
 }
 
+.modal-header a img {
+    height: 30px;
+}
+
 .carousel-inner {
     height: 400px;
     /* Set a fixed height for the carousel */
@@ -114,6 +118,34 @@
     .main-content {
         margin-top: 100px;
     }
+}
+
+@media (max-width: 1400px) {
+    
+    .table .hide-xxl {
+        display: none;
+    }
+}
+
+@media (max-width: 1200px) {
+    
+    .table .hide-xl {
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    
+    .table .hide-lg {
+        display: none;
+    }
+
+    .table,
+    .table button,
+    .modal {
+        font-size: 0.9rem;
+    }
+
 }
 
 @media (max-width: 768px) {
@@ -162,6 +194,7 @@
     .filters.active {
         right: auto;
         /* Ensure it stays centered when active */
+        top: 50%;
         left: 50%;
         transform: translateX(-50%);
         /* Adjust for centering horizontally */
