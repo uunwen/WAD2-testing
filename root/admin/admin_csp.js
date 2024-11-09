@@ -34,7 +34,9 @@ const adminApp = Vue.createApp({
       filterProjectName: "",
       filterAdmission: "allAdmission",
       filterOrganiser: "allOrganisers",
-      showPopup: false,
+      modalDetails: {},
+      showModal: false,
+      currentIndex: -1,
     };
   },
   mounted() {
@@ -44,11 +46,14 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
-    closePopup() {
-      this.showPopup = false;
+    openModal(record, index) {
+      this.modalDetails = { ...record };  // Store the record data in modalDetails
+      this.showModal = true;  // Show the modal
+      this.currentIndex = index
+      console.log(this.currentIndex)
     },
-    showPopup() {
-      this.showPopup = true;
+    closeModal() {
+      this.showModal = false;  // Close the modal
     },
     async loadCommunityServices() {
       get(dbRef)
@@ -79,10 +84,27 @@ const adminApp = Vue.createApp({
           await update(statusRef, { Status: "Approved" });
           selectedEvent.Status = "Approved"; // Update the local data
           console.log("Status successfully updated!");
+          if (this.modalDetails != {}){
+            this.modalDetails.Status = "Approved"
+          }
         } catch (error) {
           console.error("Error updating status:", error);
         }
       }
+      else if (selectedEvent.Status === "Approved") {
+        try {
+          const statusRef = ref(database, `events/${selectedEvent.eventKey}`);
+          await update(statusRef, { Status: "Not Approved" });
+          selectedEvent.Status = "Not Approved"; // Update the local data
+          console.log("Status successfully updated!");
+        } catch (error) {
+          console.error("Error updating status:", error);
+        }
+        if (this.modalDetails != {}){
+          this.modalDetails.Status = "Not Approved"
+        }
+      }
+      
     },
     findFilterParameters() {
       if (this.allEvents.length > 0) {
@@ -175,6 +197,40 @@ const adminApp = Vue.createApp({
         event["Total CSP hours"] <= this.filterMaxHours && event["Total CSP hours"] >= this.filterMinHours
       );
     },
+    checkStatus(status, admissionPeriod) {
+      console.log(admissionPeriod);
+      if (status == "Not Approved") {
+        return "glowing-circle-red";
+      }
+      else {
+        try {
+          const admission = admissionPeriod.split('–').map(period => period.trim());
+
+          // Check if the admissions period has two parts before proceeding
+          if (admission.length == 2) {
+            const date = new Date();
+            // Parse the start and end dates
+            const startDate = new Date(admission[0]);
+            const endDate = new Date(admission[1]);
+
+            if (date >= startDate && date <= endDate) {
+              console.log("Hello")
+              return "glowing-circle-green"
+            }
+            else if (date < startDate) {
+              return "glowing-circle-orange"
+            }
+            else {
+              return "glowing-circle-black"
+            }
+          }
+        }
+        catch {
+          console.error("Error parsing admission period.");
+        }
+      }
+      return "glowing-circle-black"
+    },
 
   }
 });
@@ -189,10 +245,10 @@ adminApp.component('organisersList', {
 
 adminApp.component('communityServiceRecords', {
   props: ['record', 'index'],
-  emits: ["updateStatus"],
+  emits: ['open-modal', 'update-status'], // Declare the 'update-status' event here
   template: `
         <tr>
-            <td :class="checkStatus(record.Status, record['Admissions Period'])" class="align-middle"><b>{{ index }}</b></td>
+            <td class="align-middle"><div :class="checkStatus(record.Status, record['Admissions Period'])"></div></td>
             <td class="align-middle">{{ record['Admissions Period'] }}</td>
             <td class="align-middle">{{ record.Capacity }}</td>
             <td class="align-middle">{{ record.Location }}</td>
@@ -202,15 +258,20 @@ adminApp.component('communityServiceRecords', {
             <td class="align-middle">{{ record['Session(s)'] }}</td>
             <td class="align-middle">{{ record['Total CSP hours'] }}</td>
             <td class="align-middle">{{ record['Volunteer Period'] }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('update-status', index)">{{ record.Status }}</button></td>
-            <td class="align-middle"><button class="btn btn-light">View</button></td>
+            <td class="align-middle">
+              <button v-if="record.Status == 'Approved'" class="btn btn-success" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
+              <button v-else class="btn btn-danger" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
+            </td>
+            <td class="align-middle">
+              <button class="btn btn-light" @click="$emit('open-modal', record, index - 1)">View</button>
+            </td>
         </tr>
   `,
   methods: {
     checkStatus(status, admissionPeriod) {
       console.log(admissionPeriod);
       if (status == "Not Approved") {
-        return "red";
+        return "glowing-circle-red";
       }
       else {
         try {
@@ -218,31 +279,32 @@ adminApp.component('communityServiceRecords', {
 
           // Check if the admissions period has two parts before proceeding
           if (admission.length == 2) {
-
             const date = new Date();
             // Parse the start and end dates
             const startDate = new Date(admission[0]);
             const endDate = new Date(admission[1]);
 
             if (date >= startDate && date <= endDate) {
-              return "green"
+              console.log("Hello")
+              return "glowing-circle-green"
             }
             else if (date < startDate) {
-              return "orange"
+              return "glowing-circle-orange"
             }
             else {
-              return "black"
+              return "glowing-circle-black"
             }
           }
         }
         catch {
-
+          console.error("Error parsing admission period.");
         }
       }
-      return "black"
+      return "glowing-circle-black"
     }
   }
 });
 
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
+

@@ -1,4 +1,4 @@
-// Firebase configuration (keep this as it is in your project)
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
     authDomain: "wad-proj-2b37f.firebaseapp.com",
@@ -11,213 +11,191 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+
+// Reference to the Firebase Realtime Database
 const database = firebase.database();
 
-// Get references to HTML elements
-const eventSelect = document.getElementById('event-select');
-const studentTableBody = document.getElementById('student-table-body');
-const studentCountDisplay = document.getElementById('student-count');
-const eventCapacityDisplay = document.getElementById('event-capacity');
-const signupCapacityChart = document.getElementById('signupCapacityChart');
+// Get the sponsor UID from the URL
+const urlParams = new URLSearchParams(window.location.search);
+const sponsorUID = urlParams.get('uid');
 
-// Ensure the elements are properly loaded
-if (!eventSelect || !studentTableBody || !studentCountDisplay || !signupCapacityChart) {
-    console.error('One or more essential elements are missing in the HTML!');
-}
+// Ensure the DOM is fully loaded before running the script
+document.addEventListener('DOMContentLoaded', function() {
+    // Elements from the DOM
+    const eventSelect = document.getElementById('event-select');
+    const studentTableBody = document.getElementById('student-table-body');
+    const studentCounter = document.getElementById('student-counter'); // Element to display student count
+    const eventCapacity = document.getElementById('event-capacity'); // Element to display event capacity
 
-// Function to get the UID from the URL
-function getUIDFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('uid'); // Get the uid parameter from the URL
-}
+    // Function to fetch and display students for a specific event
+    function fetchStudentsForEvent(eventKey) {
+        studentTableBody.innerHTML = ''; // Clear previous data immediately
+        studentCounter.textContent = '0'; // Reset the student counter
+        eventCapacity.textContent = '';
+        let studentCount = 0;
+        let capacity = 0;
 
-// Function to fetch project list for the sponsor and populate dropdown
-async function fetchProjectListAndEvents(uid) {
-    try {
-        console.log(`Fetching project list for sponsor UID: ${uid}`); // Log the UID being used
-        const snapshot = await database.ref(`sponsors/${uid}/project_list`).once('value');
-        const projectList = snapshot.val();
+        // Fetch student sign-ups
+        database.ref('events/' + eventKey + '/signups').once('value', function(snapshot) { 
+            const signups = snapshot.val();
+            if (!signups) {
+                console.log('No students found for this event.');
+                studentCounter.textContent = ` 0`;
+                studentCount = 0;
+            } else {
+                studentTableBody.innerHTML = ''; // Clear previous data
+                for (const studentKey in signups) {
+                    const student = signups[studentKey];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${student.name}</td><td>${student.email}</td><td>${student.telegram}</td>`;
+                    studentTableBody.appendChild(row);
+                    studentCount++;
+                }
+                studentCounter.textContent = ` ${studentCount}`;
+            }
 
-        // Log the project list retrieved from Firebase
-        console.log('Project List from Firebase:', projectList);
+            // Check if capacity has been fetched before updating the chart
+            if (capacity > 0) {
+                console.log('Calling updatePieChart with:', { studentCount, capacity });
+                updatePieChart(studentCount, capacity);
+            }
+        }, function(error) {
+            console.error('Error fetching student data: ', error);
+        });
 
-        if (!projectList) {
-            console.log('No project list found for this sponsor.');
-            return;
-        }
+        // Fetch event capacity
+        database.ref('events/' + eventKey).once('value', function(snapshot) {
+            const event = snapshot.val();
+            if (event && event.Capacity) {
+                capacity = event.Capacity;
+                eventCapacity.textContent = ` ${capacity}`;
+            } else {
+                console.error('Capacity not found for event.');
+                capacity = 0;
+            }
 
-        // Clear previous options in the dropdown
-        eventSelect.innerHTML = '';
-
-        // Add a default "Select Event" option
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Select an event --';
-        eventSelect.appendChild(defaultOption);
-
-        // Loop through each project and create options for the dropdown
-        for (const projectKey of projectList) { // Iterate directly over the array
-            const projectName = await fetchEventName(projectKey); // Fetch the event name
-            const option = document.createElement('option');
-            option.value = projectKey; // Use projectKey as the value
-            option.textContent = projectName; // Display project name
-            eventSelect.appendChild(option);
-        }
-
-    } catch (error) {
-        console.error('Error fetching project list:', error);
+            // Check if student count has been fetched before updating the chart
+            if (studentCount >= 0) {
+                console.log('Calling updatePieChart with:', { studentCount, capacity });
+                updatePieChart(studentCount, capacity);
+            }
+        }, function(error) {
+            console.error('Error fetching event capacity: ', error);
+        });
     }
-}
 
-// Function to fetch event name for a given project key
-async function fetchEventName(projectKey) {
-    try {
-        const eventSnapshot = await database.ref(`events/${projectKey}`).once('value');
-        const eventData = eventSnapshot.val();
+    // Function to fetch the sponsor org_name based on UID
+    function fetchSponsorOrgName(uid) {
+        database.ref('sponsors/' + uid).once('value', function(snapshot) {
+            const sponsor = snapshot.val();
+            if (sponsor) {
+                const orgName = sponsor.org_name; // Get the org_name of the sponsor
+                fetchEvents(orgName); // Fetch events based on org_name
+            } else {
+                console.error('Sponsor not found for UID: ' + uid);
+            }
+        }, function(error) {
+            console.error('Error fetching sponsor data: ', error);
+        });
+    }
 
-        // Return event name if exists
-        if (eventData && eventData['Project Name']) {
-            console.log(`Event Name for ${projectKey}: ${eventData['Project Name']}`);
-            return eventData['Project Name'];
+    // Function to fetch events and filter by Organiser
+    function fetchEvents(orgName) {
+        database.ref('events').once('value', function(snapshot) {
+            const events = snapshot.val();
+            if (!events) {
+                console.log('No events found in the database.');
+                return;
+            }
+
+            // Clear previous options in the dropdown
+            eventSelect.innerHTML = `<option value="">-- Select an event --</option>`;
+
+            // Iterate through events and check if Organiser matches the orgName
+            for (const eventKey in events) {
+                if (events.hasOwnProperty(eventKey)) {
+                    const event = events[eventKey];
+                    const organiser = event.Organiser;
+                    
+                    // If the event's Organiser matches the sponsor's org_name, add it to the dropdown
+                    if (organiser === orgName) {
+                        const option = document.createElement('option');
+                        option.value = eventKey;
+                        option.textContent = event["Project Name"];
+                        eventSelect.appendChild(option);
+                    }
+                }
+            }
+        }, function(error) {
+            console.error('Error fetching events data: ', error);
+        });
+    }
+
+    // Event listener for dropdown selection change
+    eventSelect.addEventListener('change', function() {
+        const selectedEvent = eventSelect.value;
+        if (selectedEvent) {
+            fetchStudentsForEvent(selectedEvent); // Fetch and display students for the selected event
         } else {
-            console.log(`No 'Project Name' found for event ${projectKey}`);
-            return 'Unknown Event'; // Fallback if no project name found
+            // Clear the student table if no event is selected
+            studentTableBody.innerHTML = '';
+            studentCounter.textContent = ''; // Clear the student counter
+            eventCapacity.textContent = ''; // Clear the event capacity
         }
+    });
 
-    } catch (error) {
-        console.error(`Error fetching event name for ${projectKey}:`, error);
-        return 'Error Fetching Event Name'; // Fallback in case of error
+    // Fetch the sponsor org_name and events when the page loads
+    if (sponsorUID) {
+        fetchSponsorOrgName(sponsorUID);
+    } else {
+        console.error('Sponsor UID not found in URL.');
     }
-}
+});
 
-// Fetch students based on the selected event
-async function fetchAndDisplayStudents(eventKey) {
-    if (!studentTableBody || !studentCountDisplay) {
-        console.error('Essential elements are missing!');
-        return;
-    }
-
-    studentTableBody.innerHTML = ''; // Clear previous table rows
-    studentCountDisplay.textContent = '0'; // Reset count display
-
-    try {
-        // Log the eventKey to the console to show which event ID is being searched for
-        console.log(`Searching for students in event with ID: ${eventKey}`);
-
-        // Fetch the selected event data to get signups
-        const eventSnapshot = await database.ref(`events/${eventKey}`).once('value');
-        const eventData = eventSnapshot.val();
-
-        console.log(`Event Data for ${eventKey}:`, eventData); // Log the event data to console
-
-        if (!eventData || !eventData.signups) {
-            console.log('No signups data found for this event.');
-            studentCountDisplay.textContent = '0';
-            return;
-        }
-
-        const signups = eventData.signups;
-        const capacity = eventData.Capacity || 0;
-
-        // Update the event capacity display
-        eventCapacityDisplay.textContent = `Event Capacity: ${capacity}`;
-
-        // Now, fetch and display the students who signed up for the event
-        let studentCount = 0; // Counter for students signed up
-
-        for (const studentKey in signups) {
-            const studentData = signups[studentKey];
-
-            // Add student data to the table
-            addStudentRow(studentKey, studentData);
-            studentCount++; // Increment the counter
-        }
-
-        // Update the total count display
-        studentCountDisplay.textContent = studentCount;
-
-        // Update the pie chart
-        updatePieChart(studentCount, capacity);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
-
-// Add a row for each student
-function addStudentRow(studentID, studentData) {
-    const row = document.createElement('tr');
-    const nameCell = document.createElement('td');
-    const emailCell = document.createElement('td');
-    const telegramCell = document.createElement('td');
-    
-    const nameLink = document.createElement('a'); // Create a link element
-    nameLink.textContent = studentData.name; // Set the text to the student's name
-    nameLink.href = `studentDetails.html?userId=${studentID}`; // Set the href to the details page with studentID as a query parameter
-    nameLink.style.color = 'inherit'; // Keep the link color the same as the text
-    nameLink.style.textDecoration = 'none'; // Remove underline from the link
-
-    nameCell.appendChild(nameLink); // Append the link to the cell
-    emailCell.textContent = studentData.email; // Add student's email to email cell
-    telegramCell.textContent = studentData.telegram; // Add student's telegram to telegram cell
-
-    row.appendChild(nameCell);
-    row.appendChild(emailCell);
-    row.appendChild(telegramCell);
-    studentTableBody.appendChild(row); // Append the row to the table body
-}
-
-// Update the pie chart
+// Function to update the pie chart
 function updatePieChart(studentCount, capacity) {
-    const chart = new Chart(signupCapacityChart, {
-        type: 'pie',
-        data: {
-            labels: ['Signed Up', 'Remaining Capacity'],
-            datasets: [{
-                data: [studentCount, capacity - studentCount],
-                backgroundColor: ['#36A2EB', '#FF6384'],
-                hoverBackgroundColor: ['#36A2EB', '#FF6384']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (tooltipItem) {
-                            // Customizing the tooltip based on the segment hovered
-                            if (tooltipItem.raw === studentCount) {
-                                return `Signed Up: ${studentCount} / Total Capacity: ${capacity}`;
-                            } else {
-                                return `Remaining Capacity: ${capacity - studentCount}`;
+    console.log('updatePieChart received:', { studentCount, capacity }); // Log parameters
+    capacity = parseInt(capacity); 
+
+    if (isNaN(capacity)) {
+        console.error("Capacity is not a valid number.");
+        return; // Exit the function if capacity is invalid
+    }
+
+    const signupCapacityChart = document.getElementById('signup-capacity-chart').getContext('2d');
+    
+    if (window.myPieChart) {
+        window.myPieChart.data.datasets[0].data = [studentCount, capacity - studentCount];
+        window.myPieChart.update();
+    } else {
+        window.myPieChart = new Chart(signupCapacityChart, {
+            type: 'pie',
+            data: {
+                labels: ['Signed Up', 'Remaining Capacity'],
+                datasets: [{
+                    data: [studentCount, capacity - studentCount],
+                    backgroundColor: ['#36A2EB', '#FF6384'],
+                    hoverBackgroundColor: ['#36A2EB', '#FF6384']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                const signedUp = studentCount;
+                                const remaining = capacity - studentCount;
+                                return tooltipItem.raw === signedUp ? 
+                                    `Signed Up: ${signedUp} / Total Capacity: ${capacity}` :
+                                    `Remaining Capacity: ${remaining}`;
                             }
                         }
                     }
                 }
             }
-        }
-    });
-}
-
-// Event listener for when the dropdown value changes
-eventSelect.addEventListener('change', (event) => {
-    const selectedEventKey = event.target.value;
-
-    console.log(`Selected Event Key: ${selectedEventKey}`);
-
-    if (selectedEventKey) {
-        fetchAndDisplayStudents(selectedEventKey);
+        });
     }
-});
-
-// Initialize the page with the project list for the given sponsor UID
-const sponsorUID = getUIDFromURL();
-if (sponsorUID) {
-    fetchProjectListAndEvents(sponsorUID);
-} else {
-    console.error('Sponsor UID not found in the URL!');
 }

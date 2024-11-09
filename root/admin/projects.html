@@ -7,6 +7,7 @@
     <title>Projects</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="admin_csp.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -15,75 +16,8 @@
 
 
     <style>
-        .menu-content {
-            top: 4rem;
-        }
-
-        .main-content {
-            width: 95%;
-            margin-top: 25px;
-            position: relative;
-            margin-top: 4.5%;
-        }
-
-        .filter-wrapper {
-            position: absolute;
-            /* Position it absolutely */
-            top: -10px;
-            /* Distance from the top of the container */
-            right: 30px;
-            /* Distance from the right of the container */
-        }
-
-        .filters {
-            width: 600px;
-            position: fixed;
-            right: 25px;
-            top: 125px;
-            height: 100%;
-        }
-
-        /* Basic styling for the popup */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .popup-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            text-align: center;
-        }
-
-        .popup-display {
-            display: none;
-        }
-
         
-        table td.green{
-            color: green;
-        }
-
-        table td.red {
-            color: red;
-        }
-
-        table td.orange {
-            color: orange;
-        }
-
-        table td.black {
-            color: black;
-        }
+        
     </style>
 </head>
 
@@ -127,7 +61,7 @@
         </div>
 
     </nav>
-
+    
     <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
         <div class="filter-wrapper position-absolute">
             <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
@@ -222,21 +156,73 @@
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedEvents" :key="record.eventKey">
-                    <community-service-records :record="record" :index="idx + 1" @update-tasklist="updateTasklist(idx)" />
+                    <community-service-records :record="record" :index="idx + 1" @open-modal="openModal"
+                        @update-status="updateStatus" />
                 </template>
             </tbody>
 
 
         </table>
-    </div>
-    <button @click="showPopup = true">Open Popup</button>
-    <div v-if="showPopup" class="popup-overlay popup-display" @click="closePopup">
-        <div class="popup-content popup-display">
-            <h2>Popup Title</h2>
-            <p>This is a mini popup page.</p>
-            <button @click="closePopup">Close Popup</button>
+
+        <!-- Modal Structure -->
+        <div v-if="showModal" class="modal fade show" id="projectModal" tabindex="-1"
+            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'" style="display: block;">
+
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content shadow-lg rounded-3">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title me-2" id="projectModalLabel"> {{ modalDetails['Project Name'] }}</h5>
+                        <div :class="checkStatus(modalDetails.Status, modalDetails['Admissions Period'])"></div>
+                        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Organiser:</strong> {{ modalDetails['Organiser'] }}</p>
+                                <p><strong>Location:</strong> {{ modalDetails['Location'] }}</p>
+                                <p><strong>Region:</strong> {{ modalDetails['Region'] }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Sessions:</strong> {{ modalDetails['Session(s)'] }}</p>
+                                <p><strong>Total CSP Hours:</strong> {{ modalDetails['Total CSP hours'] }}</p>
+                                <p><strong>Capacity:</strong> {{ modalDetails['Capacity'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><strong>Admission Period:</strong> {{ modalDetails['Admissions Period'] }}</p>
+                                <p><strong>Volunteer Period:</strong> {{ modalDetails['Volunteer Period'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row border rounded">
+                            <div class="col-lg-12">
+                                <p><strong>Description:</strong></p>
+                                <p>{{ modalDetails['Description'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="modalDetails['Status'] == 'Approved'" class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" @click="updateStatus(this.currentIndex)">Reject
+                            Project</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
+                    </div>
+
+                    <div v-if="modalDetails['Status'] == 'Not Approved'" class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-success" @click="updateStatus(this.currentIndex)">Approve
+                            Project</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+
     </div>
+
+    <!-- Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <!-- script for event cards -->
     <script type="module" src="admin_csp.js"></script>
