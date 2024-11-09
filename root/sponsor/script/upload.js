@@ -38,6 +38,17 @@ function initMap() {
 
     const infowindow = new google.maps.InfoWindow();
 
+    // Autocomplete for the 'placeInput'
+    const inputElement = document.getElementById("placeInput");
+    if (inputElement && inputElement instanceof HTMLInputElement) {
+      const autocompletePlaceInput = new google.maps.places.Autocomplete(inputElement);
+      autocompletePlaceInput.bindTo("bounds", map);
+      // Add any additional configuration or event listeners if needed
+    } else {
+      console.error("The input element for Autocomplete is missing or not an HTMLInputElement.");
+    }
+
+
     // Autocomplete for the 'searchInput'
     const autocompleteSearch = new google.maps.places.Autocomplete(document.getElementById("searchInput"));
     autocompleteSearch.bindTo("bounds", map);
@@ -192,6 +203,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const eventForm = document.getElementById("eventForm");
   const photoURLsContainer = document.getElementById("photoURLsContainer");
 
+
+
   // Extract uid from URL
   const uid = getUrlParameter('uid'); // Assuming you have this in your URL
   const orgName = await getOrganizerName(uid); // Get the organization name based on the uid
@@ -248,12 +261,45 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Function to add a new photo URL input field
   document.getElementById("addPhotoButton").addEventListener("click", function () {
+    // Create a new wrapper div for the input and remove button
+    const photoWrapper = document.createElement("div");
+    photoWrapper.classList.add("photoURL-wrapper");
+
+    // Create the new input element
     const newInput = document.createElement("input");
     newInput.type = "url";
     newInput.className = "photoURL";
     newInput.placeholder = "Enter a photo URL";
-    photoURLsContainer.appendChild(newInput);
+    newInput.required = true;
+
+    // Create the remove button
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "removePhotoButton";
+    removeButton.textContent = "Remove";
+
+    // Append the input and remove button to the wrapper
+    photoWrapper.appendChild(newInput);
+    photoWrapper.appendChild(removeButton);
+
+    // Append the wrapper to the container
+    photoURLsContainer.appendChild(photoWrapper);
+
+    // Add event listener to remove button
+    removeButton.addEventListener("click", function () {
+      photoWrapper.remove();
+    });
   });
+
+  // Add event listeners for existing remove buttons
+  document.querySelectorAll(".removePhotoButton").forEach(button => {
+    button.addEventListener("click", function () {
+      button.parentElement.remove();
+    });
+  });
+
+
+
 
   // Form submission logic with validation checks
   eventForm.addEventListener("submit", async function (event) {

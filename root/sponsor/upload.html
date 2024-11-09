@@ -154,21 +154,28 @@
             <label for="volunteerPeriodEnd">Volunteer Period End:</label>
             <input type="date" id="volunteerPeriodEnd" required />
 
-
+            <!-- Place input field for searching locations -->
             <div>
               <input id="placeInput" type="text" placeholder="Enter a place" style="width: 100%; margin-bottom: 10px;">
             </div>
+
+            <!-- Map container -->
             <div id="map" style="height: 400px; width: 100%;"></div>
 
+            <!-- Coordinates input field -->
             <input id="coordinates" type="text" readonly placeholder="Latitude, Longitude"
               style="width: 100%; margin-bottom: 10px;">
 
 
+
             <label for="photoURL">Photo URLs (add multiple URLs by pressing "Add Photo"):</label>
             <div id="photoURLsContainer">
-              <input type="url" class="photoURL" placeholder="Enter a photo URL" required />
+              <div class="photoURL-wrapper">
+                <input type="url" class="photoURL" placeholder="Enter a photo URL" required />
+                <button type="button" class="removePhotoButton">Remove</button>
+              </div>
             </div>
-            <button type="button" id="addPhotoButton">Add Photo</button> <!-- Button to add more photo URL fields -->
+            <button type="button" id="addPhotoButton">Add Photo</button>
 
             <!-- Submit button -->
             <button type="submit" id="submitEvent">Submit Event</button>
