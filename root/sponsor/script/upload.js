@@ -22,35 +22,108 @@ const database = getDatabase(app);
 const firestore = getFirestore(app);
 
 
-// Define the function globally
+// Replace the existing initMap function with the updated version
 function initMap() {
-  const defaultLocation = { lat: 1.3521, lng: 103.8198 };
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 12,
-    center: defaultLocation,
-  });
+  if (typeof google !== 'undefined' && google.maps) {
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 1.3521, lng: 103.8198 },
+      zoom: 12,
+    });
 
-  const marker = new google.maps.Marker({
-    position: defaultLocation,
-    map: map,
-    draggable: true,
-  });
+    const marker = new google.maps.Marker({
+      map: map,
+      draggable: true,
+      visible: false,
+    });
 
-  marker.addListener('dragend', function (event) {
-    const lat = event.latLng.lat().toFixed(6);
-    const lng = event.latLng.lng().toFixed(6);
-    document.getElementById("coordinates").value = `${lat}, ${lng}`;
-  });
+    const infowindow = new google.maps.InfoWindow();
 
-  map.addListener('click', (e) => {
-    marker.setPosition(e.latLng);
-    const lat = e.latLng.lat().toFixed(6);
-    const lng = e.latLng.lng().toFixed(6);
-    document.getElementById("coordinates").value = `${lat}, ${lng}`;
-  });
+    // Autocomplete for the 'searchInput'
+    const autocompleteSearch = new google.maps.places.Autocomplete(document.getElementById("searchInput"));
+    autocompleteSearch.bindTo("bounds", map);
+
+    // Autocomplete for the 'placeInput'
+    const autocompletePlaceInput = new google.maps.places.Autocomplete(document.getElementById("placeInput"));
+    autocompletePlaceInput.bindTo("bounds", map);
+
+    // Listener for 'placeInput'
+    autocompletePlaceInput.addListener("place_changed", () => {
+      infowindow.close();
+      const place = autocompletePlaceInput.getPlace();
+
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17);
+      }
+
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
+
+      infowindow.setContent(`<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`);
+      infowindow.open(map, marker);
+
+      document.getElementById("coordinates").value = `${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}`;
+    });
+
+    // Existing 'searchInput' listener
+    autocompleteSearch.addListener("place_changed", () => {
+      infowindow.close();
+      const place = autocompleteSearch.getPlace();
+
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17);
+      }
+
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
+
+      infowindow.setContent(`<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`);
+      infowindow.open(map, marker);
+
+      document.getElementById("coordinates").value = `${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}`;
+    });
+
+    // Existing click and drag logic for the map and marker
+    map.addListener("click", (event) => {
+      const lat = event.latLng.lat().toFixed(6);
+      const lng = event.latLng.lng().toFixed(6);
+
+      marker.setPosition(event.latLng);
+      marker.setVisible(true);
+      document.getElementById("coordinates").value = `${lat}, ${lng}`;
+
+      infowindow.setContent(`Selected coordinates: ${lat}, ${lng}`);
+      infowindow.open(map, marker);
+    });
+
+    marker.addListener("dragend", (event) => {
+      const lat = event.latLng.lat().toFixed(6);
+      const lng = event.latLng.lng().toFixed(6);
+      document.getElementById("coordinates").value = `${lat}, ${lng}`;
+    });
+  } else {
+    console.error("Google Maps API not loaded.");
+  }
 }
 
-// Attach initMap to the global window object to ensure it's globally available
+
+
+// Attach initMap to the global window object
 window.initMap = initMap;
 
 
@@ -198,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "Capacity": document.getElementById("capacity").value,
       "Description": document.getElementById("description").value,
       "Location": document.getElementById("location").value,
-      "Coordinates": document.getElementById("coordinates").value, // Added line for coordinates
+      "Coordinates": document.getElementById("coordinates").value, // Coordinates field included
       "Organiser": orgName || "Unknown", // Set the organizer name or "Unknown" if not found
       "Project Name": document.getElementById("projectName").value,
       "Project Requirements": document.getElementById("projectRequirements").value,

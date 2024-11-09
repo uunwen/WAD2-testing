@@ -98,8 +98,7 @@
 
   <!-- Google Maps API -->
   <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGmHvzKBllTQ5BS83DBKfdRhCGBgoxzlw&callback=initMap&libraries=marker"></script>
-
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALsNUyvi16f4TWilVrWh1RY16ZcFJBZAE&callback=initMap&libraries=places,geometry"></script>
 </head>
 
 <body>
@@ -156,11 +155,13 @@
             <input type="date" id="volunteerPeriodEnd" required />
 
 
-            <label for="map">Select Location on Map:</label>
-            <div id="map" style="height: 400px; width: 100%; margin-top: 10px;"></div>
+            <div>
+              <input id="placeInput" type="text" placeholder="Enter a place" style="width: 100%; margin-bottom: 10px;">
+            </div>
+            <div id="map" style="height: 400px; width: 100%;"></div>
 
-            <label for="coordinates">Coordinates:</label>
-            <input type="text" id="coordinates" readonly placeholder="Latitude, Longitude" required />
+            <input id="coordinates" type="text" readonly placeholder="Latitude, Longitude"
+              style="width: 100%; margin-bottom: 10px;">
 
 
             <label for="photoURL">Photo URLs (add multiple URLs by pressing "Add Photo"):</label>
@@ -177,7 +178,6 @@
       </main>
     </div>
   </div>
-
   <!-- end of sidebar -->
 
   <script type="module">
