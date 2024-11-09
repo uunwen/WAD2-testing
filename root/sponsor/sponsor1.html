@@ -131,7 +131,7 @@
       document.addEventListener("DOMContentLoaded", async () => {
         createNavbar();
         try {
-          await initializeSearch();
+          await initializeSearch("searchInput");
         } catch (err) {
           console.error("Error initializing search:", err);
         }

@@ -69,13 +69,14 @@ const database = getDatabase(app);
 //   }
 // }
 
-export async function initializeSearch() {
+export async function initializeSearch(eleId) {
   // Replace this 2 depending on the nav-bar
-  const searchInput = document.getElementById("searchInput");
+  const searchInput = document.getElementById(eleId);
 
   // Update the search variable when input changes but don't trigger search
   searchInput.addEventListener("input", (e) => {
     search = e.target.value.toLowerCase();
+    console.log(search);
   });
 
   // Also trigger search when Enter key is pressed
