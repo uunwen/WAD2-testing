@@ -30,6 +30,7 @@ const adminApp = Vue.createApp({
       filterMinCount: this.minCount,
       filterMaxCount: this.maxCount,
       filterSponsorName: "",
+      isFilterMenuOpen: false
     };
   },
   mounted() {
@@ -39,6 +40,9 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    toggleFilterMenu() {
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
+    },
     async loadSponsors() {
       get(dbRef)
         .then((snapshot) => {

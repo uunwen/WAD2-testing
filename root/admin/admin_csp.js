@@ -1,7 +1,7 @@
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -15,8 +15,9 @@ const firebaseConfig = {
   measurementId: "G-LFFLPT7G58",
 };
 
-// Initialize Firebase
+// Initialize Firebase & Firestore
 const app = initializeApp(firebaseConfig);
+const dbStore = getFirestore(app);
 const database = getDatabase(app);
 const dbRef = ref(database); // Reference to the root of the database
 
@@ -34,9 +35,13 @@ const adminApp = Vue.createApp({
       filterProjectName: "",
       filterAdmission: "allAdmission",
       filterOrganiser: "allOrganisers",
-      modalDetails: {},
+      currentPhotoIndex: 0,
+      modalDetails: {
+        photos: [],
+      },
       showModal: false,
       currentIndex: -1,
+      isFilterMenuOpen: false
     };
   },
   mounted() {
@@ -49,11 +54,15 @@ const adminApp = Vue.createApp({
     openModal(record, index) {
       this.modalDetails = { ...record };  // Store the record data in modalDetails
       this.showModal = true;  // Show the modal
-      this.currentIndex = index
-      console.log(this.currentIndex)
+      this.currentIndex = index;
+      this.currentPhotoIndex = 0;
+      this.displayEventPhoto(record["Project Name"]);
     },
     closeModal() {
       this.showModal = false;  // Close the modal
+    },
+    toggleFilterMenu() {
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },
     async loadCommunityServices() {
       get(dbRef)
@@ -77,14 +86,13 @@ const adminApp = Vue.createApp({
     },
     async updateStatus(index) {
       const selectedEvent = this.selectedEvents[index];
-      console.log(selectedEvent);
       if (selectedEvent.Status === "Not Approved") {
         try {
           const statusRef = ref(database, `events/${selectedEvent.eventKey}`);
           await update(statusRef, { Status: "Approved" });
           selectedEvent.Status = "Approved"; // Update the local data
           console.log("Status successfully updated!");
-          if (this.modalDetails != {}){
+          if (this.modalDetails != {}) {
             this.modalDetails.Status = "Approved"
           }
         } catch (error) {
@@ -100,11 +108,11 @@ const adminApp = Vue.createApp({
         } catch (error) {
           console.error("Error updating status:", error);
         }
-        if (this.modalDetails != {}){
+        if (this.modalDetails != {}) {
           this.modalDetails.Status = "Not Approved"
         }
       }
-      
+
     },
     findFilterParameters() {
       if (this.allEvents.length > 0) {
@@ -153,15 +161,12 @@ const adminApp = Vue.createApp({
           }
           else if (this.filterAdmission === "ongoingAdmission" && date >= startDate && date <= endDate) {
             this.selectedEvents.push(event);
-            console.log(`Added ongoing event: ${event['Project Name']}`);
           }
           else if (this.filterAdmission === "upcomingAdmission" && date < startDate) {
             this.selectedEvents.push(event);
-            console.log(`Added upcoming event: ${event['Project Name']}`);
           }
           else if (this.filterAdmission === "completedAdmission" && date > endDate) {
             this.selectedEvents.push(event);
-            console.log(`Added completed event: ${event['Project Name']}`);
           }
         }
       }
@@ -198,7 +203,6 @@ const adminApp = Vue.createApp({
       );
     },
     checkStatus(status, admissionPeriod) {
-      console.log(admissionPeriod);
       if (status == "Not Approved") {
         return "glowing-circle-red";
       }
@@ -214,7 +218,6 @@ const adminApp = Vue.createApp({
             const endDate = new Date(admission[1]);
 
             if (date >= startDate && date <= endDate) {
-              console.log("Hello")
               return "glowing-circle-green"
             }
             else if (date < startDate) {
@@ -231,6 +234,32 @@ const adminApp = Vue.createApp({
       }
       return "glowing-circle-black"
     },
+    async displayEventPhoto(projectName) {
+      const eventsRef = collection(dbStore, "events");
+      const q = query(eventsRef, where("Project Name", "==", projectName));
+      const querySnapshot = await getDocs(q);
+
+      let test = 0; // Use `let` to modify test
+      this.modalDetails.photos = []; // Initialize photos to empty array
+
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const photos = data.Photos || []; // Use `let` to allow modification if needed
+
+          test += 1;
+
+          // If photos exist, add them to modalDetails
+          this.modalDetails.photos = photos;  // This will overwrite photos for each iteration
+        });
+      } else {
+        // No matching events found
+        this.modalDetails.photos = [];
+      }
+
+      console.log(this.modalDetails.photos); // Logs the number of matched events
+    }
+
 
   }
 });
@@ -260,16 +289,15 @@ adminApp.component('communityServiceRecords', {
             <td class="align-middle">{{ record['Volunteer Period'] }}</td>
             <td class="align-middle">
               <button v-if="record.Status == 'Approved'" class="btn btn-success" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
-              <button v-else class="btn btn-danger" @click="$emit('update-status', index - 1)">{{ record.Status }}</button>
+              <button v-else class="btn btn-danger" @click="$emit('update-status', index)">{{ record.Status }}</button>
             </td>
             <td class="align-middle">
-              <button class="btn btn-light" @click="$emit('open-modal', record, index - 1)">View</button>
+              <button class="btn btn-light" @click="$emit('open-modal', record, index)">View</button>
             </td>
         </tr>
   `,
   methods: {
     checkStatus(status, admissionPeriod) {
-      console.log(admissionPeriod);
       if (status == "Not Approved") {
         return "glowing-circle-red";
       }
@@ -285,7 +313,6 @@ adminApp.component('communityServiceRecords', {
             const endDate = new Date(admission[1]);
 
             if (date >= startDate && date <= endDate) {
-              console.log("Hello")
               return "glowing-circle-green"
             }
             else if (date < startDate) {

@@ -1,0 +1,215 @@
+.main-content {
+    width: 95%;
+    position: relative;
+}
+
+.main-content {
+    margin-top: 80px;
+    /* Adjust this to your navbar height, typically 56px */
+}
+
+/* Media query for small screens */
+@media (max-width: 991px) {
+
+    /* Ensure content is pushed down when the navbar expands */
+    #navbarContent.collapse:not(.show)+.main-content {
+        margin-top: 0;
+    }
+
+    #navbarContent.show+.main-content {
+        margin-top: 150px;
+        /* Adjust to match expanded height */
+    }
+}
+
+.filter-wrapper {
+    position: absolute;
+    /* Position it absolutely */
+    top: -10px;
+    /* Distance from the top of the container */
+    right: 30px;
+    /* Distance from the right of the container */
+}
+.filter-wrapper img {
+    width: 80px;
+}
+
+.filters {
+    width: 600px;
+    position: fixed;
+    right: 25px;
+    top: 125px;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filters h2 {
+    font-size: 1.5rem; /* Default font size for large screens */
+}
+
+.filters .filter-label {
+    font-size: 1rem; /* Default font size for labels */
+}
+
+.filters .form-select, .filters input {
+    font-size: 0.9rem; /* Default font size for inputs */
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    text-align: left;
+    max-height: 80vh;
+    /* Change Modal Height */
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.carousel-inner {
+    height: 400px;
+    /* Set a fixed height for the carousel */
+}
+
+.carousel-item img {
+    object-fit: contain;
+    /* Fill the container while maintaining aspect ratio */
+    height: 100%;
+    /* Fill the carousel container height */
+    width: 100%;
+    /* Fill the width of the carousel container */
+}
+
+.carousel-indicators li {
+    font-size: 0;
+    /* Hides any text or numbers */
+}
+
+@media (min-width: 769px) {
+    .main-content {
+        margin-top: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-inner {
+        max-height: 300px;
+        /* Adjust the height on smaller screens */
+    }
+
+    .table .hide-md {
+        display: none;
+    }
+
+    .table,
+    .table button,
+    .modal {
+        font-size: 0.85rem;
+    }
+
+    .filter-wrapper {
+        top: 5px;
+        right: 10px;
+        
+    }
+    .filter-wrapper img {
+        width: 60px;
+    }
+
+    /* Adjust filter menu on smaller screens */
+    .filters {
+        width: 90%; /* Set to 80% of viewport width, adjust as needed */
+        max-width: 600px;
+        position: fixed; /* Position it fixed on the screen */
+        top: 50%; /* Center it vertically in the viewport */
+        left: 50%; /* Center it horizontally in the viewport */
+        transform: translate(-50%, -50%); /* Perfectly center by adjusting its position */
+        display: none; /* Hidden by default */
+        z-index: 9999; /* Ensure it stays on top of other content */
+        background-color: white; /* Optional: Add a background color */
+        border-radius: 8px; /* Optional: Add rounded corners */
+        padding: 20px; /* Optional: Add padding for spacing */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow */
+        transition: opacity 0.3s ease-in-out; /* Smooth transition */
+        font-size: 0.85rem;
+    }
+
+    .filters.active {
+        right: auto;
+        /* Ensure it stays centered when active */
+        left: 50%;
+        transform: translateX(-50%);
+        /* Adjust for centering horizontally */
+    }
+
+    .filters h2 {
+        font-size: 1.25rem; /* Smaller font size for headings */
+    }
+
+    .filters .filter-label {
+        font-size: 0.9rem; /* Smaller font size for labels */
+    }
+
+    .filters .form-select, .filters input {
+        font-size: 0.8rem; /* Smaller font size for inputs */
+    }
+    
+}
+
+/* Optional: Adjust icon sizes for smaller screens */
+@media (max-width: 576px) {
+    .navbar .icon img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .navbar .menu {
+        font-size: 0.85rem;
+    }
+
+    .table .hide-sm {
+        display: none;
+    }
+
+    .table,
+    .table button, .filter, .filter input, filter select {
+        font-size: 0.7rem;
+    }
+
+    .filters h2 {
+        font-size: 1.1rem; /* Even smaller font size for headings */
+    }
+
+    .filters .filter-label {
+        font-size: 0.85rem; /* Even smaller font size for labels */
+    }
+
+    .filters .form-select, .filters input {
+        font-size: 0.75rem; /* Even smaller font size for inputs */
+    }
+}

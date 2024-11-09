@@ -1,10 +1,10 @@
 const userData = JSON.parse(sessionStorage.getItem('user'));
 
 if (userData.userType != "admin") {
-    window.location.href = `../login/login.html`;
+  window.location.href = `../login/login.html`;
 }
 else {
-    console.log(true);
+  console.log(true);
 }
 
 
@@ -41,6 +41,11 @@ const adminApp = Vue.createApp({
       filterMinHours: this.minHour,
       filterMaxHours: this.maxHour,
       filterStudentName: "",
+      modalDetails: {},
+      showModal: false,
+      message: "",
+      currentIndex: -1,
+      isFilterMenuOpen: false
     };
   },
   mounted() {
@@ -50,6 +55,17 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    openModal(record, index) {
+      this.modalDetails = { ...record };  // Store the record data in modalDetails
+      this.showModal = true;  // Show the modal
+      this.currentIndex = index
+    },
+    closeModal() {
+      this.showModal = false;  // Close the modal
+    },
+    toggleFilterMenu() {
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
+    },
     async loadStudents() {
       get(dbRef)
         .then((snapshot) => {
@@ -113,7 +129,7 @@ const adminApp = Vue.createApp({
           }
         }
 
-        
+
         // Return true if all conditions match
         return matchesName && matchesHours && matchesGraduationYear;
       });
@@ -121,23 +137,34 @@ const adminApp = Vue.createApp({
     async updateTasklist(index) {
       const student = this.allStudents[index];
       try {
+        console.log(student)
         // Reference to the tasklist array in the database
-        const tasklistRef = ref(database, `events/${student.studentKey}/tasklist`);
-    
+        const tasklistRef = ref(database, `students/${student.studentKey}/tasklist`);
+
         // Get the current tasklist array
         const snapshot = await get(tasklistRef);
         let tasklist = snapshot.exists() ? snapshot.val() : [];
-    
+
         // Add a new item to the tasklist array
-        tasklist.push("Approved");
-    
+        tasklist.push(this.message);
+
         // Update the array in the database
         await set(tasklistRef, tasklist);
         console.log("Tasklist successfully updated!");
-      } 
+      }
       catch (error) {
         console.error("Error updating tasklist:", error);
       }
+    },
+    checkGraduation(graduationYear) {
+      const currentYear = new Date().getFullYear();
+      if (graduationYear == currentYear + 1) {
+        return "glowing-circle-red"
+      }
+      else if (graduationYear == currentYear + 2) {
+        return "glowing-circle-orange"
+      }
+      return "glowing-circle-green"
     }
   }
 });
@@ -145,27 +172,27 @@ const adminApp = Vue.createApp({
 
 adminApp.component('studentRecords', {
   props: ['record', 'index'],
-  emits: ['updateTasklist'],
+  emits: ['open-modal'],
   template: `
         <tr>
-            <td :class="checkGraduation(record['graduation_year'])" class="align-middle"><b>{{ index }}</b></td>
+            <td class="align-middle"><div :class="checkGraduation(record['graduation_year'])"></div></td>
             <td class="align-middle">{{ record.name }}</td>
-            <td class="align-middle">{{ record.email }}</td>
-            <td class="align-middle">{{ record['graduation_year'] }}</td>
+            <td class="hide-md align-middle">{{ record.email }}</td>
+            <td class="align-middle">{{ record[''] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('updateTasklist', index)">Message</button></td>
+            <td class="align-middle"><button class="btn btn-light" @click="$emit('open-modal', record, index)">Message</button></td>
         </tr>
   `,
   methods: {
     checkGraduation(graduationYear) {
       const currentYear = new Date().getFullYear();
       if (graduationYear == currentYear + 1) {
-        return "red"
+        return "glowing-circle-red"
       }
       else if (graduationYear == currentYear + 2) {
-        return "orange"
+        return "glowing-circle-orange"
       }
-      return "green"
+      return "glowing-circle-green"
     }
   }
 });
