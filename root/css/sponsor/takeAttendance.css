@@ -46,26 +46,26 @@
   border-radius: 0.5rem;
   overflow: hidden;
 }
-      /* Card styles */
-      .bg-white {
-        background-color: #ffffff;
-      }
+/* Card styles */
+.bg-white {
+  background-color: #ffffff;
+}
 
-      .rounded-lg {
-        border-radius: 0.5rem;
-      }
+.rounded-lg {
+  border-radius: 0.5rem;
+}
 
-      .shadow-sm {
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      }
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
 
-      .border {
-        border: 1px solid;
-      }
+.border {
+  border: 1px solid;
+}
 
-      .border-gray-200 {
-        border-color: #e5e7eb;
-      }
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
 
 /* Button styles */
 button {
@@ -111,7 +111,7 @@ button {
 }
 
 /* Table styles */
-      /* .table {
+/* .table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
@@ -133,46 +133,46 @@ button {
       tr:hover {
         background-color: #f9fafb;
       } */
-      .table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-      }
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
 
-      th {
-        color: #4b5563;
-        font-weight: 600;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
+th {
+  color: #4b5563;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-      td {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-      tr:hover {
-        background-color: #f9fafb;
-      }
+tr:hover {
+  background-color: #f9fafb;
+}
 
-      /* Headings */
-      h1 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #111827;
-        margin: 2rem 0;
-      }
+/* Headings */
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 2rem 0;
+}
 
-      h2 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #374151;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 /* Lists section */
 .attendance-list,
@@ -233,8 +233,8 @@ button {
   }
 } */
 
- /* Responsive design */
- @media (max-width: 768px) {
+/* Responsive design */
+@media (max-width: 768px) {
   .container-fluid {
     padding: 1rem;
   }

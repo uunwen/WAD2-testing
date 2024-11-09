@@ -133,8 +133,8 @@ const createApp = Vue.createApp({
           // Add to attendance list for display
           this.attendanceList.push({
             name: userData.name,
-            // clockInTimestamp: new Date().toLocaleString(),
-            clockInTimestamp: "07/11/2024, 19:40:55",
+            clockInTimestamp: new Date().toLocaleString(),
+            // clockInTimestamp: "07/11/2024, 19:40:55",
             status: "Checked In",
           });
         } catch (error) {

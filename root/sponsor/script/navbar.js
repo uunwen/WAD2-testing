@@ -31,42 +31,72 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // Log search bar's info
+// export async function initializeSearch() {
+//   // Replace this 2 depending on the nav-bar
+//   const searchInput = document.getElementById("searchInput");
+//   const projectsContainer = document.getElementById("projectsContainer");
+
+//   function debounce(func, wait) {
+//     let timeout;
+//     return function executedFunction(...args) {
+//       const later = () => {
+//         clearTimeout(timeout);
+//         func(...args);
+//       };
+//       clearTimeout(timeout);
+//       timeout = setTimeout(later, wait);
+//     };
+//   }
+
+//   const searchProjects = debounce(async (searchTerm) => {
+//     try {
+//       // Export term into sponsor1.js
+//       search = searchTerm.toLowerCase();
+//       console.log(search);
+//     } catch (error) {
+//       console.error("Error searching projects:", error);
+//       if (projectsContainer) {
+//         projectsContainer.innerHTML =
+//           "<p>Error searching projects. Please try again.</p>";
+//       }
+//     }
+//   }, 500);
+
+//   if (searchInput) {
+//     searchInput.addEventListener("input", (e) => {
+//       searchProjects(e.target.value);
+//     });
+//   }
+// }
+
 export async function initializeSearch() {
   // Replace this 2 depending on the nav-bar
   const searchInput = document.getElementById("searchInput");
-  const projectsContainer = document.getElementById("projectsContainer");
 
-  function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
+  // Update the search variable when input changes but don't trigger search
+  searchInput.addEventListener("input", (e) => {
+    search = e.target.value.toLowerCase();
+  });
 
-  const searchProjects = debounce(async (searchTerm) => {
-    try {
-      // Export term into sponsor1.js
-      search = searchTerm.toLowerCase();
-      console.log(search);
-    } catch (error) {
-      console.error("Error searching projects:", error);
-      if (projectsContainer) {
-        projectsContainer.innerHTML =
-          "<p>Error searching projects. Please try again.</p>";
+  // Also trigger search when Enter key is pressed
+  searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      triggerSearch();
+    }
+  });
+}
+
+function triggerSearch() {
+  // Import necessary functions at the top of the file
+  import("./sponsor1.js").then(
+    ({ getSponsorOrg_name, fetchAndDisplayEvents, isEditing }) => {
+      if (isEditing) {
+        getSponsorOrg_name().then((org_name) => {
+          fetchAndDisplayEvents(org_name, search);
+        });
       }
     }
-  }, 500);
-
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      searchProjects(e.target.value);
-    });
-  }
+  );
 }
 
 // Get sponsor profile data
@@ -100,7 +130,7 @@ export function createNavbar() {
             <div class="col-8">
               <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Search projects..." aria-label="Search">
-                <span class="search-icon">🔍</span>
+                <span id="searchIcon" class="search-icon">🔍</span>
               </div>
             </div>
           </div>

@@ -3,8 +3,8 @@ import { search, initializeSearch } from "./navbar.js";
 export let isEditing = true; // Flag to pause update from searchbar during editing
 export let filteredEventsArr;
 
-// Initialize the search bar
-initializeSearch();
+// // Initialize the search bar
+// initializeSearch();
 
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -23,8 +23,6 @@ import {
   getDoc, // Ensure this line is included
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-
-
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
@@ -42,11 +40,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-
 // Initialize Firestore
 const firestore = getFirestore(app);
-
-
 
 // Function to fetch only the Photos array for an event from Firestore
 async function getEventPhotos(eventKey) {
@@ -62,13 +57,13 @@ async function getEventPhotos(eventKey) {
       return [];
     }
   } catch (error) {
-    console.error(`Error fetching event photos for ${eventKey}:`, error.message);
+    console.error(
+      `Error fetching event photos for ${eventKey}:`,
+      error.message
+    );
     return [];
   }
 }
-
-
-
 
 // Retrieve user info
 const urlParams = new URLSearchParams(window.location.search); //-- Commented by Jaxsen
@@ -76,7 +71,6 @@ const uid = urlParams.get("uid"); //-- Commented by Jaxsen
 // const userData = JSON.parse(sessionStorage.getItem("user")); // Added by Jaxsen
 
 // console.log(userData);
-
 
 // Fetch and display sponsor data
 export function fetchSponsorData() {
@@ -103,8 +97,10 @@ function displaySponsorDetails(sponsorData) {
   const aboutContent = document.getElementById("aboutContent");
   const sponsorStats = document.getElementById("sponsorStats");
 
-  if (sponsorHeader) sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
-  if (aboutContent) aboutContent.textContent = sponsorData["org_background"] || "N/A";
+  if (sponsorHeader)
+    sponsorHeader.textContent = sponsorData["org_name"] || "Sponsor Details";
+  if (aboutContent)
+    aboutContent.textContent = sponsorData["org_background"] || "N/A";
   if (sponsorStats) {
     sponsorStats.innerHTML = "";
     const stats = [
@@ -123,12 +119,14 @@ function displaySponsorDetails(sponsorData) {
 
 function displayNoSponsorData() {
   const sponsorDescription = document.getElementById("sponsorDescription");
-  if (sponsorDescription) sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
+  if (sponsorDescription)
+    sponsorDescription.innerHTML = "<p>No sponsor data available.</p>";
 }
 
 function displayErrorFetchingData(message) {
   const sponsorDescription = document.getElementById("sponsorDescription");
-  if (sponsorDescription) sponsorDescription.innerHTML = `<p>Error fetching data: ${message}</p>`;
+  if (sponsorDescription)
+    sponsorDescription.innerHTML = `<p>Error fetching data: ${message}</p>`;
 }
 
 // Define `initializeAboutSection`
@@ -151,14 +149,14 @@ function initializeAboutSection() {
   }
 }
 
-
-
 // Enter edit mode for the About section
 function enterEditMode() {
   console.log("Enter Edit Mode triggered"); // Check if this logs on click
   const aboutContent = document.getElementById("aboutContent");
   if (aboutContent) {
-    const currentText = aboutContent.textContent.trim() || "Enter your background information here...";
+    const currentText =
+      aboutContent.textContent.trim() ||
+      "Enter your background information here...";
     const textarea = document.createElement("textarea");
     textarea.id = "aboutTextarea";
     textarea.value = currentText;
@@ -171,7 +169,6 @@ function enterEditMode() {
     console.error("Element #aboutContent not found.");
   }
 }
-
 
 // Save About section content to Firebase
 async function saveAboutContent() {
@@ -232,7 +229,6 @@ function toggleAboutButtons(action) {
   }
 }
 
-
 // Display success message for About section update
 function displaySuccessMessage() {
   const successMessage = document.getElementById("successMessage");
@@ -244,12 +240,10 @@ function displaySuccessMessage() {
   }
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
   fetchSponsorData();
   initializeAboutSection();
 });
-
 
 // Initialize the application on load
 window.onload = () => {
@@ -289,14 +283,14 @@ export async function getFilteredEventsByOrganizer(organizerName) {
   }
 }
 
-
 // Display filtered events with edit functionality
 async function displayFilteredEvents(events, search) {
   const eventContainer = document.getElementById("eventContainer");
   eventContainer.innerHTML = "";
 
   if (events.length === 0) {
-    eventContainer.innerHTML = "<p>No events found for the specified organizer.</p>";
+    eventContainer.innerHTML =
+      "<p>No events found for the specified organizer.</p>";
     return;
   }
 
@@ -318,7 +312,6 @@ async function displayFilteredEvents(events, search) {
           paragraph.setAttribute("data-key", key);
           eventBox.appendChild(paragraph);
         }
-
 
         // Fetch and display event photos with optimized loading
         const photoUrls = await getEventPhotos(eventKey);
@@ -349,8 +342,6 @@ async function displayFilteredEvents(events, search) {
           console.log(`No photos available for event ${eventKey}`);
         }
 
-
-
         // Add edit, save, and cancel buttons
         createEditButtons(eventBox, eventKey);
 
@@ -367,10 +358,11 @@ async function displayFilteredEvents(events, search) {
       }
     }
   } catch (error) {
-    document.getElementById("eventContainer").innerHTML = `<p>Error displaying events: ${error.message}</p>`;
+    document.getElementById(
+      "eventContainer"
+    ).innerHTML = `<p>Error displaying events: ${error.message}</p>`;
   }
 }
-
 
 async function createEditButtons(eventBox, eventKey) {
   const editBtn = createButton("Edit", "edit-btn");
@@ -438,7 +430,6 @@ async function deleteEvent(eventKey, eventBox) {
     alert("Failed to delete event: " + error.message);
   }
 }
-
 
 // Reset button visibility after save/cancel actions
 function resetButtons(editBtn, saveBtn, cancelBtn) {
