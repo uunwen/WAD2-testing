@@ -1,3 +1,12 @@
+const userData = JSON.parse(sessionStorage.getItem('user'));
+
+// Check if userData exists and if userType is not 'admin'
+if (!userData || userData.userType !== "admin") {
+  // Clear session storage and redirect to login page
+  sessionStorage.clear();
+  window.location.href = "../login/login.html";
+}
+
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -32,18 +41,73 @@ const adminApp = Vue.createApp({
       filterSponsorName: "",
       isFilterMenuOpen: false,
       currentIndex: -1,
-      showModal: false
+      showModal: false,
+      isFilterMenuOpen: false,
+      sortColumn: '',       // track the currently sorted column
+      sortAscending: true,  // track sorting order
     };
   },
   mounted() {
     this.loadSponsors();
+    window.addEventListener("resize", this.checkScreenWidth);
+    this.checkScreenWidth();
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.checkScreenWidth);
   },
   watch: {
 
   },
   methods: {
+    sortData(column) {
+      // Log to verify column click
+      console.log(`Sorting by column: ${column}`);
+
+      // Toggle sort order if the same column is clicked, otherwise reset to ascending
+      if (this.sortColumn === column) {
+        this.sortAscending = !this.sortAscending;
+      } else {
+        this.sortColumn = column;
+        this.sortAscending = true;
+      }
+
+      // Perform the sorting directly on selectedStudents
+      this.selectedSponsors.sort((a, b) => {
+        let aValue = a[column];
+        let bValue = b[column];
+
+        // If sorting by project_list, use length instead
+        if (column === 'project_list') {
+          aValue = aValue ? aValue.length : 0;
+          bValue = bValue ? bValue.length : 0;
+        }
+
+        // Sort strings and numbers differently
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return this.sortAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        } else {
+          return this.sortAscending ? aValue - bValue : bValue - aValue;
+        }
+      });
+    },
     toggleFilterMenu() {
       this.isFilterMenuOpen = !this.isFilterMenuOpen;
+    },
+    openFilterOnHover() {
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = true;
+      }
+    },
+    closeFilterOnHover() {
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = false;
+      }
+    },
+    checkScreenWidth() {
+      // This checks the screen width and manages the filter menu visibility based on screen size
+      if (window.innerWidth < 768) {
+        this.isFilterMenuOpen = false; // Hide menu on small screens
+      }
     },
     openModal(record, index) {
       this.modalDetails = { ...record };  // Store the record data in modalDetails
@@ -90,6 +154,7 @@ const adminApp = Vue.createApp({
         // Return true if both conditions match
         return matchesName && matchesCount;
       });
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     }
   }
 });
@@ -113,3 +178,8 @@ adminApp.component('sponsorRecords', {
 
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
+
+document.getElementById("logout-link").addEventListener("click", function (event) {
+  // Clear sessionStorage to end the session
+  sessionStorage.clear();
+});

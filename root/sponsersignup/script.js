@@ -181,6 +181,7 @@ function updatePieChart(studentCount, capacity) {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top' },
                     tooltip: {
@@ -189,7 +190,7 @@ function updatePieChart(studentCount, capacity) {
                                 const signedUp = studentCount;
                                 const remaining = capacity - studentCount;
                                 return tooltipItem.raw === signedUp ? 
-                                    `Signed Up: ${signedUp} / Total Capacity: ${capacity}` :
+                                    `Total Students Signed Up: ${signedUp} ` :
                                     `Remaining Capacity: ${remaining}`;
                             }
                         }

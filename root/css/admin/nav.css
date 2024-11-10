@@ -1,0 +1,173 @@
+/* Navbar styling */
+.navbar {
+    background-color: rgb(240, 240, 240);
+    width: 100%;
+    padding: 10px 0;
+    /* Add padding for better spacing */
+    z-index: 1000;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: black;
+}
+
+.navbar img {
+    width: 70px;
+    /* Increased icon size */
+    height: 70px;
+    /* Increased icon size */
+    cursor: pointer;
+    margin: 0 15px;
+    /* Even margin between icons */
+}
+
+.navbar-brand {
+    display: flex;              /* Use flexbox for alignment */
+    align-items: center;       /* Center items vertically */
+    text-decoration: none;
+    color: black;
+    font-weight: bold; 
+}
+
+.navbar-brand img {
+    margin-right: 8px;         /* Space between image and text */
+    height: 40px;
+    width: 40px;
+}
+
+.separator {
+    border-top: 3px solid #ccc;
+    /* Grey line separator */
+    margin: 8px 0;
+    /* Spacing around the line */
+}
+
+
+.menu {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(250, 248, 248);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Optional: To reposition if it goes off the screen */
+.menu {
+    position: relative;
+    /* Ensure relative positioning */
+}
+
+.menu-content {
+    right: 0;
+    /* Align to the right of the menu */
+    left: auto;
+    /* Reset left position */
+}
+
+.menu-content a {
+    color: black;
+    padding: 0px 12px;
+    text-decoration: none;
+    display: block;
+}
+
+.menu-content a:hover {
+    background-color: #ddd;
+}
+
+.menu:hover .menu-content {
+    display: block;
+}
+
+.menu img {
+    width: 40px;
+    /* Adjust to your desired size */
+    height: 40px;
+    /* Adjust to your desired size */
+}
+
+.icon {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.menu-content a {
+    color: black;
+    padding: 10px 12px;
+    /* Adjust padding for better spacing */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    /* Center align items vertically */
+}
+
+.menu-content a img {
+    margin-right: 10px;
+    /* Space between icon and text */
+    width: 25px;
+    /* Adjust width */
+    height: 25px;
+    /* Adjust height */
+}
+
+.menu-content {
+    text-align: left;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    /* Optional: Add padding inside the menu */
+}
+
+.search-container {
+    display: flex;
+    align-items: center; /* Center vertically */
+}
+
+.search-container input {
+    flex: 1; /* Allow input to take available space */
+    padding: 8px 40px 8px 10px; /* Right padding for the icon */
+    border: none;
+    border-radius: 15px;
+    height: 36px;
+    background-color: #c8c9be;
+    color: black;
+    max-width: 300px; /* Set a max width for the input */
+}
+
+.search-icon {
+    margin-left: -30px; /* Position the icon closer to the input */
+    color: #333; /* Change color if needed */
+    font-size: 18px; /* Icon size */
+    cursor: pointer; /* Pointer cursor */
+}
+
+.search-container input[type="text"] {
+    padding: 8px 40px 8px 10px;
+    /* Right padding for the icon */
+    border: none;
+    border-radius: 15px;
+    height: 36px;
+    /* Adjust height as needed */
+    background-color: #c8c9be;
+    /* Background color */
+    color: black;
+    /* Text color inside input */
+    width: 100%;
+    /* Ensure the input takes the full width of its container */
+    max-width: 700px;
+    /* Set a maximum width for the search bar */
+    cursor: text;
+}
+
+.search-container input[type="text"]::placeholder {
+    color: black;
+    /* Placeholder color */
+}
+
