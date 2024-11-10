@@ -238,8 +238,9 @@
 
 .close-map-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 70px;
+    /* Increase the value to move it to the left */
     z-index: 1000;
     /* Ensure it's above the map */
 }
