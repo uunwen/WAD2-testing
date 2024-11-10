@@ -345,7 +345,7 @@ adminApp.component('communityServiceRecords', {
       <td class="align-middle">
         <div :class="checkStatus(record.Status, record['Admissions Period'])"></div>
       </td>
-      <td class="align-middle">{{ record['Admissions Period'] }}</td>
+      <td class="hide-md align-middle">{{ record['Admissions Period'] }}</td>
       <td class="align-middle">
         {{ getSignupsCount(record) }} / {{ record.Capacity }}
       </td>

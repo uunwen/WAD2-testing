@@ -379,6 +379,8 @@
 
 /* Optional: Adjust icon sizes for smaller screens */
 @media (max-width: 576px) {
+
+    
     .navbar .icon img {
         width: 30px;
         height: 30px;
@@ -415,4 +417,6 @@
         font-size: 0.75rem;
         /* Even smaller font size for inputs */
     }
+
+    
 }
