@@ -52,6 +52,8 @@ const adminApp = Vue.createApp({
       showModal: false,
       currentIndex: -1,
       isFilterMenuOpen: false,
+      sortColumn: '',       // track the currently sorted column
+      sortAscending: true,  // track sorting order
     };
   },
   mounted() {
@@ -66,6 +68,39 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    sortData(column) {
+      // Log to verify column click
+      console.log(`Sorting by column: ${column}`);
+  
+      // Toggle sort order if the same column is clicked, otherwise reset to ascending
+      if (this.sortColumn === column) {
+        this.sortAscending = !this.sortAscending;
+      } else {
+        this.sortColumn = column;
+        this.sortAscending = true;
+      }
+  
+      // Perform the sorting directly on selectedStudents
+      this.selectedEvents = [...this.selectedEvents].sort((a, b) => {
+        const aValue = a[column];
+        const bValue = b[column];
+  
+        // Handle undefined or null values by treating them as empty strings or zeros
+        const parsedAValue = aValue === undefined || aValue === null ? '' : aValue;
+        const parsedBValue = bValue === undefined || bValue === null ? '' : bValue;
+  
+        // Sort strings and numbers differently
+        if (typeof parsedAValue === 'string' && typeof parsedBValue === 'string') {
+          return this.sortAscending 
+            ? parsedAValue.localeCompare(parsedBValue)
+            : parsedBValue.localeCompare(parsedAValue);
+        } else {
+          return this.sortAscending 
+            ? parsedAValue - parsedBValue 
+            : bValue - parsedAValue;
+        }
+      });
+    },
     toggleFilterMenu() {
       this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },

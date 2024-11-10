@@ -159,11 +159,15 @@
                     <th>#</th>
                     <th>Admissions Period </th>
                     <th>Capacity</th>
-                    <!-- <th>Description</th> -->
                     <th class="hide-xl">Location</th>
-                    <th class="hide-lg">Organiser</th>
-                    <th>Project Name</th>
-                    <!--  <th>Project Requirements </th> -->
+                    <th class="hide-lg" @click="sortData('Organiser')">
+                        Organiser <span v-if="sortColumn === 'Organiser'" class="sort-icon">{{ sortAscending ? '↑' : '↓'
+                            }}</span>
+                    </th>
+                    <th @click="sortData('Project Name')">
+                        Project Name <span v-if="sortColumn === 'Project Name'" class="sort-icon">{{ sortAscending ? '↑'
+                            : '↓' }}</span>
+                    </th>
                     <th class="hide-xxl">Region</th>
                     <th class="hide-xxl">Session(s)</th>
                     <th class="hide-lg">Total CSP hours</th>

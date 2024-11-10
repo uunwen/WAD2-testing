@@ -119,9 +119,15 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Organisation Name</th>
+                    <th @click="sortData('org_name')">
+                        Organisation Name <span v-if="sortColumn === 'org_name'" class="sort-icon">{{
+                            sortAscending ? '↑' : '↓' }}</span>
+                    </th>
                     <th class="hide-lg">Organisation Website</th>
-                    <th>Project Count</th>
+                    <th @click="sortData('project_list')">
+                        Project Count <span v-if="sortColumn === 'project_list'" class="sort-icon">{{ sortAscending ?
+                            '↑' : '↓' }}</span>
+                    </th>
                     <th>View More</th>
                 </tr>
             </thead>

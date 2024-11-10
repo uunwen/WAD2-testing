@@ -135,10 +135,18 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
+                    <th @click="sortData('name')">
+                        Name <span v-if="sortColumn === 'name'" class="sort-icon">{{ sortAscending ? '↑' : '↓' }}</span>
+                    </th>
                     <th class="hide-md">Email</th>
-                    <th>Graduation Year</th>
-                    <th>Hours Left</th>
+                    <th @click="sortData('graduation_year')">
+                        Graduation Year <span v-if="sortColumn === 'graduation_year'" class="sort-icon">{{ sortAscending
+                            ? '↑' : '↓' }}</span>
+                    </th>
+                    <th @click="sortData('hours_left')">
+                        Hours Left <span v-if="sortColumn === 'hours_left'" class="sort-icon">{{ sortAscending ? '↑' :
+                            '↓' }}</span>
+                    </th>
                     <th>Message</th>
                 </tr>
             </thead>

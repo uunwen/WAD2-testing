@@ -43,6 +43,8 @@ const adminApp = Vue.createApp({
       currentIndex: -1,
       showModal: false,
       isFilterMenuOpen: false,
+      sortColumn: '',       // track the currently sorted column
+      sortAscending: true,  // track sorting order
     };
   },
   mounted() {
@@ -57,6 +59,37 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    sortData(column) {
+      // Log to verify column click
+      console.log(`Sorting by column: ${column}`);
+
+      // Toggle sort order if the same column is clicked, otherwise reset to ascending
+      if (this.sortColumn === column) {
+        this.sortAscending = !this.sortAscending;
+      } else {
+        this.sortColumn = column;
+        this.sortAscending = true;
+      }
+
+      // Perform the sorting directly on selectedStudents
+      this.selectedSponsors.sort((a, b) => {
+        let aValue = a[column];
+        let bValue = b[column];
+
+        // If sorting by project_list, use length instead
+        if (column === 'project_list') {
+          aValue = aValue ? aValue.length : 0;
+          bValue = bValue ? bValue.length : 0;
+        }
+
+        // Sort strings and numbers differently
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return this.sortAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        } else {
+          return this.sortAscending ? aValue - bValue : bValue - aValue;
+        }
+      });
+    },
     toggleFilterMenu() {
       this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },
@@ -146,7 +179,7 @@ adminApp.component('sponsorRecords', {
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
 
-document.getElementById("logout-link").addEventListener("click", function(event) {
+document.getElementById("logout-link").addEventListener("click", function (event) {
   // Clear sessionStorage to end the session
   sessionStorage.clear();
 });
