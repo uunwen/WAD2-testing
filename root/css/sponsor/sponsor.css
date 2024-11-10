@@ -209,3 +209,9 @@ h1 {
 #mapContainer {
   display: none;
 }
+
+#map {
+  width: 100%;
+  height: 400px;
+  /* Ensure it has a defined height */
+}

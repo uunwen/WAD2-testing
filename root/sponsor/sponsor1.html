@@ -13,6 +13,11 @@
   <link href="../css/sponsor/addEventButton.css" rel="stylesheet" />
   <link href="../css/sponsor/sidebar.css" rel="stylesheet" />
   <title>Sponsor Details</title>
+
+
+  <!-- Google Maps API -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALsNUyvi16f4TWilVrWh1RY16ZcFJBZAE&libraries=places,geometry"></script>
 </head>
 
 <body>
@@ -23,57 +28,50 @@
         <div class="container">
           <h1 id="sponsorHeader">Sponsor Details</h1>
           <hr />
-          <!-- yw: commented, as it's not connected to db -->
-          <!-- <div id="sponsorStats"></div> -->
           <div id="socialLinks"></div>
 
-          <!-- Updated About section with success message -->
+          <!-- About section -->
           <div id="sponsorDescription" class="description-box">
             <p id="aboutText">
               <strong>About:</strong> <span id="aboutContent"></span>
             </p>
 
-            <!-- yw: hey psps i commented this as there was 2 about session ;- ;; -->
-            <!-- Updated About section with success message
-          <div id="sponsorDescription" class="description-box">
-            <p id="aboutText">
-              <strong>About:</strong> <span id="aboutContent">This is the about content.</span>
-            </p> -->
-
-            <!-- Success message div, hidden by default -->
-            <div id="successMessage" style="display: none; color: green; margin-top: 10px">
+            <!-- Success message div -->
+            <div id="successMessage" style="display: none; color: green; margin-top: 10px;">
               Changes saved successfully!
             </div>
 
-            <div id="aboutActions" style="margin-top: 10px">
+            <div id="aboutActions" style="margin-top: 10px;">
               <button id="editAboutBtn" class="edit-btn">Edit</button>
-              <button id="saveAboutBtn" class="save-btn" style="display: none">
-                Save
-              </button>
-              <button id="cancelAboutBtn" class="cancel-btn" style="display: none">
-                Cancel
-              </button>
+              <button id="saveAboutBtn" class="save-btn" style="display: none;">Save</button>
+              <button id="cancelAboutBtn" class="cancel-btn" style="display: none;">Cancel</button>
             </div>
           </div>
 
+          <!-- Event Container -->
           <div id="eventContainer"></div>
-          <div id="eventSuccessMessage" style="display: none; color: green; margin-top: 10px">
-            Changes saved successfully.
+
+          <!-- Map Container for editing coordinates -->
+          <div id="mapContainer" style="display: none; width: 100%; height: 400px; margin-top: 20px;"></div>
+
+          <div id="eventSuccessMessage" style="display: none; color: green; margin-top: 10px;">Changes saved
+            successfully.
           </div>
+
         </div>
       </main>
     </div>
-  </div>
-  <button class="floating-btn" id="redirectBtn">+</button>
+    <button class="floating-btn" id="redirectBtn">+</button>
 
-  <!-- Scripts -->
-  <script type="module" src="./script/addEventButton.js"></script>
-  <!-- <script type="module">
+    <!-- Scripts -->
+    <script type="module" src="./script/addEventButton.js"></script>
+    <script type="module">
       import {
         getSponsorOrg_name,
         fetchSponsorData,
         fetchAndDisplayEvents,
         isEditing,
+        createViewOnMapButton,
       } from "./script/sponsor1.js";
 
       import { search } from "./script/navbar.js";
@@ -86,39 +84,23 @@
               fetchSponsorData();
               fetchAndDisplayEvents(org_name, search);
             });
-          }          
-        }, 1000);
+          }
+        }, 100000);
       };
-    </script> -->
-  <script type="module">
-    import {
-      getSponsorOrg_name,
-      fetchSponsorData,
-      fetchAndDisplayEvents,
-    } from "./script/sponsor1.js";
+    </script>
+    <script type="module">
+      import { createNavbar, initializeSearch } from "./script/navbar.js";
 
-    // Initial load of sponsor data and events
-    window.onload = () => {
-      getSponsorOrg_name().then((org_name) => {
-        fetchSponsorData();
-        fetchAndDisplayEvents(org_name, ""); // Pass empty string for initial load
+      document.addEventListener("DOMContentLoaded", async () => {
+        createNavbar();
+        try {
+          await initializeSearch();
+        } catch (err) {
+          console.error("Error initializing search:", err);
+        }
       });
-    };
-  </script>
-
-  <script type="module">
-    import { createNavbar, initializeSearch } from "./script/navbar.js";
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      createNavbar();
-      try {
-        await initializeSearch("searchInput");
-      } catch (err) {
-        console.error("Error initializing search:", err);
-      }
-    });
-  </script>
-  <script src="./script/sidebar.js"></script>
+    </script>
+    <script src="./script/sidebar.js"></script>
 </body>
 
 </html>

@@ -18,93 +18,96 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Helper to retrieve query parameters
+// Helper function to retrieve query parameters
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
 
-// Display sponsor details
-function displaySponsorDetails() {
+// Function to display sponsor details and associated projects
+async function displaySponsorDetails() {
     const sponsorKey = getQueryParam("sponsorKey");
     if (!sponsorKey) {
         document.getElementById("sponsorDetails").innerHTML = "<p>Sponsor not found.</p>";
         return;
     }
 
+    // Reference to the sponsor in the database
     const dbRef = ref(database, `sponsors/${sponsorKey}`);
-    get(dbRef).then((snapshot) => {
+    try {
+        const snapshot = await get(dbRef);
         if (snapshot.exists()) {
             const data = snapshot.val();
 
             // Set sponsor title as org_name
             document.getElementById("sponsorTitle").textContent = data["org_name"];
 
-            // Update icon links if data exists
-            if (data["email_add"]) {
-                document.getElementById("emailIcon").href = `mailto:${data["email_add"]}`;
-                document.getElementById("emailIcon").style.display = "block";
-            }
-            if (data["facebook_link"]) {
-                document.getElementById("facebookIcon").href = data["facebook_link"];
-                document.getElementById("facebookIcon").style.display = "block";
-            }
-            if (data["website"]) {
-                document.getElementById("websiteIcon").href = data["website"];
-                document.getElementById("websiteIcon").style.display = "block";
-            }
-
-            // Display additional sponsor details, using "About" instead of "org_background"
+            // Display additional sponsor details
             const sponsorDetailsContainer = document.getElementById("sponsorDetails");
             sponsorDetailsContainer.innerHTML = "";
 
-            for (const key in data) {
-                if (data.hasOwnProperty(key) && !["org_name", "email_add", "facebook_link", "website"].includes(key)) {
-                    const paragraph = document.createElement("p");
+            // Display About section if it exists
+            if (data["org_background"]) {
+                const paragraph = document.createElement("p");
+                paragraph.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">About</span><br>&emsp;&emsp;<span>${data["org_background"]}</span>`;
+                sponsorDetailsContainer.appendChild(paragraph);
+            }
 
-                    if (key === "org_background") {
-                        // Display About section
-                        paragraph.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">About</span><br>&emsp;&emsp;<span>${data[key]}</span>`;
-                    } else if (key === "project_list") {
-                        // Display Project List section with event names
-                        paragraph.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">Project List</span><br>`;
+            // Create an unordered list for the project list
+            const projectListContainer = document.createElement("div");
+            projectListContainer.innerHTML = `<span style="font-weight:bold; font-size: 1.3em;">Project List</span><br>`;
 
-                        // Check if project_list is an array
-                        const projectArray = Array.isArray(data[key]) ? data[key] : data[key].split(",");
+            const ul = document.createElement("ul");
+            ul.style.listStyleType = "none"; // Remove bullet points
+            ul.style.paddingLeft = "0";  // Align list items to the left
+            ul.style.marginLeft = "0";  // Align list items to the left
 
-                        // Create an ordered list for projects
-                        const ol = document.createElement("ol");
-                        ol.style.paddingLeft = "20px"; // Add some indentation for numbering
+            // Iterate through all events and check if the organiser matches the sponsor's org_name
+            const eventsRef = ref(database, "events");
+            const eventsSnapshot = await get(eventsRef);
+            if (eventsSnapshot.exists()) {
+                const eventsData = eventsSnapshot.val();
+                let hasProjects = false; // Flag to check if any projects match the sponsor's org_name
 
-                        // Fetch event names based on project IDs
-                        projectArray.forEach(async (projectId) => {
-                            const eventRef = ref(database, `events/${projectId.trim()}`);
-                            const snapshot = await get(eventRef);
-                            if (snapshot.exists()) {
-                                const eventData = snapshot.val();
-                                const li = document.createElement("li");
-                                li.textContent = eventData["Project Name"] || "Unnamed Project"; // Use "Project Name" or fallback to a default
-                                ol.appendChild(li);
-                            } else {
-                                console.error(`No event found for ID ${projectId}`);
-                            }
-                        });
+                // Loop through all events to check if organiser matches the sponsor's org_name
+                for (const eventId in eventsData) {
+                    const eventData = eventsData[eventId];
+                    if (eventData.Organiser === data["org_name"]) {
+                        const li = document.createElement("li");
 
-                        paragraph.appendChild(ol);
-                    } else {
-                        paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+                        // Create the link for each project
+                        const projectLink = document.createElement("a");
+                        projectLink.href = `../event-details/event-details.html?eventKey=${eventId}`;
+                        projectLink.textContent = eventData["Project Name"] || "Unnamed Project"; // Display event's project name
+
+                        // Append the link to the list item
+                        li.appendChild(projectLink);
+                        ul.appendChild(li); // Add the list item to the unordered list
+                        hasProjects = true; // Set flag to true if a project is found
                     }
-
-                    sponsorDetailsContainer.appendChild(paragraph);
                 }
+
+                // If no projects are found, log and display a message to the user
+                if (!hasProjects) {
+                    console.log(`No projects found for sponsor: ${data["org_name"]}`);
+                    const noProjectsMessage = document.createElement("p");
+                    noProjectsMessage.textContent = `No projects found for ${data["org_name"]}.`;
+                    sponsorDetailsContainer.appendChild(noProjectsMessage);
+                }
+
+                // Append the unordered list to the project list container
+                projectListContainer.appendChild(ul);
+                sponsorDetailsContainer.appendChild(projectListContainer);
+            } else {
+                console.error("No events found.");
             }
         } else {
             document.getElementById("sponsorDetails").innerHTML = "<p>Sponsor details not available.</p>";
         }
-    }).catch((error) => {
+    } catch (error) {
         console.error("Error fetching sponsor details:", error);
         document.getElementById("sponsorDetails").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    });
+    }
 }
 
 window.onload = displaySponsorDetails;

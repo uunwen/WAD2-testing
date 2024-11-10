@@ -30,65 +30,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// Log search bar's info
-// export async function initializeSearch() {
-//   // Replace this 2 depending on the nav-bar
-//   const searchInput = document.getElementById("searchInput");
-//   const projectsContainer = document.getElementById("projectsContainer");
 
-//   function debounce(func, wait) {
-//     let timeout;
-//     return function executedFunction(...args) {
-//       const later = () => {
-//         clearTimeout(timeout);
-//         func(...args);
-//       };
-//       clearTimeout(timeout);
-//       timeout = setTimeout(later, wait);
-//     };
-//   }
-
-//   const searchProjects = debounce(async (searchTerm) => {
-//     try {
-//       // Export term into sponsor1.js
-//       search = searchTerm.toLowerCase();
-//       console.log(search);
-//     } catch (error) {
-//       console.error("Error searching projects:", error);
-//       if (projectsContainer) {
-//         projectsContainer.innerHTML =
-//           "<p>Error searching projects. Please try again.</p>";
-//       }
-//     }
-//   }, 500);
-
-//   if (searchInput) {
-//     searchInput.addEventListener("input", (e) => {
-//       searchProjects(e.target.value);
-//     });
-//   }
-// }
-
+// Function to initialize search
 export async function initializeSearch(eleId) {
-  // Replace this 2 depending on the nav-bar
   const searchInput = document.getElementById(eleId);
 
-  // Update the search variable when input changes but don't trigger search
-  searchInput.addEventListener("input", (e) => {
-    search = e.target.value.toLowerCase();
-    console.log(search);
-  });
+  if (searchInput) {
+    // Update the search variable when input changes but don't trigger search
+    searchInput.addEventListener("input", (e) => {
+      search = e.target.value.toLowerCase();
+      console.log(search);
+    });
 
-  // Also trigger search when Enter key is pressed
-  searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      triggerSearch();
-    }
-  });
+    // Also trigger search when Enter key is pressed
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        triggerSearch();
+      }
+    });
+  } else {
+    console.error(`Element with id '${eleId}' not found!`);
+  }
 }
 
+
+// Function to trigger search
 function triggerSearch() {
-  // Import necessary functions at the top of the file
   import("./sponsor1.js").then(
     ({ getSponsorOrg_name, fetchAndDisplayEvents, isEditing }) => {
       if (isEditing) {
@@ -99,6 +66,8 @@ function triggerSearch() {
     }
   );
 }
+
+
 
 // Get sponsor profile data
 async function getSponsorData(uid) {
@@ -118,38 +87,37 @@ export function createNavbar() {
   const uid = urlParams.get("uid");
 
   const navbar = `
-    <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center brand-container">
-          <a href="sponsor1.html?uid=${uid}" class="navbar-brand">
-            <img src="../img/social-services.png" alt="">RIGHTTRACK
-          </a>
-        </div>
-        
-        <div class="flex-grow-1 mx-4 search-wrapper">
-          <div class="row justify-content-center">
-            <div class="col-8">
-              <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search projects..." aria-label="Search">
-                <span id="searchIcon" class="search-icon">🔍</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu">
-          <span class="icon" id="profileMenuBtn"><img src="../img/user.png" alt="Profile"></span>
-          <div class="menu-content" id="profileMenu">
-            <a href="../login/login.html"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
+  <nav class="navbar navbar-expand-lg">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center brand-container">
+      <a href="sponsor1.html?uid=${uid}" class="navbar-brand">
+        <img src="../img/social-services.png" alt="">RIGHTTRACK
+      </a>
+    </div>
+    
+    <div class="flex-grow-1 mx-4 search-wrapper">
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <div class="search-container">
+            <!-- Place the search input here -->
+            <input type="text" id="searchInput" placeholder="Search projects..." aria-label="Search">
+            <span id="searchIcon" class="search-icon">🔍</span>
           </div>
         </div>
       </div>
-    </nav>
-  `;
+    </div>
 
-  // <a href="#"><img src="../img/user.png" alt="Profile Icon">Profile</a>
-  // <a href="#"><img src="../img/settings.png" alt="Settings Icon">Settings</a>
-  // <div class="separator"></div>
+    <div class="menu">
+      <span class="icon" id="profileMenuBtn"><img src="../img/user.png" alt="Profile"></span>
+      <div class="menu-content" id="profileMenu">
+        <a href="../login/login.html"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+`;
+
+
 
   // Updated styles with responsive design
   const styles = `
@@ -326,6 +294,11 @@ export function createNavbar() {
   document.body.insertAdjacentHTML("afterbegin", navbar);
   document.head.insertAdjacentHTML("beforeend", styles);
 
+
+  // Initialize the search input
+  initializeSearch("searchInput");
+
+
   // Initialize click-based profile menu
   const profileBtn = document.getElementById("profileMenuBtn");
   const profileMenu = document.getElementById("profileMenu");
@@ -367,4 +340,9 @@ export function createNavbar() {
       }
     });
   }
+
+  // Add the event listener to initialize search input after the DOM is loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    initializeSearch("searchInput");
+  });
 }

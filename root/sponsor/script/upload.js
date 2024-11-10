@@ -323,8 +323,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "Project Requirements": document.getElementById("projectRequirements").value,
       "Region": document.getElementById("region").value,
       "Session(s)": document.getElementById("sessions").value,
-      "Status": "Not Approved",
-      "Total CSP hours": Number(document.getElementById("totalCSPHours").value),
+      "Total CSP Hours": document.getElementById("totalCSPHours").value,
       "Volunteer Period": `${document.getElementById("volunteerPeriodStart").value} - ${document.getElementById("volunteerPeriodEnd").value}`, // Format as needed
     };
 

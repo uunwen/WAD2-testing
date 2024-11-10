@@ -103,59 +103,7 @@ window.onload = () => {
     showTab('details');
 };
 
-// Function to load event details into the details tab
-// Function to load event details into the details tab
-function displayEventDetails() {
-    const eventKey = getQueryParam("eventKey");
-    if (!eventKey) {
-        document.getElementById("eventDetailsContainer").innerHTML = "<p>Event not found.</p>";
-        return;
-    }
 
-    const dbRef = ref(database, `events/${eventKey}`);
-    get(dbRef).then((snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            document.getElementById("eventTitle").textContent = data["Project Name"];
-            const eventContent = document.getElementById("eventContent");
-            eventContent.innerHTML = ""; // Clear previous content
-
-            // Add data to the event details section
-            for (const key in data) {
-                if (data.hasOwnProperty(key) && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos" && key !== "Status" && key !== "Coordinates") {
-                    const card = document.createElement("div");
-                    card.className = "card";
-                    card.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
-                    eventContent.appendChild(card);
-                }
-            }
-
-            // Add the "View on Map" button if coordinates are available
-            if (data["Coordinates"]) {
-                const viewMapBtn = createViewOnMapButton(data["Coordinates"]);
-                eventContent.appendChild(viewMapBtn);
-            }
-
-            // Add the "Sign Up" button
-            const buttonContainer = document.querySelector('.button-container');
-            buttonContainer.innerHTML = ""; // Clear previous content
-            const signupButton = document.createElement("button");
-            signupButton.textContent = "Sign Up";
-            signupButton.className = "signup-button button-with-margin";
-            const signupLink = `../event-signup/signup-form.html?eventKey=${eventKey}&eventName=${encodeURIComponent(data["Project Name"])}`;
-            signupButton.onclick = () => {
-                window.location.href = signupLink;
-            };
-            buttonContainer.appendChild(signupButton);
-
-        } else {
-            document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
-        }
-    }).catch((error) => {
-        console.error("Error fetching event details:", error);
-        document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    });
-}
 
 // Helper function to find sponsor key
 function findSponsorKey(organiserName) {
@@ -174,6 +122,111 @@ function findSponsorKey(organiserName) {
         console.error("Error fetching sponsor details:", error);
         return null;
     });
+}
+
+
+
+// Function to toggle between tabs
+function showTab(tabName) {
+    const detailsContainer = document.getElementById("eventDetailsContainer");
+    const photosContainer = document.getElementById("photosSection");
+
+    detailsContainer.style.display = (tabName === "details") ? "block" : "none";
+    photosContainer.style.display = (tabName === "photos") ? "block" : "none";
+
+    if (tabName === "details" && !detailsContainer.hasChildNodes()) {
+        displayEventDetails();  // Ensure event details are loaded only once
+    } else if (tabName === "photos") {
+        displayEventPhotos();  // Load photos when "photos" tab is active
+    }
+}
+
+// Function to load event details into the details tab
+function displayEventDetails() {
+    const eventKey = getQueryParam("eventKey");
+    if (!eventKey) {
+        document.getElementById("eventDetailsContainer").innerHTML = "<p>Event not found.</p>";
+        return;
+    }
+
+    const dbRef = ref(database, `events/${eventKey}`);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            document.getElementById("eventTitle").textContent = data["Project Name"];
+            const eventContent = document.getElementById("eventContent");
+            eventContent.innerHTML = ""; // Clear previous content
+
+            // Process the "Organiser" key outside the loop
+            const organiserName = data["Organiser"];
+            if (organiserName) {
+                // Fetch sponsorKey for the organiser
+                findSponsorKey(organiserName).then((sponsorKey) => {
+                    const link = document.createElement("a");
+                    link.href = `../sponsor-details/sponsor-details.html?sponsorKey=${sponsorKey}`;
+                    link.style.textDecoration = "underline"; // Apply underline style
+                    link.className = "organiser-card"; // Add the class
+                    link.textContent = organiserName; // Set the text content of the link
+
+                    const organiserCard = document.createElement("div");
+                    organiserCard.className = "card";
+                    const organiserLabel = document.createElement("strong");
+                    organiserLabel.textContent = "Organiser: ";
+                    organiserCard.appendChild(organiserLabel);
+                    organiserCard.appendChild(link);
+                    eventContent.appendChild(organiserCard); // Append the organiser card
+
+                    // Now process the rest of the event details
+                    processEventDetails(data, eventContent); // Call function to process remaining fields
+                }).catch((error) => {
+                    console.error("Error fetching sponsor key:", error);
+                });
+            } else {
+                // If no "Organiser", process the rest of the details immediately
+                processEventDetails(data, eventContent);
+            }
+
+        } else {
+            document.getElementById("eventDetailsContainer").innerHTML = "<p>Event details not available.</p>";
+        }
+    }).catch((error) => {
+        console.error("Error fetching event details:", error);
+        document.getElementById("eventDetailsContainer").innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+    });
+}
+
+// Helper function to process event details (other than the "Organiser")
+function processEventDetails(data, eventContent) {
+    for (const key in data) {
+        if (data.hasOwnProperty(key) && key !== "Organiser" && key !== "signups" && key !== "Project Name" && key !== "photoURL" && key !== "Photos" && key !== "Status" && key !== "Coordinates") {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const label = document.createElement("strong");
+            label.textContent = `${key}: `;
+            card.appendChild(label);
+            card.appendChild(document.createTextNode(data[key])); // Add text directly
+            eventContent.appendChild(card); // Append the card
+        }
+    }
+
+    // Add the "View on Map" button if coordinates are available
+    if (data["Coordinates"]) {
+        const viewMapBtn = createViewOnMapButton(data["Coordinates"]);
+        eventContent.appendChild(viewMapBtn);
+    }
+
+    // Add the "Sign Up" button
+    const buttonContainer = document.querySelector('.button-container');
+    buttonContainer.innerHTML = ""; // Clear previous content
+    const signupButton = document.createElement("button");
+    signupButton.textContent = "Sign Up";
+    signupButton.className = "signup-button button-with-margin";
+    const signupLink = `../event-signup/signup-form.html?eventKey=${getQueryParam("eventKey")}&eventName=${encodeURIComponent(data["Project Name"])}`;
+    signupButton.onclick = () => {
+        window.location.href = signupLink;
+    };
+    buttonContainer.appendChild(signupButton);
 }
 
 // Function to load and display event photos from Firestore
@@ -263,23 +316,3 @@ document.addEventListener("DOMContentLoaded", () => {
     showTab("details");
     detailsTab.classList.add("active"); // Make detailsTab active by default
 });
-
-// Function to toggle between tabs
-function showTab(tabName) {
-    const detailsContainer = document.getElementById("eventDetailsContainer");
-    const photosContainer = document.getElementById("photosSection");
-
-    detailsContainer.style.display = (tabName === "details") ? "block" : "none";
-    photosContainer.style.display = (tabName === "photos") ? "block" : "none";
-
-    if (tabName === "details") {
-        displayEventDetails();  // Ensure event details reload if switched to details
-    } else if (tabName === "photos") {
-        displayEventPhotos();  // Load photos when "photos" tab is active
-    }
-}
-
-// Load default tab
-window.onload = () => {
-    showTab('details');  // Show details tab on load
-};
