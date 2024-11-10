@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
-    <link rel="stylesheet" href="../css/nav.css">
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="glowing_circle.css">
+    <link rel="stylesheet" href="../css/admin/nav.css">
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="glowing_circle.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -28,13 +27,13 @@
             <a href="admin.html" class="navbar-brand brand-icon">
                 <img src="../img/social-services.png" alt="">RIGHTTRACK
             </a>
-    
+
             <!-- Navbar Toggle Button for Small Screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <!-- Collapsible Navbar Content -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <!-- Navbar Items, aligned left on large screens and centered on smaller screens -->
@@ -46,7 +45,7 @@
                             <span>Students</span>
                         </a>
                     </div>
-    
+
                     <!-- Community Services Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="projects.html" class="d-flex flex-column align-items-center">
@@ -54,7 +53,7 @@
                             <span>Projects</span>
                         </a>
                     </div>
-    
+
                     <!-- Sponsors Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="sponsors.html" class="d-flex flex-column align-items-center">
@@ -62,7 +61,7 @@
                             <span>Organisations</span>
                         </a>
                     </div>
-    
+
                     <!-- Profile Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="#" class="d-flex flex-column align-items-center">
@@ -79,14 +78,15 @@
     </nav>
 
     <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
-        <div  class="filter-wrapper position-absolute">
-            <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
 
+        <div class="filter-wrapper position-absolute" @mouseover="openFilterOnHover" @mouseleave="closeFilterOnHover">
+            <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" @click="toggleFilterMenu" />
 
-            <!-- Filters Menu (Hidden by default, shown on hover) -->
-            <div :class="['filters', { 'active': isFilterMenuOpen }]" id="filter-menu" class="filters">
+            <!-- Filters Menu -->
+            <div :class="['filters', { 'active': isFilterMenuOpen }]" id="filter-menu">
                 <h2>FILTERS</h2>
 
+                <!-- Student Name Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Student Name:</span>
                     <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
@@ -95,9 +95,10 @@
                     </div>
                 </div>
 
+                <!-- Hours Left Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label">Hours Left:</span>
-                    <div class="row filter-options ">
+                    <div class="row filter-options">
                         <div class="d-flex align-items-center mb-2">
                             <div class="mx-2">
                                 <p class="mb-0">From</p>
@@ -117,21 +118,21 @@
                     </div>
                 </div>
 
+                <!-- Graduation Year Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Graduation Year:</span>
-                    <select v-model="filterGraduation" class="form-select w-100" aria-label="graduation year">
+                    <select v-model="filterGraduation" class="form-select w-100" aria-label="Graduation Year">
                         <option value="allGraduationYear" selected>All Graduation Year</option>
                         <option value="within1Year">Within 1 Year</option>
                         <option value="within2Years">Within 2 Years</option>
                     </select>
                 </div>
 
-
-
-
                 <button id="submit-btn" @click="updateRecords">Submit</button>
             </div>
         </div>
+
+
         <h1>Student Records</h1>
         <table class="table overflow-auto table-responsive">
             <thead>

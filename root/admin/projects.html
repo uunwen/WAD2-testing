@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects</title>
-    <link rel="stylesheet" href="../css/nav.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/admin/nav.css">
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="glowing_circle.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
@@ -26,13 +25,13 @@
             <a href="admin.html" class="navbar-brand brand-icon">
                 <img src="../img/social-services.png" alt="">RIGHTTRACK
             </a>
-    
+
             <!-- Navbar Toggle Button for Small Screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <!-- Collapsible Navbar Content -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <!-- Navbar Items, aligned left on large screens and centered on smaller screens -->
@@ -44,7 +43,7 @@
                             <span>Students</span>
                         </a>
                     </div>
-    
+
                     <!-- Community Services Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="projects.html" class="d-flex flex-column align-items-center">
@@ -52,7 +51,7 @@
                             <span>Projects</span>
                         </a>
                     </div>
-    
+
                     <!-- Sponsors Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="sponsors.html" class="d-flex flex-column align-items-center">
@@ -60,7 +59,7 @@
                             <span>Organisations</span>
                         </a>
                     </div>
-    
+
                     <!-- Profile Icon -->
                     <div class="menu d-flex flex-column align-items-center mx-2">
                         <a href="#" class="d-flex flex-column align-items-center">
@@ -75,17 +74,17 @@
             </div>
         </div>
     </nav>
-    
-    
+
+
     <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
-        <div class="filter-wrapper position-absolute">
-            <img src="../img/filter.png" alt="Settings" class="filter-icon"  @click="toggleFilterMenu"/>
+        <div class="filter-wrapper position-absolute" @mouseover="openFilterOnHover" @mouseleave="closeFilterOnHover">
+            <img src="../img/filter.png" alt="Settings" class="filter-icon" @click="toggleFilterMenu" />
 
-
-            <!-- Filters Menu (Hidden by default, shown on hover) -->
-            <div :class="['filters', { 'active': isFilterMenuOpen }]" id="filter-menu" class="filters">
+            <!-- Filters Menu -->
+            <div :class="['filters', { 'active': isFilterMenuOpen }]" id="filter-menu">
                 <h2>FILTERS</h2>
 
+                <!-- Project Application Status -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Project Application Status:</span>
                     <select v-model="filterProjectStatus" class="form-select w-100"
@@ -96,6 +95,7 @@
                     </select>
                 </div>
 
+                <!-- Admission Period Status -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Admission Period Status:</span>
                     <select v-model="filterAdmission" class="form-select w-100" aria-label="Admission Status">
@@ -106,9 +106,10 @@
                     </select>
                 </div>
 
+                <!-- Total CSP Hours -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label">Total CSP Hours:</span>
-                    <div class="row filter-options ">
+                    <div class="row filter-options">
                         <div class="d-flex align-items-center mb-2">
                             <div class="mx-2">
                                 <p class="mb-0">From</p>
@@ -128,6 +129,7 @@
                     </div>
                 </div>
 
+                <!-- Project Name -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Project Name:</span>
                     <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
@@ -136,20 +138,23 @@
                     </div>
                 </div>
 
+                <!-- Organisers -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Organisers:</span>
-                    <select v-model="filterOrganiser" class="form-select w-100" aria-label="Orgainsers">
-                        <option selected value="allOrganisers" selected>All Organisers</option>
-                        <template v-for="organiser in organisers">
-                            <organisers-list :organiser="organiser" />
+                    <select v-model="filterOrganiser" class="form-select w-100" aria-label="Organisers">
+                        <option selected value="allOrganisers">All Organisers</option>
+                        <template v-for="organiser in organisers" :key="organiser.id">
+                            <organisers-list :organiser="organiser"></organisers-list>
                         </template>
                     </select>
                 </div>
 
                 <button id="submit-btn" @click="updateCommunityServices">Submit</button>
             </div>
-
         </div>
+
+
+
         <h1>Project Records</h1>
         <table class="table overflow-auto table-responsive">
             <thead>
@@ -193,8 +198,8 @@
                     </div>
 
                     <div class="modal-body">
-                        <div v-if="modalDetails.photos.length > 0" id="carouselExampleIndicators" class="carousel slide"
-                            data-bs-ride="carousel">
+                        <div v-if="modalDetails.photos && modalDetails.photos.length > 0" id="carouselExampleIndicators"
+                            class="carousel slide" data-bs-ride="carousel">
                             <ol class="carousel-indicators">
                                 <li v-for="(photo, index) in modalDetails.photos" :key="'indicator-' + index"
                                     :data-bs-target="'#carouselExampleIndicators'" :data-bs-slide-to="index"
@@ -242,6 +247,30 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><strong>Sign Ups:</strong></p>
+                                <!-- Table for signups -->
+                                <div class="table-responsive w-100">
+                                    <table v-if="modalDetails.signups"
+                                        class="table table-striped table-bordered table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Student Name</th>
+                                                <th>Student Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="(student, index) in modalDetails.signups" :key="index">
+                                                <student-list :student="student" />
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                    <!-- If no signups exist, show the fallback message -->
+                                    <p v-else class="text-muted mt-3">No Student Records</p>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 

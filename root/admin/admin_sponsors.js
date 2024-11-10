@@ -32,11 +32,17 @@ const adminApp = Vue.createApp({
       filterSponsorName: "",
       isFilterMenuOpen: false,
       currentIndex: -1,
-      showModal: false
+      showModal: false,
+      isFilterMenuOpen: false,
     };
   },
   mounted() {
     this.loadSponsors();
+    window.addEventListener("resize", this.checkScreenWidth);
+    this.checkScreenWidth();
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.checkScreenWidth);
   },
   watch: {
 
@@ -44,6 +50,22 @@ const adminApp = Vue.createApp({
   methods: {
     toggleFilterMenu() {
       this.isFilterMenuOpen = !this.isFilterMenuOpen;
+    },
+    openFilterOnHover() {
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = true;
+      }
+    },
+    closeFilterOnHover() {
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = false;
+      }
+    },
+    checkScreenWidth() {
+      // This checks the screen width and manages the filter menu visibility based on screen size
+      if (window.innerWidth < 768) {
+        this.isFilterMenuOpen = false; // Hide menu on small screens
+      }
     },
     openModal(record, index) {
       this.modalDetails = { ...record };  // Store the record data in modalDetails
@@ -90,6 +112,7 @@ const adminApp = Vue.createApp({
         // Return true if both conditions match
         return matchesName && matchesCount;
       });
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     }
   }
 });

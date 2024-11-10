@@ -24,40 +24,188 @@
 
 .filter-wrapper {
     position: absolute;
-    /* Position it absolutely */
-    top: -10px;
-    /* Distance from the top of the container */
-    right: 30px;
-    /* Distance from the right of the container */
+    top: 0px;
+    right: 10px;
 }
+.filter-icon {
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+    color: white;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    border: none;
+    /* Remove border */
+    outline: none;
+    /* Remove outline */
+}
+
+.filter-group {
+    display: flex;
+    /* Use flexbox for alignment */
+    flex-wrap: wrap;
+    /* Wrap items if necessary */
+    margin: 20px 0;
+    /* Space above and below the group */
+    gap: 10px;
+    /* Space between cat name and button */
+}
+
 .filter-wrapper img {
     width: 80px;
 }
 
+.filters h2 {
+    text-align: center;
+}
+
+.filter-option:hover {
+    background-color: #4b89dc;
+    color: white;
+    border-color: #3574ba;
+}
+
+.filter-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.selected {
+    background-color: #4b89dc;
+    color: white;
+}
+
 .filters {
     width: 600px;
-    position: fixed;
-    right: 25px;
-    top: 125px;
+    position: absolute;
+    right: 10px;
+    top: 60px;
     height: auto;
     max-height: 80vh;
     overflow-y: auto;
     background-color: #fff;
     border: 1px solid #ddd;
-    padding: 15px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    display: none;
+    z-index: 9999;
+    /* Ensure it sits above other elements */
+}
+
+.filter-wrapper:hover .filters, /* When the icon is hovered */
+.filters:hover { /* When the menu is hovered */
+    display: block;
+}
+
+.filters.active {
+    display: block;
+}
+
+.filter-option {
+    display: flex;
+    /* Use flex to center content */
+    justify-content: center;
+    /* Center the text horizontally */
+    align-items: center;
+    /* Center the text vertically */
+    width: 120px;
+    /* Set a fixed width for uniformity */
+    padding: 10px;
+    /* Adjust padding as needed */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    /* Remove individual margins */
 }
 
 .filters h2 {
-    font-size: 1.5rem; /* Default font size for large screens */
+    font-size: 1.5rem;
+    /* Default font size for large screens */
 }
 
 .filters .filter-label {
-    font-size: 1rem; /* Default font size for labels */
+    font-size: 1rem;
+    /* Default font size for labels */
 }
 
-.filters .form-select, .filters input {
-    font-size: 0.9rem; /* Default font size for inputs */
+.filters .form-select,
+.filters input {
+    font-size: 0.9rem;
+    /* Default font size for inputs */
+}
+
+.filters h2 {
+    text-align: center;
+}
+
+#filter-menu {
+    display: none;
+}
+
+#filter-menu.active {
+    display: block;
+}
+
+.filter-option {
+    display: flex;
+    /* Use flex to center content */
+    justify-content: center;
+    /* Center the text horizontally */
+    align-items: center;
+    /* Center the text vertically */
+    width: 120px;
+    /* Set a fixed width for uniformity */
+    padding: 10px;
+    /* Adjust padding as needed */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    /* Remove individual margins */
+}
+
+.filter-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.filter-group {
+    display: flex;
+    /* Use flexbox for alignment */
+    flex-wrap: wrap;
+    /* Wrap items if necessary */
+    margin: 20px 0;
+    /* Space above and below the group */
+    gap: 10px;
+    /* Space between cat name and button */
+}
+
+#submit-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #4b89dc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#submit-btn:hover {
+    background-color: #3574ba;
 }
 
 .modal {
@@ -114,28 +262,46 @@
     /* Hides any text or numbers */
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
     .main-content {
         margin-top: 100px;
     }
+
+    .filters {
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        display: block;
+        /* Always display on hover */
+    }
+
+    .filter-wrapper:hover .filters {
+        display: block;
+        /* Show on hover */
+    }
+
+    .filter-wrapper img {
+        width: 80px;
+    }
+
 }
 
 @media (max-width: 1400px) {
-    
+
     .table .hide-xxl {
         display: none;
     }
 }
 
 @media (max-width: 1200px) {
-    
+
     .table .hide-xl {
         display: none;
     }
 }
 
 @media (max-width: 992px) {
-    
+
     .table .hide-lg {
         display: none;
     }
@@ -164,54 +330,51 @@
         font-size: 0.85rem;
     }
 
-    .filter-wrapper {
-        top: 5px;
-        right: 10px;
-        
-    }
+
     .filter-wrapper img {
         width: 60px;
     }
 
-    /* Adjust filter menu on smaller screens */
     .filters {
-        width: 90%; /* Set to 80% of viewport width, adjust as needed */
+        width: 90%;
         max-width: 600px;
-        position: fixed; /* Position it fixed on the screen */
-        top: 50%; /* Center it vertically in the viewport */
-        left: 50%; /* Center it horizontally in the viewport */
-        transform: translate(-50%, -50%); /* Perfectly center by adjusting its position */
-        display: none; /* Hidden by default */
-        z-index: 9999; /* Ensure it stays on top of other content */
-        background-color: white; /* Optional: Add a background color */
-        border-radius: 8px; /* Optional: Add rounded corners */
-        padding: 20px; /* Optional: Add padding for spacing */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow */
-        transition: opacity 0.3s ease-in-out; /* Smooth transition */
+        position: fixed;
+        /* Fixed positioning ensures it stays centered when scrolling */
+        top: 50%;
+        /* Center vertically */
+        left: 50%;
+        /* Center horizontally */
+        transform: translate(-50%, -50%);
+        /* True centering */
+        display: none;
+        /* Hidden until toggled */
+        z-index: 9999;
+        /* Ensure it's on top */
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease-in-out;
         font-size: 0.85rem;
     }
 
     .filters.active {
-        right: auto;
-        /* Ensure it stays centered when active */
-        top: 50%;
-        left: 50%;
-        transform: translateX(-50%);
-        /* Adjust for centering horizontally */
+        display: block;
+        /* Show when active */
     }
 
     .filters h2 {
-        font-size: 1.25rem; /* Smaller font size for headings */
+        font-size: 1.25rem;
     }
 
     .filters .filter-label {
-        font-size: 0.9rem; /* Smaller font size for labels */
+        font-size: 0.9rem;
     }
 
-    .filters .form-select, .filters input {
-        font-size: 0.8rem; /* Smaller font size for inputs */
+    .filters .form-select,
+    .filters input {
+        font-size: 0.8rem;
     }
-    
 }
 
 /* Optional: Adjust icon sizes for smaller screens */
@@ -230,19 +393,26 @@
     }
 
     .table,
-    .table button, .filter, .filter input, filter select {
+    .table button,
+    .filter,
+    .filter input,
+    filter select {
         font-size: 0.7rem;
     }
 
     .filters h2 {
-        font-size: 1.1rem; /* Even smaller font size for headings */
+        font-size: 1.1rem;
+        /* Even smaller font size for headings */
     }
 
     .filters .filter-label {
-        font-size: 0.85rem; /* Even smaller font size for labels */
+        font-size: 0.85rem;
+        /* Even smaller font size for labels */
     }
 
-    .filters .form-select, .filters input {
-        font-size: 0.75rem; /* Even smaller font size for inputs */
+    .filters .form-select,
+    .filters input {
+        font-size: 0.75rem;
+        /* Even smaller font size for inputs */
     }
 }

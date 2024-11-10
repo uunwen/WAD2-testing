@@ -51,10 +51,31 @@ const adminApp = Vue.createApp({
   mounted() {
     this.loadStudents();
   },
+  beforeUnmount() {
+    
+  },
   watch: {
 
   },
   methods: {
+    toggleFilterMenu() {
+      // Toggle the filter menu when the icon is clicked (for mobile)
+      if (window.innerWidth < 768) {
+        this.isFilterMenuOpen = !this.isFilterMenuOpen;
+      }
+    },
+    openFilterOnHover() {
+      // Show the filter menu on hover (for desktop)
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = true;
+      }
+    },
+    closeFilterOnHover() {
+      // Hide the filter menu on mouse leave (for desktop)
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = false;
+      }
+    },
     openModal(record, index) {
       this.modalDetails = { ...record };  // Store the record data in modalDetails
       this.showModal = true;  // Show the modal
@@ -62,9 +83,6 @@ const adminApp = Vue.createApp({
     },
     closeModal() {
       this.showModal = false;  // Close the modal
-    },
-    toggleFilterMenu() {
-      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },
     async loadStudents() {
       get(dbRef)
