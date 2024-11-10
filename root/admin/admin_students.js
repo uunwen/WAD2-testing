@@ -1,10 +1,10 @@
 const userData = JSON.parse(sessionStorage.getItem('user'));
 
-if (userData.userType != "admin") {
-  window.location.href = `../login/login.html`;
-}
-else {
-  console.log(true);
+// Check if userData exists and if userType is not 'admin'
+if (!userData || userData.userType !== "admin") {
+  // Clear session storage and redirect to login page
+  sessionStorage.clear();
+  window.location.href = "../login/login.html";
 }
 
 
@@ -218,3 +218,8 @@ adminApp.component('studentRecords', {
 
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
+
+document.getElementById("logout-link").addEventListener("click", function(event) {
+  // Clear sessionStorage to end the session
+  sessionStorage.clear();
+});

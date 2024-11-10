@@ -1,3 +1,12 @@
+const userData = JSON.parse(sessionStorage.getItem('user'));
+
+// Check if userData exists and if userType is not 'admin'
+if (!userData || userData.userType !== "admin") {
+  // Clear session storage and redirect to login page
+  sessionStorage.clear();
+  window.location.href = "../login/login.html";
+}
+
 // Import Firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -306,7 +315,7 @@ adminApp.component('communityServiceRecords', {
         {{ getSignupsCount(record) }} / {{ record.Capacity }}
       </td>
       <td class="hide-xl align-middle">{{ record.Location }}</td>
-      <td class="align-middle">{{ record.Organiser }}</td>
+      <td class="hide-lg align-middle">{{ record.Organiser }}</td>
       <td class="align-middle">{{ record['Project Name'] }}</td>
       <td class="hide-xxl align-middle">{{ record.Region }}</td>
       <td class="hide-xxl align-middle">{{ record['Session(s)'] }}</td>
@@ -377,3 +386,7 @@ adminApp.component('studentList', {
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
 
+document.getElementById("logout-link").addEventListener("click", function(event) {
+  // Clear sessionStorage to end the session
+  sessionStorage.clear();
+});
