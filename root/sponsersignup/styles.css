@@ -1,48 +1,101 @@
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f9f9f9; /* Background color for the body */
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  font-size: 2rem; /* Responsive font size */
+}
+
+/* Center the chart and make it responsive */
+.chart-container {
+  max-width: 90vw; /* Adjusts width based on viewport */
+  margin: 0 auto;
+  padding: 10px;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto; /* Makes the canvas responsive */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
   h1 {
-    text-align: center; /* Center the heading */
-    color: #333; /* Color of the heading */
+    font-size: 1.5rem;
   }
-  
   table {
-    width: 100%; /* Full width of the table */
-    border-collapse: collapse; /* Collapses border spacing */
-    margin-top: 20px; /* Space above the table */
+    font-size: 0.9rem;
   }
-  td {
-    color: black !important;
-    visibility: visible !important;
-    display: table-cell !important;
-  }
-  
-  
   th, td {
-    padding: 10px; /* Padding for cells */
-    text-align: left; /* Align text to the left */
-    border-bottom: 1px solid #ddd; /* Bottom border for rows */
+    padding: 8px;
   }
-  
+}
+
+@media (max-width: 480px) {
+  body {
+    margin: 10px;
+  }
+  h1 {
+    font-size: 1.3rem;
+  }
+  table {
+    font-size: 0.8rem;
+  }
+  /* Stack table cells vertically on extra small screens */
+  th, td {
+    display: block;
+    width: 100%;
+    text-align: right;
+  }
   th {
-    background-color: #f2f2f2; /* Background color for headers */
+    text-align: left;
+    background-color: #e0e0e0;
   }
-  
-  canvas {
-    display: block; /* Block display for the canvas */
-    margin: 50px auto; /* Center the canvas */
-    max-width: 600px; /* Max width of the canvas */
-    width: 100%; /* Full width of the canvas */
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    float: left;
+    color: #333;
   }
-  a {
-    text-decoration: none;
-    color: inherit; /* Use the original color of the text */
-  }
-  
-  a:visited {
-    color: inherit; /* Prevent color change after clicking */
-  }
-  
+}
+
+/* Center the chart and make it responsive */
+.chart-container {
+  max-width: 100%; /* Use the full width of the parent */
+  margin: 0 auto;
+  padding: 10px;
+}
+
+canvas {
+  display: block;
+  width: 100%;  /* Full width */
+  height: auto; /* Auto height to maintain aspect ratio */
+}
+
+/* Update for chart container */
+#signup-capacity-chart {
+  width: 100% !important;  /* Make it fully responsive */
+  height: 300px;  /* Adjust the height to something more reasonable */
+}

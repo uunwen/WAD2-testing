@@ -2,7 +2,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBFS6yp8D-82OMm_s3AmwCJfyDKFhGl0V0",
     authDomain: "wad-proj-2b37f.firebaseapp.com",
-    databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    databaseURL: "https://wad-proj-2b37f-default-rtdb.asia-southeast1.firebasedatabase.app", // Full URL here
     projectId: "wad-proj-2b37f",
     storageBucket: "wad-proj-2b37f.appspot.com",
     messagingSenderId: "873354832788",
@@ -41,18 +41,22 @@ async function fetchEventSignUps() {
     }
 }
 
+// Generate dynamic colors based on the number of events
+function generateColors(numColors) {
+    const colors = [];
+    for (let i = 0; i < numColors; i++) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.6)`);
+    }
+    return colors;
+}
+
 // Function to create the bar chart
 function createChart(eventNames, signUpCounts, eventKeys) {
     const ctx = document.getElementById('signupChart').getContext('2d');
-    const colors = [
-        'rgba(255, 99, 132, 0.6)', // Red
-        'rgba(54, 162, 235, 0.6)', // Blue
-        'rgba(255, 206, 86, 0.6)', // Yellow
-        // Add more colors as needed
-    ];
-    
-    // Ensure the number of colors is equal to the number of events
-    const datasetColors = colors.slice(0, eventNames.length);
+    const colors = generateColors(eventNames.length); // Generate colors based on the number of events
 
     const signupChart = new Chart(ctx, {
         type: 'bar',
@@ -61,12 +65,14 @@ function createChart(eventNames, signUpCounts, eventKeys) {
             datasets: [{
                 label: 'Number of Students Signed Up',
                 data: signUpCounts,
-                backgroundColor: datasetColors,
-                borderColor: datasetColors.map(color => color.replace('0.6', '1')), // Make border color fully opaque
+                backgroundColor: colors,
+                borderColor: colors.map(color => color.replace('0.6', '1')), // Make border color fully opaque
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true, // Enable responsiveness
+            maintainAspectRatio: false, // Allow chart to adjust to canvas size
             scales: {
                 x: { beginAtZero: true },
                 y: { beginAtZero: true }
