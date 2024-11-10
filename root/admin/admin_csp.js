@@ -71,7 +71,7 @@ const adminApp = Vue.createApp({
     sortData(column) {
       // Log to verify column click
       console.log(`Sorting by column: ${column}`);
-  
+
       // Toggle sort order if the same column is clicked, otherwise reset to ascending
       if (this.sortColumn === column) {
         this.sortAscending = !this.sortAscending;
@@ -79,24 +79,24 @@ const adminApp = Vue.createApp({
         this.sortColumn = column;
         this.sortAscending = true;
       }
-  
+
       // Perform the sorting directly on selectedStudents
       this.selectedEvents = [...this.selectedEvents].sort((a, b) => {
         const aValue = a[column];
         const bValue = b[column];
-  
+
         // Handle undefined or null values by treating them as empty strings or zeros
         const parsedAValue = aValue === undefined || aValue === null ? '' : aValue;
         const parsedBValue = bValue === undefined || bValue === null ? '' : bValue;
-  
+
         // Sort strings and numbers differently
         if (typeof parsedAValue === 'string' && typeof parsedBValue === 'string') {
-          return this.sortAscending 
+          return this.sortAscending
             ? parsedAValue.localeCompare(parsedBValue)
             : parsedBValue.localeCompare(parsedAValue);
         } else {
-          return this.sortAscending 
-            ? parsedAValue - parsedBValue 
+          return this.sortAscending
+            ? parsedAValue - parsedBValue
             : bValue - parsedAValue;
         }
       });
@@ -211,10 +211,9 @@ const adminApp = Vue.createApp({
       // Iterate over all events
 
       for (const event of this.allEvents) {
-
         // Split the Admissions Period and trim any whitespace
-        const admissionsPeriod = event["Admissions Period"].split('–').map(period => period.trim());
-
+        const admissionsPeriod = event["Admissions Period"].split("-").map(period => period.trim());
+        
         // Check if the admissions period has two parts before proceeding
         if (admissionsPeriod.length === 2) {
           // Parse the start and end dates
@@ -356,7 +355,7 @@ adminApp.component('communityServiceRecords', {
       <td class="hide-xxl align-middle">{{ record['Session(s)'] }}</td>
       <td class="hide-lg align-middle">{{ record['Total CSP hours'] }}</td>
       <td class="hide-xl align-middle">{{ record['Volunteer Period'] }}</td>
-      <td class="align-middle hide-xl">
+      <td class="align-middle hide-lg">
         <button 
           :class="record.Status === 'Approved' ? 'btn btn-success' : 'btn btn-danger'" 
           @click="$emit('update-status', index)">
@@ -373,7 +372,7 @@ adminApp.component('communityServiceRecords', {
       if (status === 'Not Approved') return 'glowing-circle-red';
 
       try {
-        const [start, end] = admissionPeriod.split('–').map(date => new Date(date.trim()));
+        const [start, end] = admissionPeriod.split('-').map(date => new Date(date.trim()));
         const currentDate = new Date();
 
         if (start && end) {
@@ -421,7 +420,7 @@ adminApp.component('studentList', {
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
 
-document.getElementById("logout-link").addEventListener("click", function(event) {
+document.getElementById("logout-link").addEventListener("click", function (event) {
   // Clear sessionStorage to end the session
   sessionStorage.clear();
 });

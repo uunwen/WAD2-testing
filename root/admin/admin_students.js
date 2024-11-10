@@ -202,6 +202,8 @@ const adminApp = Vue.createApp({
         // Update the array in the database
         await set(tasklistRef, tasklist);
         console.log("Tasklist successfully updated!");
+        this.showModal = false;
+        this.message = "";
       }
       catch (error) {
         console.error("Error updating tasklist:", error);

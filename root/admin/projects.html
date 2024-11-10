@@ -22,7 +22,7 @@
     <nav class="navbar navbar-expand-lg fixed-top top-0">
         <div class="container-fluid">
             <!-- Brand Icon -->
-            <a href="admin.html" class="navbar-brand brand-icon">
+            <a href="projects.html" class="navbar-brand brand-icon">
                 <img src="../img/social-services.png" alt="">RIGHTTRACK
             </a>
 
@@ -170,7 +170,9 @@
                     </th>
                     <th class="hide-xxl">Region</th>
                     <th class="hide-xxl">Session(s)</th>
-                    <th class="hide-lg">Total CSP hours</th>
+                    <th class="hide-lg" @click="sortData('Total CSP hours')">
+                        Total CSP hours <span v-if="sortColumn === 'Total CSP hour'" class="sort-icon">{{ sortAscending ? '↑' : '↓' }}</span>
+                      </th>
                     <th class="hide-xl">Volunteer Period </th>
                     <th class="hide-lg">Status</th>
                     <th>View Details</th>
@@ -193,8 +195,12 @@
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content shadow-lg rounded-3">
                     <div class="modal-header border-bottom">
-                        <h5 class="modal-title me-2" id="projectModalLabel"> {{ modalDetails['Project Name'] }}</h5>
-                        <div :class="checkStatus(modalDetails.Status, modalDetails['Admissions Period'])"></div>
+                        <div class="d-flex flex-column flex-md-row">
+                            <h5 class="modal-title me-2" id="projectModalLabel">
+                                {{ modalDetails['Project Name'] }}
+                            </h5>
+                            <div :class="checkStatus(modalDetails.Status, modalDetails['Admissions Period'])"></div>
+                        </div>
                         <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
                     </div>
 
