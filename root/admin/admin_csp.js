@@ -213,7 +213,7 @@ const adminApp = Vue.createApp({
       for (const event of this.allEvents) {
         // Split the Admissions Period and trim any whitespace
         const admissionsPeriod = event["Admissions Period"].split("-").map(period => period.trim());
-        
+
         // Check if the admissions period has two parts before proceeding
         if (admissionsPeriod.length === 2) {
           // Parse the start and end dates
@@ -274,7 +274,7 @@ const adminApp = Vue.createApp({
       }
       else {
         try {
-          const admission = admissionPeriod.split('–').map(period => period.trim());
+          const admission = admissionPeriod.split('-').map(period => period.trim());
 
           // Check if the admissions period has two parts before proceeding
           if (admission.length == 2) {
