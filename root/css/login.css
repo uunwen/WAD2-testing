@@ -15,6 +15,11 @@ nav.navbar {
   padding: 0.5rem 1rem; /* Adjust padding to reduce height */
 }
 
+/* Default styling for desktop view */
+.nav-items {
+  display: flex;
+}
+
 /* Flex alignment for icons and labels */
 .navbar-nav .nav-item {
   display: flex;
@@ -205,11 +210,21 @@ nav.navbar {
       align-items: center;
   }
 
-  .icon {
-      width: 20px; /* Adjust icon size on smaller screens */
-  }
+  .nav-items {
+    display: none; /* Hide the right-side links on smaller screens */
+}
 
-  .navbar-brand {
-      font-size: 1.2rem; /* Adjust title font size on smaller screens */
-  }
+/* Adjust font size and padding if necessary for smaller screens */
+.navbar-nav .nav-item {
+font-size: 14px;
+}
+
+.login-options {
+  flex-direction: column;
+}
+.login-options button {
+  width: 80%; /* Adjust button width for better appearance on smaller screens */
+  margin: 10px auto;
+}
+
 }

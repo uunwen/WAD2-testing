@@ -1,4 +1,10 @@
-
+// Import required Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  ref,
+  get,
+  child,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -128,9 +134,6 @@ function filterEvents(events) {
   });
 }
 
-
-
-
 // Toggle filter selection and update selected filters
 window.toggleSelect = function (element) {
   element.classList.toggle("selected");
@@ -202,10 +205,82 @@ function filterBySearch() {
   displayEvents(filteredEvents);
 }
 
+// To pass uid into filepath for attendance QR quote -- yunwen
+window.getUserUid = function () {
+  // Retrieve user info
+  const urlParams = new URLSearchParams(window.location.search);
+  const uid = urlParams.get("uid");
+  // File path to attendance.html
+  const filePath = "../attendance/attendance.html?uid=" + uid;
+  window.location.href = filePath; // Navigate to the file path
+};
+window.addEventListener("resize", function () {
+  if (window.innerWidth > 768) {
+    this.document.querySelector(".sidebar").style.display = "block";
+  } else {
+    var sidebar = document.querySelector(".sidebar");
+    sidebar.style.display = "none";
+  }
+});
+
+// collapse sidebar 
+window.sidebarIconSelect = function sidebarIconSelect() {
+  var sidebar = document.querySelector(".sidebar");
+  if (window.getComputedStyle(sidebar, null).display == "none") {
+      sidebar.style.display = "block";
+  }
+  else{
+      sidebar.style.display = "none";
+  }
+}
+
+// <div id='app'></div>
+const app = Vue.createApp({
+  data() {
+    return {
+      sidebar: "False",
+      account: "student",
+      hoursLeft: 80,
+      toDoList: ["Task 1", "Task 2", "Task 3", "Task 4"],
+    };
+  }, // data
+  // computed: {
+  //     derivedProperty() {
+  //         return false;
+  //     }
+  // }, // computed
+  // created() {
+  // },
+  mounted() {
+    this.getHours();
+  },
+  methods: {
+    getUser() {
+      return this.account;
+    },
+    getHours() {
+      // To pass hours left --- yunwen
+      const userData = JSON.parse(sessionStorage.getItem("user"));
+      get(child(ref(database), `students/${userData.uid}`))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const studentInfo = snapshot.val();
+            this.hoursLeft = studentInfo["hours_left"];
+            console.log(this.hoursLeft);
+          } else {
+            console.log("No data available");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  }, // methods
+});
+const vm = app.mount("#app");
+
 // Event listener for the search icon click
 document.querySelector(".search-icon").addEventListener("click", filterBySearch);
-
-
 
 // Fetch data on page load
 document.addEventListener("DOMContentLoaded", fetchData);
