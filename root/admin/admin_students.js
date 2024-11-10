@@ -9,6 +9,10 @@ if (!userData || userData.userType !== "admin") {
 
 
 // Import Firebase modules from CDN
+import { Chart, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, PieController } from 'https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.esm.min.js';
+
+// Register the necessary components
+Chart.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, PieController);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -48,6 +52,7 @@ const adminApp = Vue.createApp({
       isFilterMenuOpen: false,
       sortColumn: '',       // track the currently sorted column
       sortAscending: true,  // track sorting order
+      studentsWithHoursChart: null // Variable to store the chart instance
     };
   },
   mounted() {
@@ -57,6 +62,38 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    createStudentsWithHoursChart() {
+      const studentsWithHours = this.allStudents.filter(student => student.hours_left > 0).length;
+      const studentsWithoutHours = this.allStudents.length - studentsWithHours;
+    
+      // Destroy previous chart instance if it exists
+      if (this.studentsWithHoursChart) {
+        this.studentsWithHoursChart.destroy();
+      }
+    
+      // Select the canvas element where the chart will render
+      const ctx = document.getElementById('studentsWithHoursChart').getContext('2d');
+    
+      // Create the pie chart with updated data
+      this.studentsWithHoursChart = new Chart(ctx, {
+        type: 'pie',  // Pie chart
+        data: {
+          labels: ['Students with > 0 Hours', 'Students with 0 Hours'],
+          datasets: [{
+            data: [studentsWithHours, studentsWithoutHours],
+            backgroundColor: ['#4CAF50', '#FF6347'], // Colors for the chart
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        },
+      });
+    },
     sortData(column) {
       // Log to verify column click
       console.log(`Sorting by column: ${column}`);
@@ -128,6 +165,7 @@ const adminApp = Vue.createApp({
             // Initially set selectedStudents to allStudents
             this.selectedStudents = this.allStudents;
             this.findFilterParameters();
+            this.createStudentsWithHoursChart();
           } else {
             console.log("No data available");
           }

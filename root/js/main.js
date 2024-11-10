@@ -227,10 +227,10 @@ window.addEventListener("resize", function () {
 window.sidebarIconSelect = function sidebarIconSelect() {
   var sidebar = document.querySelector(".sidebar");
   if (window.getComputedStyle(sidebar, null).display == "none") {
-      sidebar.style.display = "block";
+    sidebar.style.display = "block";
   }
-  else{
-      sidebar.style.display = "none";
+  else {
+    sidebar.style.display = "none";
   }
 }
 
@@ -238,10 +238,9 @@ window.sidebarIconSelect = function sidebarIconSelect() {
 const app = Vue.createApp({
   data() {
     return {
-      sidebar: "False",
       account: "student",
       hoursLeft: 80,
-      toDoList: ["Task 1", "Task 2", "Task 3", "Task 4"],
+      tasklist: ["You Are Up To Task!"],
     };
   }, // data
   // computed: {
@@ -266,7 +265,9 @@ const app = Vue.createApp({
           if (snapshot.exists()) {
             const studentInfo = snapshot.val();
             this.hoursLeft = studentInfo["hours_left"];
+            this.tasklist = studentInfo["tasklist"]
             console.log(this.hoursLeft);
+            console.log(this.tasklist);
           } else {
             console.log("No data available");
           }
@@ -275,7 +276,44 @@ const app = Vue.createApp({
           console.error(error);
         });
     },
+    handleTaskToggle(eventData) {
+      const task = eventData.task;
+      const isChecked = eventData.isChecked;
+
+      // If the task is checked, remove it from the task list
+      if (isChecked) {
+        // Remove the task from the list in Vue
+        this.tasklist = this.tasklist.filter(item => item !== task);
+
+        // Also remove the task from Firebase
+        const userData = JSON.parse(sessionStorage.getItem("user"));
+        const userRef = database.ref(`students/${userData.uid}/tasklist`);
+        userRef.set(this.tasklist); // Update the task list in Firebase
+      }
+    },
   }, // methods
+});
+
+app.component('tasklist', {
+  props: ['task'],  // Only need 'task' prop
+  emits: ['task-toggled'],  // Emit event when checkbox is clicked
+  template: `
+    <label>
+      <input type="checkbox" v-model="isChecked" @change="onTaskToggle">
+      {{ task }}  <!-- Render the task text -->
+    </label>
+  `,
+  data() {
+    return {
+      isChecked: false,  // Local state for checkbox
+    };
+  },
+  methods: {
+    onTaskToggle() {
+      // Emit the task-toggled event with task and checkbox status
+      this.$emit('task-toggled', { task: this.task, isChecked: this.isChecked });
+    },
+  },
 });
 const vm = app.mount("#app");
 
