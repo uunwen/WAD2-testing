@@ -6,11 +6,6 @@ const userData = JSON.parse(sessionStorage.getItem('user'));
 
 console.log(userData.uid);
 
-// Display welcome message
-document.getElementById(
-  "welcomeMessage"
-).textContent = `Welcome`;
-
 // // Get today's date, NOT COMPLETE BUT DO NOT DELET FIRST
 // var date = moment();
 // let qrText = date.format("DD/MM/YYYY").toString();
@@ -32,3 +27,14 @@ function generateQr() {
 window.onload = () => {
   setTimeout(generateQr, 1000); // Delay QR generation by 1 second
 };
+
+// Update time display
+function updateTime() {
+  const now = new Date();
+  const timeString = now.toLocaleTimeString();
+  const dateString = now.toLocaleDateString();
+  document.getElementById("timeDisplay").textContent = `${dateString} ${timeString}`;
+}
+
+updateTime();
+setInterval(updateTime, 1000);

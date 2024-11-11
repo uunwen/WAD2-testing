@@ -120,6 +120,11 @@
     display: block;
 }
 
+#filter-menu {
+    max-height: 70vh;  /* Adjust based on your needs */
+    overflow-y: auto;  /* Enables scrolling when the content overflows */
+}
+
 .selected {
     background-color: #4b89dc;
     color: white;

@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: #f0f1e6;
 }
@@ -54,6 +58,29 @@ body {
 
 nav {
     z-index: 1000;
+}
+
+.search-container {
+    max-width: 600px;  /* Limit max width for readability */
+    width: 100%;       /* Full width within the container */
+    position: relative;
+    margin-left: 15px;
+}
+
+.search-container input[type="text"] {
+    width: 100%;       /* Make input take full width of container */
+    padding: 10px 40px; /* Add padding for aesthetics */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-container .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {

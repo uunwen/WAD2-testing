@@ -56,37 +56,37 @@ function displayEvents(events) {
 
     cardElement.innerHTML = `
       <div class="card-body p-0">
-        <!-- Event Title -->
-        <h2 class="card-title" style="color: #007bff; font-size: 42px; text-decoration: underline; margin: 16px;">
-          ${event["Project Name"] || "Unnamed Event"}
-        </h2>
-
-        <!-- Event Description -->
-        <p style="margin: 16px;"><strong>Description:</strong> ${event.Description || "No description available."}</p>
-
-        <!-- Event Location -->
-        <p style="margin: 16px;"><strong>Location:</strong> ${event.Location || "Not specified"}</p>
-
-        <!-- Volunteer Period -->
-        <p style="margin: 16px;"><strong>Volunteer Period:</strong> ${event["Volunteer Period"] || "Not specified"}</p>
-
-        <!-- Organiser -->
-        <p style="margin: 16px;"><strong>Organiser:</strong> ${event.Organiser || "Not specified"}</p>
-
-        <!-- Sign-Up Button -->
-        <div class="text-center" style="border: 2px solid #ccc;">
-          <button class="btn btn-light w-70" style="padding: 0px; color: #cccccc; border: none; ">
-            Sign Up
-          </button>
-        </div>
-      </div>
+      <!-- Event Title -->
+      <h2 class="card-title" onclick="navigateToEventDetails('${event.eventId}')" style="color: #007bff; font-size: 42px; text-decoration: underline; margin: 16px; cursor: pointer;">
+        ${event["Project Name"] || "Unnamed Event"}
+      </h2>
+  
+      <!-- Event Description -->
+      <p style="margin: 16px;"><strong>Description:</strong> ${event.Description || "No description available."}</p>
+  
+      <!-- Event Location -->
+      <p style="margin: 16px;"><strong>Location:</strong> ${event.Location || "Not specified"}</p>
+  
+      <!-- Volunteer Period -->
+      <p style="margin: 16px;"><strong>Volunteer Period:</strong> ${event["Volunteer Period"] || "Not specified"}</p>
+  
+      <!-- Organiser -->
+      <p style="margin: 16px;"><strong>Organiser:</strong> ${event.Organiser || "Not specified"}</p>
+    </div>
     `;
 
     dataDisplayDiv.appendChild(cardElement);
   });
 }
 
+// Make the function globally accessible
+window.navigateToEventDetails = function(eventKey) {
+  // Construct the relative URL
+  const url = `../student/event-details/event-details.html?eventKey=${eventKey}`;
 
+  // Redirect to the constructed relative URL
+  window.location.href = url;
+};
 
 // Define global variables for selected filters
 const selectedFilters = {
@@ -196,24 +196,18 @@ function filterBySearch() {
   const searchInput = document.getElementById("search-bar").value.toLowerCase();
 
   // Filter events based on the search input matching the title or project name
-  const filteredEvents = allEvents.filter((event) => {
+  let filteredEvents = allEvents.filter((event) => {
     const eventTitle = (event["Project Name"] || "").toLowerCase();
     return eventTitle.includes(searchInput);
   });
+
+  // Further filter the events based on selected filters
+  filteredEvents = filterEvents(filteredEvents);
 
   // Display the filtered events
   displayEvents(filteredEvents);
 }
 
-// To pass uid into filepath for attendance QR quote -- yunwen
-window.getUserUid = function () {
-  // Retrieve user info
-  const urlParams = new URLSearchParams(window.location.search);
-  const uid = urlParams.get("uid");
-  // File path to attendance.html
-  const filePath = "../attendance/attendance.html?uid=" + uid;
-  window.location.href = filePath; // Navigate to the file path
-};
 window.addEventListener("resize", function () {
   if (window.innerWidth > 768) {
     this.document.querySelector(".sidebar").style.display = "block";
@@ -223,16 +217,21 @@ window.addEventListener("resize", function () {
   }
 });
 
-// collapse sidebar 
-window.sidebarIconSelect = function sidebarIconSelect() {
-  var sidebar = document.querySelector(".sidebar");
-  if (window.getComputedStyle(sidebar, null).display == "none") {
-    sidebar.style.display = "block";
+// sidebar collapse
+  window.sidebarIconSelect = function sidebarIconSelect() {
+    var sidebar = document.querySelector(".sidebar");
+  
+    // Toggle the sidebar visibility
+    if (window.getComputedStyle(sidebar, null).display == "none") {
+      sidebar.style.display = "block";
+      // Scroll to the sidebar after making it visible
+      sidebar.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    else {
+      sidebar.style.display = "none";
+    }
   }
-  else {
-    sidebar.style.display = "none";
-  }
-}
+  
 
 // <div id='app'></div>
 const app = Vue.createApp({

@@ -1,57 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Page</title>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
-    <style>
-        html, body {
-            height: 100%; /* Ensures full height of the viewport */
-            margin: 0; /* Removes any default margins */
-        }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: url('../img/profilebackground.jpg') no-repeat center center/cover;
-        }
-      .profile-container {
-        max-width: 600px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1; /* Ensures content is above the background */
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Page</title>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+  <style>
+    html,
+    body {
+      height: 100%;
+      /* Ensures full height of the viewport */
+      margin: 0;
+      /* Removes any default margins */
+    }
 
-      .profile-header {
-        text-align: center;
-      }
-      .profile-header img {
-        border-radius: 50%;
-        width: 150px;
-        height: 150px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="profile-container">
-      <div class="profile-header">
-        <img id="profile-picture" src="" alt="Profile Picture" crossorigin="anonymous">
-        <h1 id="user-name">Loading...</h1>
-        <p id="user-email">Loading...</p>
-        <p id="graduation-year">Loading...</p>
-      </div>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('../img/profilebackground.jpg') no-repeat center center/cover;
+    }
 
-      <div class="history">
-        <h2>Past Events</h2>
-        <div id="displayEvent">No events yet!</div>
-      </div>
+    .profile-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      /* Ensures content is above the background */
+    }
+
+    .profile-header {
+      text-align: center;
+    }
+
+    .profile-header img {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="profile-container">
+    <div class="profile-header">
+      <img id="profile-picture" src="" alt="Profile Picture" crossorigin="anonymous">
+      <h1 id="user-name">Loading...</h1>
+      <p id="user-email">Loading...</p>
+      <p id="graduation-year">Loading...</p>
     </div>
 
-    <script type="module" src="../js/profile.js"></script>
-  </body>
+    <div class="history">
+      <h2>Past Events</h2>
+      <div id="displayEvent"></div>
+    </div>
+  </div>
+  <script type="module" src="../js/profile.js"></script>
+</body>
+
 </html>
