@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/sidebar-checkbox.css">
-    <!-- <link rel="stylesheet" href="../css/events.css"> -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- Bootstrap CSS -->
@@ -53,139 +52,140 @@
     <!-- Bootstrap Navbar with icons -->
     <nav class="navbar navbar-expand-lg position-sticky top-0">
 
-        <div class="container-fluid d-flex justify-content-end"> <!-- Align icons to the right -->
-            <!-- this links back to the homepage -->
-            <a href="../student/main.html" class="navbar-brand"><img src="../img/social-services.png"
-                    alt="">RIGHTTRACK</a>
-            <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <div class="col-8">
-                        <div class="search-container"> <!-- Flexbox container -->
-                            <input type="text" placeholder="Search..." aria-label="Search" id="search-bar">
-                            <span class="search-icon">🔍</span> <!-- Search icon next to input -->
-                        </div>
-                    </div>
+        <div class="container-fluid">
+            <!-- Logo on the left -->
+            <a href="../student/main.html" class="navbar-brand me-auto d-flex align-items-center">
+                <img src="../img/social-services.png" alt=""> RIGHTTRACK
+            </a>
+
+
+            <!-- Centered Search Bar -->
+            <div class="d-flex justify-content-center flex-grow-1">
+                <div class="search-container">
+                    <input type="text" placeholder="Search..." aria-label="Search" id="search-bar">
+                    <span class="search-icon">🔍</span>
                 </div>
             </div>
 
-            <!-- Filter Icon which shows the filters on hover -->
-            <div class="filter-wrapper">
-                <img src="../img/filter.png" alt="Settings" class="filter-icon">
-
-                <!-- Filters Menu (Hidden by default, shown on hover) -->
-                <div id="filter-menu" class="filters">
-                    <h2>FILTERS</h2>
-
-                    <div class="filter-group">
-                        <span class="filter-label">Time:</span>
-                        <div class="row filter-options">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Morning</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Afternoon</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Evening</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-label">Day:</span>
-                        <div class="row filter-options">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Monday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Tuesday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Wednesday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Thursday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Friday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Saturday</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Sunday</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-label">Region:</span>
-                        <div class="row filter-options">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Central</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">North</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">South</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">East</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">West</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-label">Commitment Level:</span>
-                        <div class="row filter-options">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">Bi-weekly</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">1x / wk</div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="filter-option" onclick="toggleSelect(this)">One time event</div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="filter-group">
-                        <span class="filter-label">Minimum Hours Needed:</span>
-                        <div class="row filter-options">
-                            <div class="col-lg-12 col-md-12 col-sm-12 mb-2">
-                                <input type="number" class="form-control" placeholder="Min (hours)"
-                                    aria-label="Minimum Volunteer Period" min="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button id="submit-btn">Submit</button>
+            <!-- Icons on the right -->
+            <div class="d-flex align-items-center ms-auto">
+                <!-- Sidebar Icon -->
+                <div class="menu sidebar-icon">
+                    <span onclick="sidebarIconSelect()" class="icon"><img src="../img/layout.png" alt="sidebar"></span>
                 </div>
-            </div>
+                <!-- Filter Icon which shows the filters on hover -->
+                <div class="filter-wrapper">
+                    <img src="../img/filter.png" alt="Settings" class="filter-icon">
 
-            <!-- Profile Icon -->
-            <div class="menu">
-                <span class="icon"><img src="../img/user.png" alt="Profile" /></span>
-                <div class="menu-content">
-                    <a href="../student/profile.html"><img src="../img/user.png" alt="Profile Icon" />Profile</a>
-                    <a href="../" onclick="getUserUid()">
-                        <img src="../img/attendance.png" alt="attendance Icon" />Attendance
-                    </a>
+                    <!-- Filters Menu (Hidden by default, shown on hover) -->
+                    <div id="filter-menu" class="filters">
+                        <h2>FILTERS</h2>
 
-                    <div class="separator"></div>
-                    <a href="#" id="logout"><img src="../img/logout.png" alt="Log Out Icon" />Log out</a>
+                        <div class="filter-group">
+                            <span class="filter-label">Time:</span>
+                            <div class="row filter-options flex-wrap">
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Morning</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Afternoon</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Evening</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <span class="filter-label">Day:</span>
+                            <div class="row filter-options flex-wrap">
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Monday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Tuesday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Wednesday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Thursday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Friday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Saturday</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Sunday</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <span class="filter-label">Region:</span>
+                            <div class="row filter-options flex-wrap">
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Central</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">North</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">South</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">East</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">West</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <span class="filter-label">Commitment Level:</span>
+                            <div class="row filter-options flex-wrap">
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">Bi-weekly</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">1x / wk</div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                                    <div class="filter-option" onclick="toggleSelect(this)">One time event</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <span class="filter-label">Minimum Hours Needed:</span>
+                            <div class="row filter-options flex-wrap">
+                                <div class="col-12 mb-2">
+                                    <input type="number" class="form-control" placeholder="Min (hours)"
+                                        aria-label="Minimum Volunteer Period" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="submit-btn">Submit</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Sidebar Icon -->
-            <div class="menu sidebar-icon">
-                <span onclick="sidebarIconSelect()" class="icon"><img src="../img/layout.png" alt="sidebar"></span>
+                <!-- Profile Icon -->
+                <div class="menu">
+                    <span class="icon"><img src="../img/user.png" alt="Profile" /></span>
+                    <div class="menu-content">
+                        <a href="../student/profile.html"><img src="../img/user.png" alt="Profile Icon" />Profile</a>
+                        <a href="../attendance/attendance.html">
+                            <img src="../img/attendance.png" alt="attendance Icon" />Attendance
+                        </a>
+
+                        <div class="separator"></div>
+                        <a href="#" id="logout"><img src="../img/logout.png" alt="Log Out Icon" />Log out</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
