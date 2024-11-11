@@ -9,7 +9,7 @@ body {
   background-color: #f8f9fa; /* Light background color */
   padding: 20px; /* Add padding */
   border-right: 1px solid #ddd; /* Light border on the right */
-  height: auto; /* Dynamic height based on content */
+  height: 100vh; /* Dynamic height based on content */
   position: relative; /* Position relative to its parent */
   transition: height 0.3s; /* Smooth transition for height change */
 }
