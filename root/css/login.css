@@ -225,15 +225,46 @@ nav.navbar {
 /* Adjust navbar for mobile responsiveness */
 @media (max-width: 767px) {
   .navbar-nav {
-    flex-direction: column; /* Stack the navbar items vertically on smaller screens */
+    flex-direction: column;
+    /* Stack the navbar items vertically on smaller screens */
     align-items: center;
   }
 
-  .icon {
-    width: 20px; /* Adjust icon size on smaller screens */
+  .nav-items {
+    display: none;
+    /* Hide the right-side links on smaller screens */
   }
 
-  .navbar-brand {
-    font-size: 1.2rem; /* Adjust title font size on smaller screens */
+  /* Adjust font size and padding if necessary for smaller screens */
+  .navbar-nav .nav-item {
+    font-size: 14px;
+  }
+
+  .login-options {
+    flex-direction: column;
+  }
+
+  .login-options button {
+    width: 80%;
+    /* Adjust button width for better appearance on smaller screens */
+    margin: 10px auto;
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem; /* Slightly smaller for medium screens */
+  }
+
+  .hero-content p {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-content h1 {
+    font-size: 1.8rem; /* Smaller font size for small screens */
+  }
+
+  .hero-content p {
+    font-size: 1rem;
   }
 }
