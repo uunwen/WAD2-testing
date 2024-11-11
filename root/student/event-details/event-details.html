@@ -16,11 +16,16 @@
 
     <link rel="stylesheet" href="./event-details.css">
     <script type="module" src="event-details.js"></script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALsNUyvi16f4TWilVrWh1RY16ZcFJBZAE&callback=initMap&libraries=places,geometry,marker,directions">
+        </script>
+
 </head>
 
 <body>
     <!-- Back Button -->
-    <div style="margin: 20px;">
+    <div style=" margin: 20px;">
         <button class="custom-back-button" onclick="goBack()">Back</button>
     </div>
 
@@ -36,6 +41,13 @@
     <!-- Event Details Section -->
     <div id="eventDetailsContainer">
         <div id="eventContent"></div>
+
+        <!-- Map Container for Viewing Coordinates -->
+        <div id="mapContainer" style="margin-top: 20px;">
+            <!-- Map Div -->
+            <div id="eventMap" style="height: 400px; width: 100%;"></div>
+        </div>
+
         <div class="button-container"></div>
     </div>
 
@@ -44,6 +56,7 @@
         <h2>Photo Gallery</h2>
         <div id="photo-gallery" class="photo-gallery"></div>
     </div>
+
 
     <script>
         // Function to toggle between tabs

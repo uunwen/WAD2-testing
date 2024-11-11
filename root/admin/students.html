@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
-    <link rel="stylesheet" href="../css/nav.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/admin/nav.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="glowing_circle.css">
     <!-- <link rel="stylesheet" href="../css/events.css"> -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -14,103 +15,75 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
-    <style>
-        .menu-content {
-            top: 4rem;
-        }
 
-        .main-content {
-            width: 95%;
-            margin-top: 25px;
-            position: relative;
-            margin-top: 4.5%;
-        }
-
-        .filter-wrapper {
-            position: absolute;
-            /* Position it absolutely */
-            top: -10px;
-            /* Distance from the top of the container */
-            right: 30px;
-            /* Distance from the right of the container */
-        }
-
-        .filters {
-            width: 600px;
-            position: fixed;
-            right: 25px;
-            top: 125px;
-            height: auto;
-        }
-
-        table td.green{
-            color: green;
-        }
-
-        table td.red {
-            color: red;
-        }
-
-        table td.orange {
-            color: orange;
-        }
-
-        table td.black {
-            color: black;
-        }
-    </style>
 </head>
 
 <body>
 
     <!-- Bootstrap Navbar with icons -->
-    <nav class="navbar navbar-expand-lg  fixed-top top-0">
-        <a href="admin.html" class="navbar-brand brand-icon"><img src="../img/social-services.png" alt="">RIGHTTRACK</a>
+    <nav class="navbar navbar-expand-lg fixed-top top-0">
+        <div class="container-fluid">
+            <!-- Brand Icon -->
+            <a href="projects.html" class="navbar-brand brand-icon">
+                <img src="../img/social-services.png" alt="">RIGHTTRACK
+            </a>
 
-        <div class="container-fluid d-flex justify-content-end"> <!-- Align icons to the right -->
-            <!-- this links back to the homepage -->
-            <!-- Profile Icon -->
-            <div class="menu d-flex flex-column align-items-center">
-                <span class="icon"><img src="../img/students.png" alt="Profile" class=""></span>
-                <a href="#">Students</a>
-            </div>
+            <!-- Navbar Toggle Button for Small Screens -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-            <!-- Community Services Icon -->
-            <div class="menu d-flex flex-column align-items-center mx-3">
-                <span class="icon"><img src="../img/public-health.png" alt="Profile" class=""></span>
-                <a href="#">Community Services</a>
-            </div>
+            <!-- Collapsible Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Navbar Items, aligned left on large screens and centered on smaller screens -->
+                <div class="d-flex align-items-center justify-content-lg-end justify-content-between w-100">
+                    <!-- Students Icon -->
+                    <div class="menu d-flex flex-column align-items-center mx-2">
+                        <a href="students.html" class="d-flex flex-column align-items-center">
+                            <span class="icon"><img src="../img/students.png" alt="Students"></span>
+                            <span>Students</span>
+                        </a>
+                    </div>
 
-            <!-- Sponsors Icon -->
-            <div class="menu d-flex flex-column align-items-center mx-3">
-                <span class="icon"><img src="../img/ngo.png" alt="Profile" class=""></span>
-                <a href="#">Sponsors</a>
-            </div>
+                    <!-- Community Services Icon -->
+                    <div class="menu d-flex flex-column align-items-center mx-2">
+                        <a href="projects.html" class="d-flex flex-column align-items-center">
+                            <span class="icon"><img src="../img/public-health.png" alt="Projects"></span>
+                            <span>Projects</span>
+                        </a>
+                    </div>
 
-            <!-- Profile Icon -->
-            <div class="menu d-flex flex-column align-items-center mx-3">
-                <span class="icon"><img src="../img/user.png" alt="Profile" class=""></span>
-                <a href="#">Profile</a>
-                <div class="menu-content">
-                    <a href="#"><img src="../img/user.png" alt="Profile Icon">Profile</a>
-                    <a href="#"><img src="../img/settings.png" alt="Settings Icon">Settings</a>
-                    <div class="separator"></div>
-                    <a href="#"><img src="../img/logout.png" alt="Log Out Icon">Log out</a>
+                    <!-- Sponsors Icon -->
+                    <div class="menu d-flex flex-column align-items-center mx-2">
+                        <a href="sponsors.html" class="d-flex flex-column align-items-center">
+                            <span class="icon"><img src="../img/ngo.png" alt="Sponsors"></span>
+                            <span>Organisations</span>
+                        </a>
+                    </div>
+
+                    <!-- Profile Icon -->
+                    <div class="menu d-flex flex-column align-items-center mx-2">
+                        <a href="../login/login.html" id="logout-link" class="d-flex flex-column align-items-center">
+                            <span class="icon"><img src="../img/logout.png" alt="Log Out Icon"></span>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-
     </nav>
 
     <div class="container-fluid main-content mx-auto text-center" class="main" id="adminApp">
-        <div class="filter-wrapper position-absolute">
-            <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" />
 
+        <div class="filter-wrapper position-absolute" @mouseover="openFilterOnHover" @mouseleave="closeFilterOnHover">
+            <img src="../img/filter.png" alt="Settings" class="filter-icon" width="80px" @click="toggleFilterMenu" />
 
-            <!-- Filters Menu (Hidden by default, shown on hover) -->
-            <div id="filter-menu" class="filters">
+            <!-- Filters Menu -->
+            <div :class="['filters', { 'active': isFilterMenuOpen }]" id="filter-menu">
                 <h2>FILTERS</h2>
 
+                <!-- Student Name Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Student Name:</span>
                     <div class="col-lg-12 col-md-12 w-100 col-sm-12 mb-2">
@@ -119,9 +92,10 @@
                     </div>
                 </div>
 
+                <!-- Hours Left Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label">Hours Left:</span>
-                    <div class="row filter-options ">
+                    <div class="row filter-options">
                         <div class="d-flex align-items-center mb-2">
                             <div class="mx-2">
                                 <p class="mb-0">From</p>
@@ -141,40 +115,111 @@
                     </div>
                 </div>
 
+                <!-- Graduation Year Filter -->
                 <div class="filter-group border d-flex flex-column align-items-start p-2">
                     <span class="filter-label mb-1">Graduation Year:</span>
-                    <select v-model="filterGraduation" class="form-select w-100" aria-label="graduation year">
+                    <select v-model="filterGraduation" class="form-select w-100" aria-label="Graduation Year">
                         <option value="allGraduationYear" selected>All Graduation Year</option>
                         <option value="within1Year">Within 1 Year</option>
                         <option value="within2Years">Within 2 Years</option>
                     </select>
                 </div>
 
-
-
-
                 <button id="submit-btn" @click="updateRecords">Submit</button>
             </div>
         </div>
+
+
         <h1>Students</h1>
         <table class="table overflow-auto table-responsive">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Graduation Year</th>
-                    <th>Hours Left</th>
+                    <th @click="sortData('name')">
+                        Name <span v-if="sortColumn === 'name'" class="sort-icon">{{ sortAscending ? '↑' : '↓' }}</span>
+                    </th>
+                    <th class="hide-md">Email</th>
+                    <th @click="sortData('graduation_year')">
+                        Graduation Year <span v-if="sortColumn === 'graduation_year'" class="sort-icon">{{ sortAscending
+                            ? '↑' : '↓' }}</span>
+                    </th>
+                    <th @click="sortData('hours_left')">
+                        Hours Left <span v-if="sortColumn === 'hours_left'" class="sort-icon">{{ sortAscending ? '↑' :
+                            '↓' }}</span>
+                    </th>
                     <th>Message</th>
                 </tr>
             </thead>
             <tbody>
                 <template v-for="(record, idx) in selectedStudents" :key="record.eventKey">
-                    <student-records :record="record" :index="idx + 1" @update-tasklist="updateTasklist(idx)"/>
+                    <student-records :record="record" :index="idx" @open-modal="openModal" />
                 </template>
             </tbody>
         </table>
+
+        <div v-if="showModal" class="modal fade show overflow-hidden" id="projectModal" tabindex="-1"
+            aria-labelledby="projectModalLabel" :aria-hidden="showModal ? 'false' : 'true'" style="display: block;">
+
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content shadow-lg rounded-3">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title me-2" id="projectModalLabel"> {{ modalDetails['name'] }}</h5>
+                        <div :class="checkGraduation(modalDetails['graduation_year'])"></div>
+                        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Graduation Year: </strong>{{ modalDetails['graduation_year'] }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Hours Left: </strong>{{ modalDetails['hours_left'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><strong>Email: </strong>{{ modalDetails['email'] }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <p><strong>Text Message:</strong></p>
+                            </div>
+                            <div class="col-lg-8">
+                                <!--
+                                <select v-model="filterGraduation" class="form-select w-100" aria-label="graduation year">
+                                    <option value="allGraduationYear" selected></option>
+                                    <option value="within1Year"></option>
+                                    <option value="within2Years">Within 2 Years</option>
+                                </select>
+                                -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <textarea v-model="message" class="form-control" rows="5"></textarea>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-success" @click="updateTasklist(this.currentIndex)">Send
+                            Message</button>
+                        <button type="button" class="btn btn-outline-secondary" @click="closeModal">Close</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div style="width: 400px; height: 400px;">
+            <canvas id="studentsWithHoursChart" width="400px"></canvas>
+
+        </div>
     </div>
+    
 
     <!-- script for event cards -->
     <script type="module" src="admin_students.js"></script>

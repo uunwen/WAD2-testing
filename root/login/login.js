@@ -105,7 +105,7 @@ window.googleSignIn = async function googleSignIn(userType) {
     if (userType == "student") {
       window.location.href = `../student/main.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
     } else if (userType == "admin") {
-      window.location.href = `../admin.html?uid=${user.uid}&name=${encodeURIComponent(user.displayName)}`;
+      window.location.href = `../admin/projects.html`;
     }
     
   } catch (error) {

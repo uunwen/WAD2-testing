@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Sign-ups</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <h1>Event Sign-ups</h1>
+
+    <!-- Dropdown for selecting an event -->
+    <label for="event-select">Select Event:</label>
+    <select id="event-select">
+        <option value="">-- Select an event --</option>
+        <!-- Event options will be populated here dynamically -->
+    </select>
+
+    <!-- Table to display the list of students who signed up -->
+    <h2>Students Signed Up</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Telegram</th>
+            </tr>
+        </thead>
+        <tbody id="student-table-body">
+            <!-- Student rows will be dynamically populated here -->
+        </tbody>
+    </table>
+
+    <!-- Display the number of students signed up for the selected event -->
+    Total Students Signed Up: <span id="student-counter">0</span> |
+    Event Capacity: <span id="event-capacity">0</span>
+
+    <!-- Section to hold the pie chart -->
+  <!-- Section to hold the pie chart -->
+    <div class="chart-container">
+        <canvas id="signup-capacity-chart"></canvas>
+    </div>
+  
+
+    <!-- Firebase and custom script files -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <!-- Chart.js CDN link -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Make sure this is above your script.js file -->
+
+    <!-- Your custom script -->
+    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>

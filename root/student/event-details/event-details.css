@@ -208,3 +208,74 @@
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
     /* Ensure smooth enlargement */
 }
+
+
+.button-with-margin {
+    margin-left: 20px;
+    /* Adjust this value as needed */
+}
+
+#mapContainer {
+    display: none;
+    margin-top: 20px;
+    width: 90%;
+    /* Adjust width as needed */
+    max-width: 1200px;
+    /* Optional max-width for responsive behavior */
+    padding-left: 20px;
+    /* Add padding on the left side */
+    position: relative;
+    /* Allow positioning of internal elements */
+}
+
+#eventMap {
+    height: 800px;
+    /* Adjust height as needed */
+    width: 100%;
+    /* Full width of the container */
+}
+
+
+.close-map-button {
+    position: absolute;
+    top: 15px;
+    right: 70px;
+    /* Increase the value to move it to the left */
+    z-index: 1000;
+    /* Ensure it's above the map */
+}
+
+
+#mapContainer {
+    position: relative;
+    /* Make sure the map container is relatively positioned */
+}
+
+.recalculate-route-btn {
+    position: absolute;
+    top: 15px;
+    /* Distance from the top */
+    right: 15px;
+    /* Distance from the right */
+    z-index: 1000;
+    /* Ensure the button is above the map */
+    padding: 10px 20px;
+    /* Optional: padding for button */
+    background-color: #FF5733;
+    /* Optional: color for the button */
+    color: white;
+    /* Button text color */
+    border: none;
+    /* Remove default border */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    cursor: pointer;
+    /* Change cursor on hover */
+}
+
+.recalculate-route-btn:hover {
+    background-color: #FF3C00;
+    /* Optional: button hover effect */
+}

@@ -59,10 +59,10 @@ h1 {
 }
 
 .event-box {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin: 20px 0;
-  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
   background-color: #f9f9f9;
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -83,12 +83,10 @@ h1 {
 .delete-btn:hover {
   color: #ffffff;
   background-color: #ff4d4d;
-  border-radius: 8px;
 }
 
 .delete-btn:active {
   background-color: #e63939;
-  border-radius: 8px;
 }
 
 .edit-btn {
@@ -127,10 +125,8 @@ h1 {
 
 #aboutTextarea {
   display: block;
-  /* Change display from 'none' to 'block' for when it is shown */
   width: 100%;
   height: 150px;
-  /* Adjust as needed */
   margin-top: 10px;
   padding: 10px;
   font-size: 14px;
@@ -139,38 +135,83 @@ h1 {
   background-color: #f9f9f9;
 }
 
-
-
 /* Style when content is in edit mode */
 #aboutContent.edit-mode {
   border: 1px solid white;
-  /* Light border to indicate edit mode */
   background-color: #f9f9f9;
-  /* Light background color */
   outline: 0.5px solid black;
-  /* Remove blue border outline */
   padding: 10px;
-  /* Add padding for better UX */
 }
-
 
 #successMessage {
   font-size: 16px;
   color: green;
   display: none;
-  /* Hidden by default */
 }
 
 .event-success-message {
   font-size: 16px;
   color: green;
   margin-top: 10px;
-  /* Ensure that 'display' is controlled by JavaScript */
 }
-
 
 #editAboutBtn {
   position: relative;
   z-index: 10;
-  /* Ensures it's above any overlapping elements */
+}
+
+.photo-wrapper {
+  display: inline-block;
+  margin: 0.5rem;
+  position: relative;
+}
+
+.event-photo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.photo-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-sm {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.add-photo-btn {
+  display: none;
+}
+
+#mapContainer {
+  display: none;
+}
+
+#map {
+  width: 100%;
+  height: 400px;
+  /* Ensure it has a defined height */
 }

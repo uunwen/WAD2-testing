@@ -2,32 +2,47 @@
 html,
 body {
   height: 100%;
-  margin: 0; /* Remove default margins */
-  padding: 0; /* Remove default padding */
-  overflow: hidden; /* Prevent scrollbars */
+  margin: 0;
+  /* Remove default margins */
+  padding: 0;
+  /* Remove default padding */
+  overflow: hidden;
+  /* Prevent scrollbars */
 }
+
 /* Navigation Bar */
 nav.navbar {
   background-color: rgb(209, 207, 207);
   color: black;
   position: sticky;
-  top: 0; /* This ensures it stays at the top when scrolled */
-  z-index: 1000; /* Keeps it on top of other elements */
-  padding: 0.5rem 1rem; /* Adjust padding to reduce height */
+  top: 0;
+  /* This ensures it stays at the top when scrolled */
+  z-index: 1000;
+  /* Keeps it on top of other elements */
+  padding: 0.5rem 1rem;
+  /* Adjust padding to reduce height */
+}
+
+/* Default styling for desktop view */
+.nav-items {
+  display: flex;
 }
 
 /* Flex alignment for icons and labels */
 .navbar-nav .nav-item {
   display: flex;
-  align-items: center; /* Vertically center-aligns icon and text */
+  align-items: center;
+  /* Vertically center-aligns icon and text */
 }
 
 .navbar-nav .nav-item .icon {
-  margin-right: 0.5rem; /* Space between icon and text */
+  margin-right: 0.5rem;
+  /* Space between icon and text */
 }
 
 .navbar-nav .nav-link {
-  padding: 0; /* Remove default padding for tighter layout */
+  padding: 0;
+  /* Remove default padding for tighter layout */
   font-size: 0.9rem;
   color: black;
   text-decoration: none;
@@ -55,7 +70,8 @@ nav.navbar {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  background: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent overlay */
 }
 
 .hero-content {
@@ -102,13 +118,15 @@ nav.navbar {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  width: 100%; /* Make it responsive */
+  width: 100%;
+  /* Make it responsive */
   box-sizing: border-box;
   transition: background-color 0.3s ease;
 }
 
 #googleSignIn img {
-  margin-right: 8px; /* Space between the icon and text */
+  margin-right: 8px;
+  /* Space between the icon and text */
   width: 20px;
 }
 
@@ -133,12 +151,14 @@ nav.navbar {
 
 /* Hover effect for Login button */
 #loginButton:hover {
-  background-color: #45a049; /* Darker green for hover effect */
+  background-color: #45a049;
+  /* Darker green for hover effect */
 }
 
 /* Style for the Back button */
 #back {
-  background-color: #f44336; /* Red color */
+  background-color: #f44336;
+  /* Red color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -152,14 +172,16 @@ nav.navbar {
 
 /* Hover effect for Back button */
 #back:hover {
-  background-color: #e53935; /* Darker red for hover effect */
+  background-color: #e53935;
+  /* Darker red for hover effect */
 }
 
 /* Style the error message */
 #errorMessage {
   font-size: 14px;
   font-weight: bold;
-  color: #e53935; /* Red color */
+  color: #e53935;
+  /* Red color */
   margin-top: 10px;
 }
 
@@ -170,8 +192,10 @@ nav.navbar {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
-  display: none; /* Initially hidden */
+  background: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent dark overlay */
+  display: none;
+  /* Initially hidden */
   align-items: center;
   justify-content: center;
   z-index: 1000;

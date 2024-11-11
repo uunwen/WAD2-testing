@@ -36,100 +36,6 @@
     width: 40px;
 }
 
-/* Filter Icon and Menu */
-.filter-icon {
-    font-size: 30px;
-    cursor: pointer;
-    padding: 10px;
-    color: white;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-    border: none;
-    /* Remove border */
-    outline: none;
-    /* Remove outline */
-}
-
-/* Show filters on hover */
-.filter-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.filter-wrapper:hover .filters {
-    display: block;
-}
-
-.filters {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: white;
-    padding: 30px;
-    /* Increase padding for more space around options */
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    /* Stronger shadow for emphasis */
-    display: none;
-    width: 400px;
-    /* Increase width for more space to display options */
-    max-height: 85vh;
-    /* Ensure it doesn't exceed viewport height */
-    overflow-y: auto;
-    /* Enable scrolling if content exceeds height */
-    z-index: 1000;
-}
-
-.filters h2 {
-    text-align: center;
-}
-
-.filter-group {
-    display: flex; /* Use flexbox for alignment */
-    flex-wrap: wrap; /* Wrap items if necessary */
-    margin: 20px 0; /* Space above and below the group */
-    gap: 10px; /* Space between cat name and button */
-}
-
-.filter-option {
-    display: flex; /* Use flex to center content */
-    justify-content: center; /* Center the text horizontally */
-    align-items: center; /* Center the text vertically */
-    width: 120px; /* Set a fixed width for uniformity */
-    padding: 10px; /* Adjust padding as needed */
-    border: 2px solid #ddd;
-    border-radius: 8px; 
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: #ffffff; 
-    color: #333; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 0; /* Remove individual margins */
-}
-
-/* Optional: Adjust filter option hover effect */
-.filter-option:hover {
-    background-color: #4b89dc; 
-    color: white; 
-    border-color: #3574ba; 
-}
-
-.filter-label {
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: block;
-}
-
-#filter-menu {
-    max-height: 70vh;  /* Adjust based on your needs */
-    overflow-y: auto;  /* Enables scrolling when the content overflows */
-}
-
-.selected {
-    background-color: #4b89dc;
-    color: white;
-}
-
 .separator {
     border-top: 3px solid #ccc;
     /* Grey line separator */
@@ -137,21 +43,6 @@
     /* Spacing around the line */
 }
 
-#submit-btn {
-    display: block;
-    margin: 0 auto;
-    padding: 10px 20px;
-    background-color: #4b89dc;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#submit-btn:hover {
-    background-color: #3574ba;
-}
 
 .menu {
     position: relative;
@@ -279,5 +170,4 @@
     color: black;
     /* Placeholder color */
 }
-
 

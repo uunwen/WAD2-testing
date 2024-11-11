@@ -1,14 +1,18 @@
 const userData = JSON.parse(sessionStorage.getItem('user'));
 
-if (userData.userType != "admin") {
-    window.location.href = `../login/login.html`;
-}
-else {
-    console.log(true);
+// Check if userData exists and if userType is not 'admin'
+if (!userData || userData.userType !== "admin") {
+  // Clear session storage and redirect to login page
+  sessionStorage.clear();
+  window.location.href = "../login/login.html";
 }
 
 
 // Import Firebase modules from CDN
+import { Chart, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, PieController } from 'https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.esm.min.js';
+
+// Register the necessary components
+Chart.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, PieController);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -41,6 +45,14 @@ const adminApp = Vue.createApp({
       filterMinHours: this.minHour,
       filterMaxHours: this.maxHour,
       filterStudentName: "",
+      modalDetails: {},
+      showModal: false,
+      message: "",
+      currentIndex: -1,
+      isFilterMenuOpen: false,
+      sortColumn: '',       // track the currently sorted column
+      sortAscending: true,  // track sorting order
+      studentsWithHoursChart: null // Variable to store the chart instance
     };
   },
   mounted() {
@@ -50,6 +62,97 @@ const adminApp = Vue.createApp({
 
   },
   methods: {
+    createStudentsWithHoursChart() {
+      const studentsWithHours = this.allStudents.filter(student => student.hours_left > 0).length;
+      const studentsWithoutHours = this.allStudents.length - studentsWithHours;
+    
+      // Destroy previous chart instance if it exists
+      if (this.studentsWithHoursChart) {
+        this.studentsWithHoursChart.destroy();
+      }
+    
+      // Select the canvas element where the chart will render
+      const ctx = document.getElementById('studentsWithHoursChart').getContext('2d');
+    
+      // Create the pie chart with updated data
+      this.studentsWithHoursChart = new Chart(ctx, {
+        type: 'pie',  // Pie chart
+        data: {
+          labels: ['Students with > 0 Hours', 'Students with 0 Hours'],
+          datasets: [{
+            data: [studentsWithHours, studentsWithoutHours],
+            backgroundColor: ['#4CAF50', '#FF6347'], // Colors for the chart
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        },
+      });
+    },
+    sortData(column) {
+      // Log to verify column click
+      console.log(`Sorting by column: ${column}`);
+  
+      // Toggle sort order if the same column is clicked, otherwise reset to ascending
+      if (this.sortColumn === column) {
+        this.sortAscending = !this.sortAscending;
+      } else {
+        this.sortColumn = column;
+        this.sortAscending = true;
+      }
+  
+      // Perform the sorting directly on selectedStudents
+      this.selectedStudents = [...this.selectedStudents].sort((a, b) => {
+        const aValue = a[column];
+        const bValue = b[column];
+  
+        // Handle undefined or null values by treating them as empty strings or zeros
+        const parsedAValue = aValue === undefined || aValue === null ? '' : aValue;
+        const parsedBValue = bValue === undefined || bValue === null ? '' : bValue;
+  
+        // Sort strings and numbers differently
+        if (typeof parsedAValue === 'string' && typeof parsedBValue === 'string') {
+          return this.sortAscending 
+            ? parsedAValue.localeCompare(parsedBValue)
+            : parsedBValue.localeCompare(parsedAValue);
+        } else {
+          return this.sortAscending 
+            ? parsedAValue - parsedBValue 
+            : bValue - parsedAValue;
+        }
+      });
+    },
+    toggleFilterMenu() {
+      // Toggle the filter menu when the icon is clicked (for mobile)
+      if (window.innerWidth < 768) {
+        this.isFilterMenuOpen = !this.isFilterMenuOpen;
+      }
+    },
+    openFilterOnHover() {
+      // Show the filter menu on hover (for desktop)
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = true;
+      }
+    },
+    closeFilterOnHover() {
+      // Hide the filter menu on mouse leave (for desktop)
+      if (window.innerWidth >= 768) {
+        this.isFilterMenuOpen = false;
+      }
+    },
+    openModal(record, index) {
+      this.modalDetails = { ...record };  // Store the record data in modalDetails
+      this.showModal = true;  // Show the modal
+      this.currentIndex = index
+    },
+    closeModal() {
+      this.showModal = false;  // Close the modal
+    },
     async loadStudents() {
       get(dbRef)
         .then((snapshot) => {
@@ -62,6 +165,7 @@ const adminApp = Vue.createApp({
             // Initially set selectedStudents to allStudents
             this.selectedStudents = this.allStudents;
             this.findFilterParameters();
+            this.createStudentsWithHoursChart();
           } else {
             console.log("No data available");
           }
@@ -113,31 +217,45 @@ const adminApp = Vue.createApp({
           }
         }
 
-        
+
         // Return true if all conditions match
         return matchesName && matchesHours && matchesGraduationYear;
       });
+      this.isFilterMenuOpen = !this.isFilterMenuOpen;
     },
     async updateTasklist(index) {
       const student = this.allStudents[index];
       try {
+        console.log(student)
         // Reference to the tasklist array in the database
-        const tasklistRef = ref(database, `events/${student.studentKey}/tasklist`);
-    
+        const tasklistRef = ref(database, `students/${student.studentKey}/tasklist`);
+
         // Get the current tasklist array
         const snapshot = await get(tasklistRef);
         let tasklist = snapshot.exists() ? snapshot.val() : [];
-    
+
         // Add a new item to the tasklist array
-        tasklist.push("Approved");
-    
+        tasklist.push(this.message);
+
         // Update the array in the database
         await set(tasklistRef, tasklist);
         console.log("Tasklist successfully updated!");
-      } 
+        this.showModal = false;
+        this.message = "";
+      }
       catch (error) {
         console.error("Error updating tasklist:", error);
       }
+    },
+    checkGraduation(graduationYear) {
+      const currentYear = new Date().getFullYear();
+      if (graduationYear == currentYear + 1) {
+        return "glowing-circle-red"
+      }
+      else if (graduationYear == currentYear + 2) {
+        return "glowing-circle-orange"
+      }
+      return "glowing-circle-green"
     }
   }
 });
@@ -145,30 +263,35 @@ const adminApp = Vue.createApp({
 
 adminApp.component('studentRecords', {
   props: ['record', 'index'],
-  emits: ['updateTasklist'],
+  emits: ['open-modal'],
   template: `
         <tr>
-            <td :class="checkGraduation(record['graduation_year'])" class="align-middle"><b>{{ index }}</b></td>
+            <td class="align-middle"><div style="display: inline-block;" :class="checkGraduation(record['graduation_year'])"></div></td>
             <td class="align-middle">{{ record.name }}</td>
-            <td class="align-middle">{{ record.email }}</td>
+            <td class="hide-md align-middle">{{ record.email }}</td>
             <td class="align-middle">{{ record['graduation_year'] }}</td>
             <td class="align-middle">{{ record.hours_left }}</td>
-            <td class="align-middle"><button class="btn btn-light" @click="$emit('updateTasklist', index)">Message</button></td>
+            <td class="align-middle"><button class="btn btn-light" @click="$emit('open-modal', record, index)">Message</button></td>
         </tr>
   `,
   methods: {
     checkGraduation(graduationYear) {
       const currentYear = new Date().getFullYear();
       if (graduationYear == currentYear + 1) {
-        return "red"
+        return "glowing-circle-red"
       }
       else if (graduationYear == currentYear + 2) {
-        return "orange"
+        return "glowing-circle-orange"
       }
-      return "green"
+      return "glowing-circle-green"
     }
   }
 });
 
 const vm = adminApp.mount('#adminApp');
 // component must be declared before app.mount(...)
+
+document.getElementById("logout-link").addEventListener("click", function(event) {
+  // Clear sessionStorage to end the session
+  sessionStorage.clear();
+});

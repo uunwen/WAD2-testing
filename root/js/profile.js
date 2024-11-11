@@ -72,13 +72,26 @@ auth.onAuthStateChanged((user) => {
           // hoursLeft.innerText = `Hours Left: ${studentData.hours_left}`;
           // document.querySelector(".profile-container").appendChild(hoursLeft);
 
+          // Add "Back to Home" button below "Hours Left"
+          const backButton = document.createElement("button");
+          backButton.className = "back-button";
+          backButton.innerText = "Back to Home";
+          backButton.onclick = goBackToHome;
+          document.querySelector(".profile-container").appendChild(backButton);
+
           // Yun Wen: Added to display past event
           let pastEvent;
           const historicalEvent = getAttendedEvent(studentData);
-          for (let i = 0; i < historicalEvent.length; i++) {
-            getPastEvent(historicalEvent[i]).then((projectName) => {
-              console.log(projectName);
-              displayEvent(projectName);
+          if (historicalEvent.length === 0) {
+            // Display "No events yet!" if there are no events
+            document.getElementById("displayEvent").textContent = "No events yet!";
+          } else {
+            // Remove "No events yet!" and display events
+            document.getElementById("displayEvent").textContent = ""; // Clear placeholder text
+            historicalEvent.forEach((eventUid) => {
+              getPastEvent(eventUid).then((projectName) => {
+                displayEvent(projectName);
+              });
             });
           }
           // Yun Wen: Added to display past event
@@ -118,4 +131,8 @@ function displayEvent(eventName) {
   const eventElement = document.createElement("p");
   eventElement.textContent = eventName;
   displayDiv.appendChild(eventElement);
+}
+
+window.goBackToHome = function goBackToHome() {
+  window.location.href = '../student/main.html';
 }
