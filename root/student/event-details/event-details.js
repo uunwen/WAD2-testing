@@ -23,15 +23,80 @@ const database = getDatabase(app);
 const db = getFirestore(app);
 
 
-
-// Ensure `initMap` is globally accessible
 window.initMap = function () {
-    // Example initialization logic for the map
-    const map = new google.maps.Map(document.getElementById("eventMap"), {
-        center: { lat: 1.3521, lng: 103.8198 }, // Replace with your desired coordinates
-        zoom: 12,
-    });
+    // Check if geolocation is supported and enabled
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            // Create the map centered on the user's current location
+            const map = new google.maps.Map(document.getElementById("eventMap"), {
+                center: { lat: userLat, lng: userLng }, // Center the map on user's location
+                zoom: 12,
+            });
+
+            // Add a marker for the user's current location
+            const userMarker = new google.maps.Marker({
+                position: { lat: userLat, lng: userLng },
+                map: map,
+                title: "Your Current Location", // Title to show when you hover over the marker
+            });
+
+            // Add a marker for the event location (using example coordinates)
+            const eventCoordinates = { lat: 1.3521, lng: 103.8198 };  // Replace with actual event coordinates
+            const eventMarker = new google.maps.Marker({
+                position: eventCoordinates,
+                map: map,
+                title: "Event Location",
+            });
+
+            // Set up Directions Service and Renderer
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: true, // Do not show default markers for start and end
+            });
+
+            // Function to calculate and display the route
+            const calculateRoute = () => {
+                const request = {
+                    origin: { lat: userLat, lng: userLng }, // User's current location
+                    destination: eventCoordinates,  // Event location
+                    travelMode: google.maps.TravelMode.DRIVING,  // You can also use WALKING, BICYCLING, or TRANSIT
+                };
+
+                directionsService.route(request, (result, status) => {
+                    if (status === google.maps.DirectionsStatus.OK) {
+                        directionsRenderer.setDirections(result);  // Display the route on the map
+                    } else {
+                        alert("Directions request failed due to " + status);
+                    }
+                });
+            };
+
+            // Automatically calculate the route when the map is loaded
+            calculateRoute();
+
+            // Optionally, you can add a button for users to recalculate the route
+            const recalculateRouteBtn = document.createElement("button");
+            recalculateRouteBtn.textContent = "Recalculate Route";
+            recalculateRouteBtn.className = "btn btn-secondary btn-sm button-with-margin";
+            recalculateRouteBtn.onclick = calculateRoute;
+
+            document.getElementById("mapContainer").appendChild(recalculateRouteBtn);
+
+        }, (error) => {
+            // If geolocation fails (e.g., permissions denied), show an alert
+            alert("Geolocation service failed. Please enable location access.");
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
 };
+
+
+
 
 
 // Helper to get URL parameter
@@ -46,7 +111,7 @@ function createViewOnMapButton(coordinates) {
     const viewMapBtn = document.createElement("button");
     viewMapBtn.textContent = "View on Map";
     viewMapBtn.className = "btn btn-primary btn-sm button-with-margin";
-    viewMapBtn.style.marginTop = "10px";
+    viewMapBtn.style.marginTop = "15px";
     viewMapBtn.style.marginBottom = "20px"; // Add margin-bottom for vertical space
 
     // Add event listener to display map when clicked

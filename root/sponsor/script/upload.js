@@ -33,7 +33,7 @@ function initMap() {
     const marker = new google.maps.Marker({
       map: map,
       draggable: true,
-      visible: false,
+      visible: true, // Set visibility to true by default
     });
 
     const infowindow = new google.maps.InfoWindow();
@@ -43,47 +43,44 @@ function initMap() {
     if (inputElement && inputElement instanceof HTMLInputElement) {
       const autocompletePlaceInput = new google.maps.places.Autocomplete(inputElement);
       autocompletePlaceInput.bindTo("bounds", map);
-      // Add any additional configuration or event listeners if needed
+
+      // Listener for 'placeInput'
+      autocompletePlaceInput.addListener("place_changed", () => {
+        infowindow.close();
+        const place = autocompletePlaceInput.getPlace();
+
+        if (!place.geometry) {
+          alert("No details available for input: '" + place.name + "'");
+          return;
+        }
+
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+
+        // Set marker position to the selected place
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+
+        // Update the info window content
+        infowindow.setContent(`<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`);
+        infowindow.open(map, marker);
+
+        // Update the coordinates field with the location
+        document.getElementById("coordinates").value = `${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}`;
+      });
     } else {
       console.error("The input element for Autocomplete is missing or not an HTMLInputElement.");
     }
-
 
     // Autocomplete for the 'searchInput'
     const autocompleteSearch = new google.maps.places.Autocomplete(document.getElementById("searchInput"));
     autocompleteSearch.bindTo("bounds", map);
 
-    // Autocomplete for the 'placeInput'
-    const autocompletePlaceInput = new google.maps.places.Autocomplete(document.getElementById("placeInput"));
-    autocompletePlaceInput.bindTo("bounds", map);
-
-    // Listener for 'placeInput'
-    autocompletePlaceInput.addListener("place_changed", () => {
-      infowindow.close();
-      const place = autocompletePlaceInput.getPlace();
-
-      if (!place.geometry) {
-        alert("No details available for input: '" + place.name + "'");
-        return;
-      }
-
-      if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
-      } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(17);
-      }
-
-      marker.setPosition(place.geometry.location);
-      marker.setVisible(true);
-
-      infowindow.setContent(`<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`);
-      infowindow.open(map, marker);
-
-      document.getElementById("coordinates").value = `${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}`;
-    });
-
-    // Existing 'searchInput' listener
+    // Listener for 'searchInput'
     autocompleteSearch.addListener("place_changed", () => {
       infowindow.close();
       const place = autocompleteSearch.getPlace();
@@ -100,31 +97,44 @@ function initMap() {
         map.setZoom(17);
       }
 
+      // Set marker position to the selected place
       marker.setPosition(place.geometry.location);
       marker.setVisible(true);
 
+      // Update the info window content
       infowindow.setContent(`<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`);
       infowindow.open(map, marker);
 
+      // Update the coordinates field with the location
       document.getElementById("coordinates").value = `${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}`;
     });
 
-    // Existing click and drag logic for the map and marker
+    // Listener for map clicks to update marker position, info window, and coordinates
     map.addListener("click", (event) => {
       const lat = event.latLng.lat().toFixed(6);
       const lng = event.latLng.lng().toFixed(6);
 
       marker.setPosition(event.latLng);
       marker.setVisible(true);
-      document.getElementById("coordinates").value = `${lat}, ${lng}`;
 
+      // Update the info window content
       infowindow.setContent(`Selected coordinates: ${lat}, ${lng}`);
       infowindow.open(map, marker);
+
+      // Update the coordinates field
+      document.getElementById("coordinates").value = `${lat}, ${lng}`;
     });
 
+    // Listener for dragging the marker to update position, info window, and coordinates
     marker.addListener("dragend", (event) => {
       const lat = event.latLng.lat().toFixed(6);
       const lng = event.latLng.lng().toFixed(6);
+
+      // Update the info window content
+      infowindow.setContent(`Selected coordinates: ${lat}, ${lng}`);
+      infowindow.open(map, marker);
+
+      // Update the coordinates field
       document.getElementById("coordinates").value = `${lat}, ${lng}`;
     });
   } else {
@@ -133,11 +143,8 @@ function initMap() {
 }
 
 
-
 // Attach initMap to the global window object
 window.initMap = initMap;
-
-
 
 
 // Function to get URL parameters
@@ -157,6 +164,47 @@ async function getOrganizerName(uid) {
     return null; // or handle accordingly
   }
 }
+
+// Function to format date as dd/mm/yy (date only, without time)
+function formatDate(date) {
+  const day = String(date.getDate()).padStart(2, '0'); // Day in dd format
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Month in mm format
+  const year = String(date.getFullYear()).slice(-2); // Year in yy format (last two digits)
+  return `${day}/${month}/${year}`;
+}
+
+
+// Function to validate if start date is neither earlier nor later than current date
+function validateStartDate(startDateInput) {
+  // Get the current date
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth(); // 0-based index, January is 0
+  const currentDay = currentDate.getDate();
+
+  // Get the input start date
+  const startDate = new Date(startDateInput.value);
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth(); // 0-based index
+  const startDay = startDate.getDate();
+
+  // Reset any previous custom validity
+  startDateInput.setCustomValidity("");
+
+  // Compare by year, month, and day
+  if (startYear < currentYear || (startYear === currentYear && startMonth < currentMonth) || (startYear === currentYear && startMonth === currentMonth && startDay < currentDay)) {
+    // If the start date is earlier than the current date
+    startDateInput.setCustomValidity("Start date cannot be earlier than the current date.");
+    startDateInput.reportValidity();
+    startDateInput.classList.add("error-highlight");
+  }
+  else {
+    // If the start date is the same as the current date (year, month, and day are equal)
+    startDateInput.classList.remove("error-highlight");
+  }
+}
+
+
 
 
 // Function to validate a single field
@@ -238,6 +286,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   const endDateInput = document.getElementById("volunteerPeriodEnd");
 
   startDateInput.addEventListener("input", function () {
+    // Check if start date is valid
+    validateStartDate(startDateInput);
+
+    // Check if end date is valid in relation to start date
     if (!validateDates(startDateInput, endDateInput)) {
       endDateInput.setCustomValidity("Volunteer period end date must be later than the start date.");
       endDateInput.reportValidity();
@@ -249,6 +301,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   endDateInput.addEventListener("input", function () {
+    // Check if end date is valid in relation to start date
     if (!validateDates(startDateInput, endDateInput)) {
       endDateInput.setCustomValidity("Volunteer period end date must be later than the start date.");
       endDateInput.reportValidity();
@@ -318,6 +371,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "Description": document.getElementById("description").value,
       "Location": document.getElementById("location").value,
       "Coordinates": document.getElementById("coordinates").value, // Coordinates field included
+      "Status": "Not Approved",
       "Organiser": orgName || "Unknown", // Set the organizer name or "Unknown" if not found
       "Project Name": document.getElementById("projectName").value,
       "Project Requirements": document.getElementById("projectRequirements").value,

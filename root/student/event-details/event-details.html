@@ -18,7 +18,8 @@
     <script type="module" src="event-details.js"></script>
 
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALsNUyvi16f4TWilVrWh1RY16ZcFJBZAE&callback=initMap&libraries=places,geometry,marker""></script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALsNUyvi16f4TWilVrWh1RY16ZcFJBZAE&callback=initMap&libraries=places,geometry,marker,directions">
+        </script>
 
 </head>
 
@@ -40,9 +41,10 @@
     <!-- Event Details Section -->
     <div id="eventDetailsContainer">
         <div id="eventContent"></div>
-      
+
         <!-- Map Container for Viewing Coordinates -->
-        <div id="mapContainer" style="display: none; margin-top: 20px;">
+        <div id="mapContainer" style="margin-top: 20px;">
+            <!-- Map Div -->
             <div id="eventMap" style="height: 400px; width: 100%;"></div>
         </div>
 
@@ -106,6 +108,6 @@
                 });
         }
     </script>
-    </body>
+</body>
 
 </html>

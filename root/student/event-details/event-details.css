@@ -244,3 +244,38 @@
     z-index: 1000;
     /* Ensure it's above the map */
 }
+
+
+#mapContainer {
+    position: relative;
+    /* Make sure the map container is relatively positioned */
+}
+
+.recalculate-route-btn {
+    position: absolute;
+    top: 15px;
+    /* Distance from the top */
+    right: 15px;
+    /* Distance from the right */
+    z-index: 1000;
+    /* Ensure the button is above the map */
+    padding: 10px 20px;
+    /* Optional: padding for button */
+    background-color: #FF5733;
+    /* Optional: color for the button */
+    color: white;
+    /* Button text color */
+    border: none;
+    /* Remove default border */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    cursor: pointer;
+    /* Change cursor on hover */
+}
+
+.recalculate-route-btn:hover {
+    background-color: #FF3C00;
+    /* Optional: button hover effect */
+}
