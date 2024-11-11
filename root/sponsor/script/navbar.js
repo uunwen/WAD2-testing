@@ -70,8 +70,14 @@ const database = getDatabase(app);
 // }
 
 export async function initializeSearch(eleId) {
+  console.log("Initializing search with ID:", eleId);
   // Replace this 2 depending on the nav-bar
   const searchInput = document.getElementById(eleId);
+
+  if (!searchInput) {
+    console.error("Element with ID", eleId, "not found!");
+    return; // Exit if element is not found
+  }
 
   // Update the search variable when input changes but don't trigger search
   searchInput.addEventListener("input", (e) => {

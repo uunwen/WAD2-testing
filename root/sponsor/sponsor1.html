@@ -81,9 +81,18 @@
 
         });
       };
+    </script>
+    <script type="module">
+      import { createNavbar, initializeSearch } from "./script/navbar.js";
 
-
-
+      document.addEventListener("DOMContentLoaded", async () => {
+        createNavbar();
+        try {
+          await initializeSearch("searchInput");
+        } catch (err) {
+          console.error("Error initializing search:", err);
+        }
+      });
     </script>
 
     <script src="./script/sidebar.js"></script>

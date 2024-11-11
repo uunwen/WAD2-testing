@@ -192,13 +192,13 @@ h2 {
   align-items: center;
 }
 
-.justify-between {
+/* .justify-between {
   justify-content: space-between;
-}
-
+} */
+/* 
 .gap-4 > * + * {
   margin-left: 1rem;
-}
+} */
 
 .overflow-x-auto {
   overflow-x: auto;

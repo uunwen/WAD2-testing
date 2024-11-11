@@ -72,19 +72,20 @@ auth.onAuthStateChanged((user) => {
           // hoursLeft.innerText = `Hours Left: ${studentData.hours_left}`;
           // document.querySelector(".profile-container").appendChild(hoursLeft);
 
-          // Add "Back to Home" button below "Hours Left"
-          const backButton = document.createElement("button");
-          backButton.className = "back-button";
-          backButton.innerText = "Back to Home";
-          backButton.onclick = goBackToHome;
-          document.querySelector(".profile-container").appendChild(backButton);
+          // // Add "Back to Home" button below "Hours Left"
+          // const backButton = document.createElement("button");
+          // backButton.className = "back-button";
+          // backButton.innerText = "Back to Home";
+          // backButton.onclick = goBackToHome;
+          // document.querySelector(".profile-container").appendChild(backButton);
 
           // Yun Wen: Added to display past event
           let pastEvent;
           const historicalEvent = getAttendedEvent(studentData);
           if (historicalEvent.length === 0) {
             // Display "No events yet!" if there are no events
-            document.getElementById("displayEvent").textContent = "No events yet!";
+            document.getElementById("displayEvent").textContent =
+              "No events yet!";
           } else {
             // Remove "No events yet!" and display events
             document.getElementById("displayEvent").textContent = ""; // Clear placeholder text
@@ -134,5 +135,5 @@ function displayEvent(eventName) {
 }
 
 window.goBackToHome = function goBackToHome() {
-  window.location.href = '../student/main.html';
-}
+  window.location.href = "../student/main.html";
+};
