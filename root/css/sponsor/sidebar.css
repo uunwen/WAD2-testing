@@ -47,3 +47,14 @@ body {
   background-color: #e2e6ea; /* Change background on hover */
   color: #007bff; /* Change text color on hover */
 }
+
+@media (max-width: 767px) {
+  .sidebar {
+    background-color: #f8f9fa; /* Light background color */
+    padding: 20px; /* Add padding */
+    border-right: 1px solid #ddd; /* Light border on the right */
+    height: auto; /* Dynamic height based on content */
+    position: relative; /* Position relative to its parent */
+    transition: height 0.3s; /* Smooth transition for height change */
+  }
+}
