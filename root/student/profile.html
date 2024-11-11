@@ -4,19 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile Page</title>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
+    ></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"
+    ></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"
+    ></script>
     <style>
-        html, body {
-            height: 100%; /* Ensures full height of the viewport */
-            margin: 0; /* Removes any default margins */
-        }
+      html,
+      body {
+        height: 100%; /* Ensures full height of the viewport */
+        margin: 0; /* Removes any default margins */
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: url('../img/profilebackground.jpg') no-repeat center center/cover;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background: url("../img/profilebackground.jpg") no-repeat center
+          center/cover;
+      }
       .profile-container {
         max-width: 600px;
         margin: auto;
@@ -35,12 +46,85 @@
         width: 150px;
         height: 150px;
       }
+
+      /* Added margin ---YW */
+      .history {
+        margin-top: 30px;
+      }
+
+      /* Font Styling ---YW */
+      h1 {
+        font-size: 2em;
+        color: #333;
+        margin: 10px 0;
+      }
+
+      p {
+        font-size: 1em;
+        color: #666;
+      }
+
+      .history h2 {
+        font-size: 1.5em;
+        color: #333;
+        margin-top: 20px;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 5px;
+      }
+
+      /* Button Styling  ---YW */
+      .back-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .back-button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Responsive styles for screens smaller than 576px */
+      @media (max-width: 575.98px) {
+        body {
+          justify-content: flex-start;
+          padding: 10px;
+        }
+
+        .profile-container {
+          margin: 0;
+          padding: 15px;
+          box-shadow: none;
+        }
+
+        .profile-header {
+          text-align: left;
+        }
+
+        h1,
+        p,
+        .history h2 {
+          text-align: left;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="profile-container">
       <div class="profile-header">
-        <img id="profile-picture" src="" alt="Profile Picture" crossorigin="anonymous">
+        <img
+          id="profile-picture"
+          src=""
+          alt="Profile Picture"
+          crossorigin="anonymous"
+        />
         <h1 id="user-name">Loading...</h1>
         <p id="user-email">Loading...</p>
         <p id="graduation-year">Loading...</p>
@@ -48,7 +132,15 @@
 
       <div class="history">
         <h2>Past Events</h2>
-        <div id="displayEvent">No events yet!</div>
+        <div id="displayEvent"></div>
+        <!-- Added Back Button --- yw-->
+        <button
+          href
+          class="back-button"
+          onclick="window.location.href='./main.html';"
+        >
+          Back
+        </button>
       </div>
     </div>
 

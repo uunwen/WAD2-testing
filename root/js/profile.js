@@ -34,7 +34,6 @@ const database = getDatabase(app);
 // Firebase authentication state change listener
 auth.onAuthStateChanged((user) => {
   if (user) {
-
     // Check if the profile picture is already stored in sessionStorage
     const cachedProfilePicture = sessionStorage.getItem("profilePicture");
     if (cachedProfilePicture) {
@@ -68,10 +67,10 @@ auth.onAuthStateChanged((user) => {
             "graduation-year"
           ).innerText = `Expected Graduation Year: ${studentData.graduation_year}`;
 
-          // You can also display hours left if needed
-          const hoursLeft = document.createElement("p");
-          hoursLeft.innerText = `Hours Left: ${studentData.hours_left}`;
-          document.querySelector(".profile-container").appendChild(hoursLeft);
+          // // You can also display hours left if needed
+          // const hoursLeft = document.createElement("p");
+          // hoursLeft.innerText = `Hours Left: ${studentData.hours_left}`;
+          // document.querySelector(".profile-container").appendChild(hoursLeft);
 
           // Yun Wen: Added to display past event
           let pastEvent;

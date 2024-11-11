@@ -1,5 +1,6 @@
 /* Ensure the html and body elements cover the full viewport */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0; /* Remove default margins */
   padding: 0; /* Remove default padding */
@@ -39,7 +40,7 @@ nav.navbar {
 /* Hero Section */
 .hero {
   position: relative;
-  background: url('../img/smu.jpg') no-repeat center center/cover;
+  background: url("../img/smu.jpg") no-repeat center center/cover;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -118,7 +119,7 @@ nav.navbar {
 
 /* Style for the Login button */
 #loginButton {
-  background-color: #4CAF50; /* Green color */
+  background-color: #4caf50; /* Green color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -162,7 +163,6 @@ nav.navbar {
   margin-top: 10px;
 }
 
-
 /* Overlay background */
 .modal-overlay {
   position: fixed;
@@ -201,15 +201,15 @@ nav.navbar {
 /* Adjust navbar for mobile responsiveness */
 @media (max-width: 767px) {
   .navbar-nav {
-      flex-direction: column; /* Stack the navbar items vertically on smaller screens */
-      align-items: center;
+    flex-direction: column; /* Stack the navbar items vertically on smaller screens */
+    align-items: center;
   }
 
   .icon {
-      width: 20px; /* Adjust icon size on smaller screens */
+    width: 20px; /* Adjust icon size on smaller screens */
   }
 
   .navbar-brand {
-      font-size: 1.2rem; /* Adjust title font size on smaller screens */
+    font-size: 1.2rem; /* Adjust title font size on smaller screens */
   }
 }

@@ -168,7 +168,7 @@
                     <tbody>
                       <tr v-for="student in checkoutList" :key="student.uid" class="border-b">
                         <td class="py-3 px-4">{{ student.name }}</td>
-                        <td class="py-3 px-4">{{ student.clockOutTimestamp }}</td>
+                        <td class="py-3 px-4">{{ student.clockOutTimestamp }}</td>  
                         <td class="py-3 px-4">{{ student.hoursDeducted }}</td>
                       </tr>
                     </tbody>
@@ -190,18 +190,10 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script type="module" src="./script/takeAttendance.js"></script>
     <script type="module">
-      import { createNavbar, initializeSearch } from "./script/navbar.js";
+      import { createNavbarNoSearch } from "./script/navbar.js";
 
       document.addEventListener("DOMContentLoaded", async () => {
-        createNavbar();
-
-        try {
-          const searchResult = await initializeSearch();
-          console.log(searchResult);
-        } catch (err) {
-          // Initialize search functionality
-          console.error("Error initializing search:", error);
-        }
+        createNavbarNoSearch();
       });
     </script>
     <script src="./script/sidebar.js"></script>
